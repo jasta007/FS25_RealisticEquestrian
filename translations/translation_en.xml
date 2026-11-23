@@ -1280,5 +1280,26 @@
         <text name="eq_messages_summary" text="Results, injuries, transport, hosting and sponsor news. Each also shows as a notification when it happens."/>
         <text name="eq_messages_date" text="Day %d, %s, Year %d"/>
         <text name="eq_messages_day" text="Day %d"/>
+        <text name="input_EQ_DT_TYPE" text="Dressage test type"/>
+        <text name="input_EQ_DT_LEVEL" text="Dressage test level"/>
+        <text name="eq_dt_typeAction" text="Test: %s"/>
+        <text name="eq_dt_levelAction" text="Level: %s"/>
+        <text name="eq_dt_type_own" text="Your own"/>
+        <text name="eq_dt_type_random" text="Random"/>
+        <text name="eq_dt_type_set" text="Standardized Test"/>
+        <text name="eq_dlevel_novice" text="Novice"/>
+        <text name="eq_dlevel_elementary" text="Elementary"/>
+        <text name="eq_dlevel_medium" text="Medium"/>
+        <text name="eq_dlevel_advanced" text="Advanced"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermediate"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Your own test (Ctrl+N: test type)"/>
+        <text name="eq_dt_choiceRandom" text="Random test, %s (Ctrl+N: test type, Ctrl+M: level)"/>
+        <text name="eq_dt_choiceSet" text="Standardized Test, %s (Ctrl+N: test type, Ctrl+M: level)"/>
+        <text name="eq_dt_choiceFallback" text="No standardized test fits this ring: random test, %s"/>
+        <text name="eq_dt_choiceEvent" text="Event test: random, %s"/>
+        <text name="eq_fig_canterSide" text="Canter %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Canter %s-X-%s"/>
     </texts>
 </l10n>

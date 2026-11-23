@@ -21,6 +21,7 @@ dofile("scripts/training/EqTemperament.lua")
 dofile("scripts/staff/EqStaffNames.lua")
 dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressagePath.lua")
+dofile("scripts/training/EqDressageLevels.lua")
 dofile("scripts/training/EqDressageTests.lua")
 dofile("scripts/training/EqCourseGlow.lua")
 dofile("scripts/training/EqRidingInput.lua")
@@ -4514,6 +4515,18 @@ end)()
         local rolls = EqRandom.new(seed)
         return function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end
     end
+    -- A pirouette is placed by its hind feet, a piaffe by the horse's middle.
+    do
+        local look = { dirX = 0.6, dirZ = 0.8 }
+        local mx, my = EqDressagePath.spotPos(frame, "piaffe", 3, 4, look)
+        local rx, ry = EqDressagePath.toLocal(frame, 3, 4)
+        local hx, hy = EqDressagePath.spotPos(frame, "pirouette", 3, 4, look)
+        local bx, by = EqDressagePath.toLocal(frame, 3 - 0.6 * EqDressagePath.PIROUETTE_BACK, 4 - 0.8 * EqDressagePath.PIROUETTE_BACK)
+        check("a pirouette is placed by its hind feet", mx == rx and my == ry and math.abs(hx - bx) < 1e-9 and math.abs(hy - by) < 1e-9
+            and math.abs(math.sqrt((hx - rx) ^ 2 + (hy - ry) ^ 2) - EqDressagePath.PIROUETTE_BACK) < 1e-6)
+    end
+    -- A wrong gait in lateral work costs more than elsewhere.
+    check("a moment at the wrong gait in lateral work costs at least a mark", EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 700 * EqDressagePath.LATERAL_WRONG, pen = 0 }) <= 9)
     local one, two = EqDressagePath.build(frame, 8, seeded("dressage 4 novice")), EqDressagePath.build(frame, 8, seeded("dressage 4 novice"))
     local same = #one.pts == #two.pts and #one.events == #two.events
     for i, m in ipairs(one.moves) do same = same and m.key == two.moves[i].key end
@@ -4896,6 +4909,167 @@ end)()
     end
 
     check("a canter counts when the horse goes fast", EqDressagePath.matches("fast", "canter") and not EqDressagePath.matches("gallop", "canter"))
+    -- TEST LEVELS (EqDressageLevels, James 2026-11-22/23): own / random / set tests at seven levels.
+    do
+        local frames = {}
+        for n, arena in ipairs(SHOP) do
+            local markers = shopMarkers(arena, 500 + 200 * n, 30, 0.3 * n)
+            frames[n] = { frame = EqDressagePath.frameFor(markers, xOf(markers)), markers = markers }
+        end
+        check("levels: the shop's arenas are first, second and third", EqDressageLevels.arenaOf(frames[1].frame) == 1
+            and EqDressageLevels.arenaOf(frames[2].frame) == 2 and EqDressageLevels.arenaOf(frames[3].frame) == 3)
+        local LATERAL = { shoulderIn = true, travers = true, renvers = true, legYieldRail = true, halfPass = true, halfPassCentre = true,
+            passageRail = true, passageDiagonal = true }
+        local ABOVE = { novice = { shoulderIn = true, travers = true, renvers = true, halfPass = true, halfPassCentre = true, passageRail = true, passageDiagonal = true },
+            elementary = { renvers = true, halfPass = true, halfPassCentre = true, passageRail = true, passageDiagonal = true },
+            medium = { passageRail = true, passageDiagonal = true }, advanced = { passageRail = true, passageDiagonal = true },
+            prixStGeorges = { passageRail = true, passageDiagonal = true }, intermediate = { passageDiagonal = true }, grandPrix = {} }
+        for _, name in ipairs(EqDressageLevels.ORDER) do
+            for n = 1, 3 do
+                local frame = frames[n].frame
+                local allowed = EqDressageLevels.allowed(name, n)
+                local plan = EqDressageLevels.setPlan(name, n)
+                check(string.format("levels: %s has a set test in arena %d exactly when it is ridden there", name, n), (plan ~= nil) == allowed)
+                if allowed then
+                    local lv = EqDressageLevels.forBuild(name, frame)
+                    -- The set test builds every step, and rides the same each time (never saved).
+                    local set = EqDressagePath.build(frame, nil, nil, plan, nil, lv)
+                    local again = EqDressagePath.build(frame, nil, nil, EqDressageLevels.setPlan(name, n), nil, lv)
+                    check(string.format("levels: %s set test builds in arena %d", name, n), set.broken == nil and set.steps == #plan.steps
+                        and #set.moves == #plan.steps + 3 and set.length == again.length,
+                        string.format("broken at %s of %d", tostring(set.broken), #plan.steps))
+                    -- A canter half pass to the centre line turns onto the track no tighter than a
+                    -- canter's corners (James, 2026-11-23: about 4 m was "incredibly hard").
+                    local tight = nil
+                    for _, sec in ipairs(set.sections) do
+                        local move = set.moves[sec.m] or {}
+                        if move.key == "halfPassCentre" and move.gait == "canter" then
+                            local pts = set.pts
+                            for i = 4, #pts - 3 do
+                                local a, b, c = pts[i - 3], pts[i], pts[i + 3]
+                                if b.s > sec.s1 + 2 and b.s < sec.s1 + 40 then
+                                    local ab = math.sqrt((b.x - a.x) ^ 2 + (b.y - a.y) ^ 2)
+                                    local bc = math.sqrt((c.x - b.x) ^ 2 + (c.y - b.y) ^ 2)
+                                    local ac = math.sqrt((c.x - a.x) ^ 2 + (c.y - a.y) ^ 2)
+                                    local cross = math.abs((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x))
+                                    local r = cross > 1e-6 and ab * bc * ac / (2 * cross) or 1e9
+                                    if r < EqDressagePath.MIN_RADIUS.canter - 0.2 and (tight == nil or r < tight) then tight = r end
+                                end
+                            end
+                        end
+                    end
+                    check(string.format("levels: %s canter half passes in arena %d turn onto the track wide enough", name, n), tight == nil,
+                        string.format("%.1f m", tight or 0))
+                    local run, event = ride(set, frame, 0, 0)
+                    check(string.format("levels: a rider on the line finishes the %s set test in arena %d", name, n), event == "test" and run.percent >= 70,
+                        string.format("%s %s%%", event, tostring(run.percent)))
+                    -- Random tests: only the level's figures and movements, canter on straights in the first arena.
+                    local ok, why = true, ""
+                    for seed = 1, 25 do
+                        local test = EqDressagePath.build(frame, EqDressageLevels.figuresOf(name), seeded(name .. n .. seed), nil, nil, lv)
+                        for _, move in ipairs(test.moves) do
+                            if ABOVE[name][move.key] then ok, why = false, "figure " .. move.key end
+                        end
+                        for _, e in ipairs(test.events) do
+                            local move = test.moves[e.m] or {}
+                            if e.reinBack and name == "novice" then ok, why = false, "rein back" end
+                            if e.kind == "spot" then
+                                local kind = e.style == "piaffe" and "piaffe" or (e.gait == "canter" and "canterPirouette" or "walkPirouette")
+                                if not lv.spots[kind] then ok, why = false, "spot " .. kind end
+                            end
+                            if n == 1 and e.kind == "change" and e.gait == "canter" and move.key ~= "canterSide" and move.key ~= "canterDiagonal" then
+                                ok, why = false, "canter in " .. tostring(move.key)
+                            end
+                        end
+                        if #test.moves < 3 + math.min(3, EqDressageLevels.figuresOf(name)) then ok, why = false, "short test" end
+                    end
+                    check(string.format("levels: %s random tests in arena %d keep to the level", name, n), ok, why)
+                else
+                    check(string.format("levels: %s is never fitted to arena %d", name, n), EqDressageLevels.fit(name, n) ~= name)
+                end
+            end
+        end
+        -- The first arena's canter only ever comes on a straight, and turns before the corner.
+        local cantered = 0
+        for seed = 1, 60 do
+            local test = EqDressagePath.build(frames[1].frame, 6, seeded("straight " .. seed), nil, nil, EqDressageLevels.forBuild("novice", frames[1].frame))
+            for m, move in ipairs(test.moves) do
+                if move.key == "canterSide" or move.key == "canterDiagonal" then
+                    cantered = cantered + 1
+                    -- Canter, then trot, both inside the straight's own movement.
+                    local up, down = nil, nil
+                    for _, e in ipairs(test.events) do
+                        if e.m == m and e.kind == "change" and e.gait == "canter" then up = e.s end
+                        if e.m == m and e.kind == "change" and e.gait == "trot" and up ~= nil then down = e.s end
+                    end
+                    if up == nil or down == nil or down > move.s1 or EqDressagePath.gaitAt(test, move.s1 + 0.5) == "canter" then cantered = -1000 end
+                end
+            end
+        end
+        check("levels: the first arena canters on straights and trots again before the turn", cantered > 0, tostring(cantered))
+        -- A player's own test never gets the level-only straights, and random tests without a level keep every figure.
+        local plain = EqDressagePath.build(frames[1].frame, 7, seeded("plain"), { turn = 1, seed = 1, steps = {} }, true)
+        local straightOffered = false
+        for _, option in ipairs(plain.options.figure) do
+            if option.figure.levelOnly then straightOffered = true end
+        end
+        check("levels: the editor never offers the level-only canter straights", not straightOffered)
+
+        -- The choice per arena: own when there is one, else random at Elementary; the keys cycle it.
+        EqDressageLevels.reset()
+        local f1, f3 = frames[1].frame, frames[3].frame
+        local kind, level = EqDressageLevels.choiceFor(f1, false)
+        local kindOwn = EqDressageLevels.choiceFor(f1, true)
+        check("levels: first time it rides random at Elementary, or your own test", kind == "random" and level == "elementary" and kindOwn == "own")
+        local types = { EqDressageLevels.cycleType(f1, false), EqDressageLevels.cycleType(f1, false) }
+        check("levels: Ctrl+N skips own when there is none", types[1] == "set" and types[2] == "random")
+        local withOwn = { EqDressageLevels.cycleType(f1, true), EqDressageLevels.cycleType(f1, true), EqDressageLevels.cycleType(f1, true) }
+        check("levels: Ctrl+N goes round own, random and set", withOwn[1] == "set" and withOwn[2] == "own" and withOwn[3] == "random")
+        local seen1 = {}
+        for _ = 1, 4 do seen1[#seen1 + 1] = (EqDressageLevels.cycleLevel(f1, false)) end
+        check("levels: Ctrl+M in the first arena goes between Novice and Elementary", seen1[1] == "novice" and seen1[2] == "elementary"
+            and seen1[3] == "novice" and seen1[4] == "elementary", table.concat(seen1, ","))
+        local seen3 = {}
+        for _ = 1, 6 do seen3[#seen3 + 1] = (EqDressageLevels.cycleLevel(f3, false)) end
+        check("levels: Ctrl+M in the third arena skips Novice", table.concat(seen3, ",") == "medium,advanced,prixStGeorges,intermediate,grandPrix,elementary",
+            table.concat(seen3, ","))
+        local _, kept = EqDressageLevels.choiceFor(f1, false)
+        check("levels: each arena keeps its own choice", kept == "elementary" and select(2, EqDressageLevels.choiceFor(f3, false)) == "elementary")
+        EqDressageLevels.setChoice(f3, "set", "grandPrix")
+        local store = memoryXML()
+        EqDressageLevels.saveToXMLFile(store, "c")
+        EqDressageLevels.loadFromXMLFile(store, "c")
+        local k3, l3 = EqDressageLevels.choiceFor(f3, false)
+        check("levels: the choice survives a save", #EqDressageLevels.choices == 2 and k3 == "set" and l3 == "grandPrix")
+        -- A test waiting at A rides the choice.
+        local function startAt(n, test)
+            local routine = {}
+            EqDressage.start(routine, { x = frames[n].frame.cx, z = frames[n].frame.cz, markers = frames[n].markers, test = test }, seeded("start " .. n))
+            return routine
+        end
+        local r3 = startAt(3)
+        check("levels: a waiting test is the arena's set test at its level", r3.kind == "path" and r3.path.choice.type == "set"
+            and r3.path.choice.level == "grandPrix" and r3.path.test.steps == #EqDressageLevels.setPlan("grandPrix", 3).steps)
+
+        -- Your own events: a random test at a level from the rating, the same all month.
+        local hostedOk = true
+        for _, case in ipairs({ { "novice", 1, { novice = true, elementary = true } }, { "novice", 3, { elementary = true } },
+            { "intermediate", 2, { medium = true, advanced = true } }, { "championship", 3, { prixStGeorges = true, intermediate = true, grandPrix = true } },
+            { "championship", 2, { advanced = true } } }) do
+            for seed = 1, 10 do
+                local lvl = EqDressageLevels.hostedLevel(case[1], frames[case[2]].frame, seeded("host " .. seed))
+                if not case[3][lvl] then hostedOk = false end
+            end
+        end
+        check("levels: your own event draws its level from its rating and the arena", hostedOk)
+        check("levels: an unknown rating has no level", EqDressageLevels.hostedLevel(nil, f1, seeded("x")) == nil)
+        local fixed = { seed = "dressage 7 championship", moves = 25, counts = true, status = "counts", event = {}, steps = 13, rating = "championship" }
+        local a, b = startAt(3, fixed), startAt(3, fixed)
+        check("levels: your own event's random test is fixed for the month", a.path.choice.hosted and a.path.choice.type == "random"
+            and a.path.choice.level == b.path.choice.level and a.path.test.length == b.path.test.length and a.competing == true
+            and #a.path.test.moves == EqDressageLevels.figuresOf(a.path.choice.level) + 3)
+        EqDressageLevels.reset()
+    end
 end)()
 
 -- Show jump poles that fall when hit (EqPoles): a scripted fall, then back up. A function, not a

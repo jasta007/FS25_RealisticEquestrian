@@ -248,7 +248,7 @@ way between the walk's and the trot's top speed); W doesn't change gait while Ct
 letting go of W goes back to the spot. Tests ask for them at letters on the track: a **piaffe** when trotting (hold Ctrl
 4 s), a **pirouette** at a walk or canter (Ctrl + A or D, a full circle the way asked, into the
 arena), 15% of the time between figures and in 40% of canters or walks between two letters.
-Started near the gold pole (marked like a halt); letting go early (off the spot for 4.5 s, so a fumbled start can be put right) costs
+Started near the gold pole (marked like a halt; a pirouette by its hind feet, 0.9 m behind the horse's middle, since it turns round them); letting go early (off the spot for 4.5 s, so a fumbled start can be put right) costs
 up to 5, riding past 5. Coming in it is ridden from the asked gait: a full stop first costs 2, and
 each second in another gait on the way costs 1 (up to 3), so a fumbled one marks near 1. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
 (Canter) at B: Ctrl + A". Gold symbols on the line show what is coming: a bar across for a halt,
@@ -312,7 +312,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   "pretty hard to not get an 8"), but never more than 7.5 times the square root of the metres, so
   further off it eases: 0.2 m is a 7, 0.33 m a 6, 0.5 m a 5 (James's hosted test, 2026-11-01: a
   circle 0.33 m off was a 3). Lateral work, passage and movements on the spot keep the gentler
-  rate. Drifting with Shift to get back on the line in an ordinary figure is never marked down. Also the wrong gait 0.5 a second (at most 5; after 0.8 s at it the asked gait shows in red, "Trot!"), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
+  rate. Drifting with Shift to get back on the line in an ordinary figure is never marked down. Also the wrong gait 0.5 a second (1.5 a second in lateral work, with no settling time; at most 5; after 0.8 s at it the asked gait shows in red, "Trot!"), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4. On top of the average, every metre of line ridden more than 1 m off costs 0.4
   (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
@@ -325,7 +325,8 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   counts as having stopped (then as moving during the halt).
 - **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or
   canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back; on a
-  diagonal, a half pass from a side letter to the centre line and on up it to C, and a leg yield
+  diagonal, a half pass from a side letter to the centre line and on up it to C (at a canter it
+  swings out and turns onto the track in one 7 m half circle, not two tight quarters), and a leg yield
   off the centre line from A to a side letter (James, 2026-10-31: none went across the arena);
   shoulder-in, renvers, travers and leg yield along the rail (walk or trot) over one or two
   letter gaps (10 to 26 m).
@@ -341,7 +342,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   alone were unreadable mid-ride): cyan dashes facing the way the horse should face, each one
   smooth curve bending to the bend side towards its front. Lateral work comes only in the gait the
   horse is already in, with no change of gait in the 15 m before it. From 1 m into each section the body must face within 15 degrees of the asked angle
-  (0.3 a second off, at most 2; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.25 a second,
+  (0.5 a second off, at most 2; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.4 a second,
   at most 1): staying on the line matters more than the form (James, 2026-10-31).
 - **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back
   onto the line (up to 1.0 of its distance off a second at temperament 100, half that outside
@@ -371,6 +372,31 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
 - In the month of your own event with a dressage phase, every shop arena rides that event's fixed
   test (the same figures for every horse, from the event's seed); other months are random. It
   counts for an entered horse in an arena big enough for the rating (see Hosting).
+
+**Test types and levels** (James, 2026-11-22/23; `EqDressageLevels`). While a test waits at A,
+**Ctrl+N** cycles the test type (your own test, random, standardized test; own only when the arena has one)
+and **Ctrl+M** the level, skipping levels the arena can't hold. The choice shows under "Move to A"
+and is saved per arena; the first time it is your own test if there is one, else random at
+Elementary. Not in your own event's month: its test is fixed.
+
+| Level | First 15x30 | Second 20x40 | Third 20x60 | Random figures | Adds |
+|---|---|---|---|---|---|
+| Novice | yes | yes | no | 6 | trot and canter circles, diagonals, loops, leg yield; halts, no rein back |
+| Elementary | yes | yes | yes | 7 | shoulder-in, travers, leg yield on the rail, walk circles, eights, canter shallow loop; rein back, walk pirouettes |
+| Medium | no | yes | yes | 8 | half pass (canter only in 20x60), renvers |
+| Advanced | no | yes | yes | 9 | canter half pass to the centre line; canter pirouettes |
+| Prix St Georges | no | no | yes | 10 | more lateral work and movements on the spot, fewer plain figures |
+| Intermediate | no | no | yes | 11 | passage on the rail; piaffe |
+| Grand Prix | no | no | yes | 12 | passage on the diagonal; piaffe more often |
+
+- A random test picks only from its level's figures and every level's below it.
+- A standardized test (set test in the code) is one fixed test per level and arena, adapted from real test sheets to the figures we
+  have (no flying changes or extended paces, no names of the real tests). It is built from the
+  arena's figures at start and never saved; in a ring it doesn't fit (another mod's) it rides a
+  random test at that level instead.
+- In the first arena canter comes only on a straight: a long side or the long diagonal, from just
+  after the turn onto it to just before the turn off it (canter K-H, canter F-X-H). No canter
+  circles, loops or eights there, and no canter stretches between figures.
 
 **Your own tests** (James, 2026-10-31). Near a shop arena **Ctrl+L** opens the test editor (or edits
 the arena's saved test). The horse stands and the camera looks straight down on the arena, C at the
@@ -952,8 +978,10 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
 - **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
   on a course that meets the rating, is that horse's show jumping or cross country, with its
   real faults and time: the penalties you are told at the finish are the ones on the
-  scoresheet. In an arena big enough, the dressage test is the event's fixed test of 8, 10 or
-  13 figures by rating (or your own test for that arena, if it has at least as many steps).
+  scoresheet. In an arena big enough, the dressage test is your own test for that arena (if it
+  has at least 8, 10 or 13 steps by rating), else the event's fixed random test at a level drawn
+  from its rating: Novice or Elementary, Medium or Advanced, Prix St Georges, Intermediate or
+  Grand Prix (a level the arena can hold; the same test all month).
   Its penalties are on the simulated field's scale: 75% scores 22 (the simulated best), each
   percent either side 0.8, so 80% is 18, 70% 26 and 60% 34; a third error of course eliminates.
   Each horse gets one go at each phase, and later rounds are practice. Phases you don't ride

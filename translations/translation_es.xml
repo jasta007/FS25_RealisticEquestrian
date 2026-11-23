@@ -1282,5 +1282,26 @@
         <text name="eq_messages_summary" text="Resultados, lesiones, transporte, eventos propios y patrocinadores. Cada uno aparece también como notificación."/>
         <text name="eq_messages_date" text="Día %d, %s, año %d"/>
         <text name="eq_messages_day" text="Día %d"/>
+        <text name="input_EQ_DT_TYPE" text="Tipo de reprise de doma"/>
+        <text name="input_EQ_DT_LEVEL" text="Nivel de reprise de doma"/>
+        <text name="eq_dt_typeAction" text="Reprise: %s"/>
+        <text name="eq_dt_levelAction" text="Nivel: %s"/>
+        <text name="eq_dt_type_own" text="La tuya"/>
+        <text name="eq_dt_type_random" text="Aleatoria"/>
+        <text name="eq_dt_type_set" text="Reprise estándar"/>
+        <text name="eq_dlevel_novice" text="Principiante"/>
+        <text name="eq_dlevel_elementary" text="Elemental"/>
+        <text name="eq_dlevel_medium" text="Medio"/>
+        <text name="eq_dlevel_advanced" text="Avanzado"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermedia"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Tu propia reprise (Ctrl+N: tipo)"/>
+        <text name="eq_dt_choiceRandom" text="Reprise aleatoria, %s (Ctrl+N: tipo, Ctrl+M: nivel)"/>
+        <text name="eq_dt_choiceSet" text="Reprise estándar, %s (Ctrl+N: tipo, Ctrl+M: nivel)"/>
+        <text name="eq_dt_choiceFallback" text="Ninguna reprise estándar cabe en esta pista: reprise aleatoria, %s"/>
+        <text name="eq_dt_choiceEvent" text="Reprise del concurso: aleatoria, %s"/>
+        <text name="eq_fig_canterSide" text="Galope %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Galope %s-X-%s"/>
     </texts>
 </l10n>

@@ -1280,5 +1280,26 @@
         <text name="eq_messages_summary" text="Wyniki, kontuzje, transport, własne zawody i sponsorzy. Każda pojawia się też jako powiadomienie."/>
         <text name="eq_messages_date" text="Dzień %d, %s, rok %d"/>
         <text name="eq_messages_day" text="Dzień %d"/>
+        <text name="input_EQ_DT_TYPE" text="Rodzaj programu ujeżdżenia"/>
+        <text name="input_EQ_DT_LEVEL" text="Poziom programu ujeżdżenia"/>
+        <text name="eq_dt_typeAction" text="Program: %s"/>
+        <text name="eq_dt_levelAction" text="Poziom: %s"/>
+        <text name="eq_dt_type_own" text="Własny"/>
+        <text name="eq_dt_type_random" text="Losowy"/>
+        <text name="eq_dt_type_set" text="Program standardowy"/>
+        <text name="eq_dlevel_novice" text="Początkujący"/>
+        <text name="eq_dlevel_elementary" text="Podstawowy"/>
+        <text name="eq_dlevel_medium" text="Średni"/>
+        <text name="eq_dlevel_advanced" text="Zaawansowany"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermediate"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Twój własny program (Ctrl+N: rodzaj)"/>
+        <text name="eq_dt_choiceRandom" text="Losowy program, %s (Ctrl+N: rodzaj, Ctrl+M: poziom)"/>
+        <text name="eq_dt_choiceSet" text="Program standardowy, %s (Ctrl+N: rodzaj, Ctrl+M: poziom)"/>
+        <text name="eq_dt_choiceFallback" text="Żaden program standardowy nie mieści się w tym czworoboku: losowy program, %s"/>
+        <text name="eq_dt_choiceEvent" text="Program zawodów: losowy, %s"/>
+        <text name="eq_fig_canterSide" text="Galop %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Galop %s-X-%s"/>
     </texts>
 </l10n>

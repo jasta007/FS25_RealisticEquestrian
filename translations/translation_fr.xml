@@ -1282,5 +1282,26 @@
         <text name="eq_messages_summary" text="Résultats, blessures, transport, concours organisés et sponsors. Chacun s'affiche aussi en notification."/>
         <text name="eq_messages_date" text="Jour %d, %s, année %d"/>
         <text name="eq_messages_day" text="Jour %d"/>
+        <text name="input_EQ_DT_TYPE" text="Type de reprise de dressage"/>
+        <text name="input_EQ_DT_LEVEL" text="Niveau de reprise de dressage"/>
+        <text name="eq_dt_typeAction" text="Reprise : %s"/>
+        <text name="eq_dt_levelAction" text="Niveau : %s"/>
+        <text name="eq_dt_type_own" text="La vôtre"/>
+        <text name="eq_dt_type_random" text="Aléatoire"/>
+        <text name="eq_dt_type_set" text="Reprise standard"/>
+        <text name="eq_dlevel_novice" text="Débutant"/>
+        <text name="eq_dlevel_elementary" text="Élémentaire"/>
+        <text name="eq_dlevel_medium" text="Moyen"/>
+        <text name="eq_dlevel_advanced" text="Avancé"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermédiaire"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Votre propre reprise (Ctrl+N : type)"/>
+        <text name="eq_dt_choiceRandom" text="Reprise aléatoire, %s (Ctrl+N : type, Ctrl+M : niveau)"/>
+        <text name="eq_dt_choiceSet" text="Reprise standard, %s (Ctrl+N : type, Ctrl+M : niveau)"/>
+        <text name="eq_dt_choiceFallback" text="Aucune reprise standard ne tient dans cette carrière : reprise aléatoire, %s"/>
+        <text name="eq_dt_choiceEvent" text="Reprise du concours : aléatoire, %s"/>
+        <text name="eq_fig_canterSide" text="Galop %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Galop %s-X-%s"/>
     </texts>
 </l10n>

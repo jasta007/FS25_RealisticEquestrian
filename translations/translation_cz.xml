@@ -1280,5 +1280,26 @@
         <text name="eq_messages_summary" text="Výsledky, zranění, doprava, vlastní závody a sponzoři. Každá se zobrazí i jako oznámení."/>
         <text name="eq_messages_date" text="Den %d, %s, rok %d"/>
         <text name="eq_messages_day" text="Den %d"/>
+        <text name="input_EQ_DT_TYPE" text="Typ drezurní úlohy"/>
+        <text name="input_EQ_DT_LEVEL" text="Úroveň drezurní úlohy"/>
+        <text name="eq_dt_typeAction" text="Úloha: %s"/>
+        <text name="eq_dt_levelAction" text="Úroveň: %s"/>
+        <text name="eq_dt_type_own" text="Vlastní"/>
+        <text name="eq_dt_type_random" text="Náhodná"/>
+        <text name="eq_dt_type_set" text="Standardní úloha"/>
+        <text name="eq_dlevel_novice" text="Začátečník"/>
+        <text name="eq_dlevel_elementary" text="Základní"/>
+        <text name="eq_dlevel_medium" text="Střední"/>
+        <text name="eq_dlevel_advanced" text="Pokročilá"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermediate"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Vaše vlastní úloha (Ctrl+N: typ)"/>
+        <text name="eq_dt_choiceRandom" text="Náhodná úloha, %s (Ctrl+N: typ, Ctrl+M: úroveň)"/>
+        <text name="eq_dt_choiceSet" text="Standardní úloha, %s (Ctrl+N: typ, Ctrl+M: úroveň)"/>
+        <text name="eq_dt_choiceFallback" text="Do této jízdárny se nevejde žádná standardní úloha: náhodná úloha, %s"/>
+        <text name="eq_dt_choiceEvent" text="Úloha závodů: náhodná, %s"/>
+        <text name="eq_fig_canterSide" text="Cval %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Cval %s-X-%s"/>
     </texts>
 </l10n>

@@ -1280,5 +1280,26 @@
         <text name="eq_messages_summary" text="Risultati, infortuni, trasporto, eventi organizzati e sponsor. Ognuno appare anche come notifica."/>
         <text name="eq_messages_date" text="Giorno %d, %s, anno %d"/>
         <text name="eq_messages_day" text="Giorno %d"/>
+        <text name="input_EQ_DT_TYPE" text="Tipo di ripresa di dressage"/>
+        <text name="input_EQ_DT_LEVEL" text="Livello di ripresa di dressage"/>
+        <text name="eq_dt_typeAction" text="Ripresa: %s"/>
+        <text name="eq_dt_levelAction" text="Livello: %s"/>
+        <text name="eq_dt_type_own" text="La tua"/>
+        <text name="eq_dt_type_random" text="Casuale"/>
+        <text name="eq_dt_type_set" text="Ripresa standard"/>
+        <text name="eq_dlevel_novice" text="Principiante"/>
+        <text name="eq_dlevel_elementary" text="Elementare"/>
+        <text name="eq_dlevel_medium" text="Medio"/>
+        <text name="eq_dlevel_advanced" text="Avanzato"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermedia"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="La tua ripresa (Ctrl+N: tipo)"/>
+        <text name="eq_dt_choiceRandom" text="Ripresa casuale, %s (Ctrl+N: tipo, Ctrl+M: livello)"/>
+        <text name="eq_dt_choiceSet" text="Ripresa standard, %s (Ctrl+N: tipo, Ctrl+M: livello)"/>
+        <text name="eq_dt_choiceFallback" text="Nessuna ripresa standard entra in questo rettangolo: ripresa casuale, %s"/>
+        <text name="eq_dt_choiceEvent" text="Ripresa della gara: casuale, %s"/>
+        <text name="eq_fig_canterSide" text="Galoppo %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Galoppo %s-X-%s"/>
     </texts>
 </l10n>

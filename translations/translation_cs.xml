@@ -1280,5 +1280,26 @@
         <text name="eq_messages_summary" text="成绩、伤病、运输、主办赛事和赞助消息。每条也会以通知显示。"/>
         <text name="eq_messages_date" text="第 %d 天，%s，第 %d 年"/>
         <text name="eq_messages_day" text="第 %d 天"/>
+        <text name="input_EQ_DT_TYPE" text="盛装舞步路线类型"/>
+        <text name="input_EQ_DT_LEVEL" text="盛装舞步路线等级"/>
+        <text name="eq_dt_typeAction" text="路线：%s"/>
+        <text name="eq_dt_levelAction" text="等级：%s"/>
+        <text name="eq_dt_type_own" text="自己的"/>
+        <text name="eq_dt_type_random" text="随机"/>
+        <text name="eq_dt_type_set" text="标准路线"/>
+        <text name="eq_dlevel_novice" text="新手"/>
+        <text name="eq_dlevel_elementary" text="初级"/>
+        <text name="eq_dlevel_medium" text="中级"/>
+        <text name="eq_dlevel_advanced" text="高级"/>
+        <text name="eq_dlevel_prixStGeorges" text="圣乔治级"/>
+        <text name="eq_dlevel_intermediate" text="中级赛"/>
+        <text name="eq_dlevel_grandPrix" text="大奖赛"/>
+        <text name="eq_dt_choiceOwn" text="你自己的路线（Ctrl+N：类型）"/>
+        <text name="eq_dt_choiceRandom" text="随机路线，%s（Ctrl+N：类型，Ctrl+M：等级）"/>
+        <text name="eq_dt_choiceSet" text="标准路线，%s（Ctrl+N：类型，Ctrl+M：等级）"/>
+        <text name="eq_dt_choiceFallback" text="没有标准路线适合此场地：随机路线，%s"/>
+        <text name="eq_dt_choiceEvent" text="赛事路线：随机，%s"/>
+        <text name="eq_fig_canterSide" text="跑步 %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="跑步 %s-X-%s"/>
     </texts>
 </l10n>

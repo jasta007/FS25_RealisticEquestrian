@@ -1280,5 +1280,26 @@
         <text name="eq_messages_summary" text="Результаты, травмы, перевозка, свои турниры и спонсоры. Каждое также появляется как уведомление."/>
         <text name="eq_messages_date" text="День %d, %s, год %d"/>
         <text name="eq_messages_day" text="День %d"/>
+        <text name="input_EQ_DT_TYPE" text="Тип езды по выездке"/>
+        <text name="input_EQ_DT_LEVEL" text="Уровень езды по выездке"/>
+        <text name="eq_dt_typeAction" text="Езда: %s"/>
+        <text name="eq_dt_levelAction" text="Уровень: %s"/>
+        <text name="eq_dt_type_own" text="Своя"/>
+        <text name="eq_dt_type_random" text="Случайная"/>
+        <text name="eq_dt_type_set" text="Стандартная езда"/>
+        <text name="eq_dlevel_novice" text="Новичок"/>
+        <text name="eq_dlevel_elementary" text="Начальный"/>
+        <text name="eq_dlevel_medium" text="Средний"/>
+        <text name="eq_dlevel_advanced" text="Продвинутый"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Интермедиат"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Ваша собственная езда (Ctrl+N: тип)"/>
+        <text name="eq_dt_choiceRandom" text="Случайная езда, %s (Ctrl+N: тип, Ctrl+M: уровень)"/>
+        <text name="eq_dt_choiceSet" text="Стандартная езда, %s (Ctrl+N: тип, Ctrl+M: уровень)"/>
+        <text name="eq_dt_choiceFallback" text="Ни одна стандартная езда не помещается на этот плац: случайная езда, %s"/>
+        <text name="eq_dt_choiceEvent" text="Езда турнира: случайная, %s"/>
+        <text name="eq_fig_canterSide" text="Галоп %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Галоп %s-X-%s"/>
     </texts>
 </l10n>

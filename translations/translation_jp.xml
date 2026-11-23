@@ -1280,5 +1280,26 @@
         <text name="eq_messages_summary" text="結果、けが、輸送、主催イベント、スポンサーの知らせ。それぞれ通知としても表示されます。"/>
         <text name="eq_messages_date" text="%d日目、%s、%d年目"/>
         <text name="eq_messages_day" text="%d日目"/>
+        <text name="input_EQ_DT_TYPE" text="馬場馬術経路の種類"/>
+        <text name="input_EQ_DT_LEVEL" text="馬場馬術経路のレベル"/>
+        <text name="eq_dt_typeAction" text="経路：%s"/>
+        <text name="eq_dt_levelAction" text="レベル：%s"/>
+        <text name="eq_dt_type_own" text="自作"/>
+        <text name="eq_dt_type_random" text="ランダム"/>
+        <text name="eq_dt_type_set" text="標準経路"/>
+        <text name="eq_dlevel_novice" text="ノービス"/>
+        <text name="eq_dlevel_elementary" text="エレメンタリー"/>
+        <text name="eq_dlevel_medium" text="ミディアム"/>
+        <text name="eq_dlevel_advanced" text="アドバンスト"/>
+        <text name="eq_dlevel_prixStGeorges" text="プリ・サンジョルジュ"/>
+        <text name="eq_dlevel_intermediate" text="インターメディエイト"/>
+        <text name="eq_dlevel_grandPrix" text="グランプリ"/>
+        <text name="eq_dt_choiceOwn" text="自作の経路（Ctrl+N：種類）"/>
+        <text name="eq_dt_choiceRandom" text="ランダム経路、%s（Ctrl+N：種類、Ctrl+M：レベル）"/>
+        <text name="eq_dt_choiceSet" text="標準経路、%s（Ctrl+N：種類、Ctrl+M：レベル）"/>
+        <text name="eq_dt_choiceFallback" text="このアリーナに合う標準経路はありません：ランダム経路、%s"/>
+        <text name="eq_dt_choiceEvent" text="競技会の経路：ランダム、%s"/>
+        <text name="eq_fig_canterSide" text="駈歩 %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="駈歩 %s-X-%s"/>
     </texts>
 </l10n>
