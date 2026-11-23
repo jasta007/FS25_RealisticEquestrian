@@ -201,11 +201,11 @@
         <text name="eq_fig_final" text="Centre line at %s, halt at %s"/>
         <text name="eq_dressage_haltAt" text="Halt at %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) at %s: hold Ctrl"/>
-        <text name="eq_dressage_pirouetteLeftAt" text="Left Pirouette (%s) at %s: Ctrl + Shift + A"/>
-        <text name="eq_dressage_pirouetteRightAt" text="Right Pirouette (%s) at %s: Ctrl + Shift + D"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Left Pirouette (%s) at %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Right Pirouette (%s) at %s: Ctrl + D"/>
         <text name="eq_dressage_piaffe" text="Piaffe (%s)! Hold Ctrl"/>
-        <text name="eq_dressage_pirouetteLeft" text="Left Pirouette (%s)! Ctrl + Shift + A"/>
-        <text name="eq_dressage_pirouetteRight" text="Right Pirouette (%s)! Ctrl + Shift + D"/>
+        <text name="eq_dressage_pirouetteLeft" text="Left Pirouette (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Right Pirouette (%s)! Ctrl + D"/>
         <text name="eq_dressage_line" text="Back on the line!"/>
         <text name="eq_dressage_mark" text="Last mark: %s"/>
         <text name="eq_pop_routineError" text="Error of course %d/%d"/>
@@ -1231,7 +1231,7 @@
         <text name="eq_help_lateral_title" text="Lateral movements"/>
         <text name="eq_help_lateral_1" text="Lateral movements are some of the hardest parts of dressage, and they combine several controls. Hold [[EQ_LATERAL]] and press A or D to drift sideways in a leg yield, and hold [[EQ_REIN]] as well to bend your horse&apos;s neck and shoulders into a travers, renvers or half pass. In a dressage test, the icons on the path show how to position your horse."/>
         <text name="eq_help_collect_title" text="Collecting"/>
-        <text name="eq_help_collect_1" text="Collecting is mostly used in dressage, to ride a gait without its usual speed. Hold [[EQ_COLLECT]] while trotting for a piaffe, a trot on the spot, and press W as well for a passage, a slow, bouncing trot. Collect and turn with A or D for a volte, a small circle (smaller the calmer the horse), and hold [[EQ_LATERAL]] as well at a walk or canter for a pirouette, turning round the hind feet."/>
+        <text name="eq_help_collect_1" text="Collecting is mostly used in dressage, to ride a gait without its usual speed. Hold [[EQ_COLLECT]] while trotting for a piaffe, a trot on the spot, and press W as well for a passage, a slow, bouncing trot. Collect and turn with A or D for a pirouette at a walk or trot, turning round the hind feet, or a volte at a canter, a small circle (smaller the calmer the horse). Hold [[EQ_LATERAL]] as well for a canter pirouette."/>
         <text name="eq_help_rein_title" text="Mouse steering"/>
         <text name="eq_help_rein_1" text="Holding [[EQ_REIN]] swings your camera behind your horse and lets you steer finely with the mouse, which is vital in dressage and sometimes in show jumping. While you also hold [[EQ_LATERAL]], the mouse bends your horse&apos;s head for lateral movements."/>
         <text name="eq_help_courseEdit_title" text="Course editing"/>

@@ -232,14 +232,15 @@ long side of our arenas (within 2.5 m of the track, body turned off the rail) Sh
 Renvers, Travers or Leg yield along the rail. White, or in a test green when it is what is asked
 right now and red when something else is.
 Holding **Ctrl** at a walk, trot or canter collects the horse to a stop over 0.6 s while it keeps
-the gait's animation (James, 2026-10-30): a trot on the spot is a piaffe. **Ctrl + A/D** rides a
-**volte** (James, 2026-11-23): the horse goes on at a collected pace (a walk as it is, a trot at a
-passage's speed, a canter at a collected canter's) on a small circle, 6 m across at temperament 70
-or more, widening evenly to 10 m at 0. Its turn is capped to what that circle needs, and its speed
-follows the turn it actually makes, so the circle keeps its size while the turn eases in (the log
-says "volte ridden N m across" once a second). **Ctrl + Shift + A/D** at a walk or canter is a
-**pirouette**: on the spot, the body carried round a point 0.9 m behind the horse's middle (its
-hind feet), so the forehand swings round them (at a trot it is a volte).
+the gait's animation (James, 2026-10-30): a trot on the spot is a piaffe. **Ctrl + A/D** at a walk
+or trot is a **pirouette** (James, 2026-11-23): on the spot, the body carried round a point 0.9 m
+behind the horse's middle (its hind feet), so the forehand swings round them. At a canter
+**Ctrl + A/D** rides a **volte**: the horse goes on at a collected canter on a small circle, 6 m
+across at temperament 70 or more, widening evenly to 10 m at 0. Its turn is capped to what that
+circle needs, and its speed follows the turn it actually makes, so the circle keeps its size while
+the turn eases in (the log says "volte ridden N m across" once a second). A canter pirouette is
+**Ctrl + Shift + A/D**, or plain Ctrl + A/D where a test asks for one (James: Ctrl + Shift + A/D is
+"too much finger gymnastics").
 Ctrl alone also makes for a precise halt. Let go and it
 moves on at the gait. On the spot the animation plays slower (60% of the way from the gait below's
 top speed) and the horse creeps on at 8% of its speed at a trot and 15% at a canter, so the hooves
@@ -247,12 +248,12 @@ slide less. **Ctrl + W** goes forward collected instead (James, 2026-10-30): at 
 **passage** (the trot's animation at the walk's top speed), at a canter a collected canter (half
 way between the walk's and the trot's top speed); W doesn't change gait while Ctrl is held, and
 letting go of W goes back to the spot. Tests ask for them at letters on the track: a **piaffe** when trotting (hold Ctrl
-4 s), a **pirouette** at a walk or canter (Ctrl + Shift + A or D, a full circle the way asked, into the
+4 s), a **pirouette** at a walk or canter (Ctrl + A or D, a full circle the way asked, into the
 arena), 15% of the time between figures and in 40% of canters or walks between two letters.
 Started near the gold pole (marked like a halt); letting go early (off the spot for 4.5 s, so a fumbled start can be put right) costs
 up to 5, riding past 5. Coming in it is ridden from the asked gait: a full stop first costs 2, and
 each second in another gait on the way costs 1 (up to 3), so a fumbled one marks near 1. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
-(Canter) at B: Ctrl + Shift + A". A volte where a pirouette is asked doesn't count as on the spot. Gold symbols on the line show what is coming: a bar across for a halt,
+(Canter) at B: Ctrl + A". Gold symbols on the line show what is coming: a bar across for a halt,
 for a piaffe a short stretch of trot and walk dashes in turn (it creeps forward a little), a ring with an arrowhead the way to turn for a pirouette.
 Single player for now (the keys and mouse are read on the rider's machine).
 

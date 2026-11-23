@@ -2052,7 +2052,7 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
         run.stallMs = 0
         local spot, done = run.spot, false
         local on = look ~= nil and look.spot and EqDressagePath.matches(move, spot.event.gait)
-        -- A pirouette is Ctrl + Shift + A/D; Ctrl + A/D rides a volte off the spot (James, 2026-11-23).
+        -- A volte (Ctrl + A/D at a canter, EqLateral.spotMode) leaves the spot; a pirouette doesn't.
         if on and spot.event.style == "pirouette" and look.pirouette == false then on = false end
         if on then
             spot.offMs = 0

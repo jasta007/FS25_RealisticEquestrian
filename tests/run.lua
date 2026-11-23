@@ -4135,7 +4135,7 @@ end
     check("the movement under the panel is named from Ctrl, the drift, the bend and the rail",
         nowName({ gait = "TROT", spot = true }) == "piaffe" and nowName({ gait = "CANTER", spot = true, turning = true }) == "volte"
         and nowName({ gait = "CANTER", spot = true, turning = true, pirouette = true }) == "pirouette"
-        and nowName({ gait = "TROT", spot = true, turning = true }) == "volte"
+        and nowName({ gait = "TROT", spot = true, turning = true, pirouette = true }) == "pirouette"
         and nowName({ gait = "WALK", spot = true }) == "collected" and nowName({ gait = "TROT", spot = true, passage = true }) == "passage"
         and nowName({ gait = "TROT", side = 1, bend = 0 }) == "legYield" and nowName({ gait = "TROT", side = 1, bend = 0.8 }) == "halfPass"
         and nowName({ gait = "TROT", side = 1, bend = -0.8, rail = "in" }) == "shoulderIn"
@@ -4170,9 +4170,10 @@ end
     check("on the spot the animation slows but stays in the gait", EqLateral.shownSpeed(4, 2, 0) == 4
         and math.abs(EqLateral.shownSpeed(4, 2, 1) - 3.2) < 1e-9 and EqLateral.shownSpeed(4, 2, 1) > 2)
     -- Ctrl + A/D a volte sized by temperament, Ctrl + Shift + A/D a pirouette round the hind feet (James, 2026-11-23).
-    check("Ctrl + A/D is a volte, Ctrl + Shift + A/D a pirouette at a walk or canter", EqLateral.spotMode("CANTER", true, false, false) == "volte"
-        and EqLateral.spotMode("CANTER", true, true, false) == "pirouette" and EqLateral.spotMode("WALK", true, true, false) == "pirouette"
-        and EqLateral.spotMode("TROT", true, true, false) == "volte" and EqLateral.spotMode("CANTER", false, true, false) == nil
+    check("Ctrl + A/D is a pirouette at a walk or trot and a volte at a canter, with Shift or asked a canter pirouette",
+        EqLateral.spotMode("CANTER", true, false, false) == "volte" and EqLateral.spotMode("TROT", true, false, false) == "pirouette"
+        and EqLateral.spotMode("WALK", true, false, false) == "pirouette" and EqLateral.spotMode("CANTER", true, true, false) == "pirouette"
+        and EqLateral.spotMode("CANTER", true, false, false, true) == "pirouette" and EqLateral.spotMode("CANTER", false, true, false) == nil
         and EqLateral.spotMode("CANTER", true, false, true) == nil and EqLateral.spotMode(nil, true, false, false) == nil)
     check("a volte is 6 m across from temperament 70, widening evenly to 10 m at 0", EqLateral.volteDiameter(70) == 6
         and EqLateral.volteDiameter(100) == 6 and EqLateral.volteDiameter(0) == 10 and EqLateral.volteDiameter(nil) == 10
