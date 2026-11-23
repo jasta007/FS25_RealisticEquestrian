@@ -521,7 +521,9 @@ end
 --- @param sheet table
 --- @param ms number milliseconds since the sheet was last ridden
 --- @param stamina number|nil the horse's trained stamina
-function EqTraining.rest(sheet, ms, stamina)
+--- @param keepRoutine boolean|nil true keeps a dressage test or routine going (a pause or menu
+---     while still in the saddle: James, 2026-11-19 "people will want to pause")
+function EqTraining.rest(sheet, ms, stamina, keepRoutine)
     if ms <= 0 then return end
     EqExertion.rest(sheet.exertion, ms, stamina)
     sheet.stamina.mult = 1
@@ -531,7 +533,7 @@ function EqTraining.rest(sheet, ms, stamina)
     sheet.combo.count, sheet.combo.timer = 0, 0
     if sheet.temper ~= nil then EqTemperament.reset(sheet.temper) end
     sheet.workRate = 0
-    EqTraining.breakRoutine(sheet)
+    if not keepRoutine then EqTraining.breakRoutine(sheet) end
 end
 
 

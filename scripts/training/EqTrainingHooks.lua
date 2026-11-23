@@ -458,6 +458,21 @@ end
 
 
 --- @return boolean true when the routine runs: it only asks for moves where the rider sees them
+--- Log a dressage test or routine that just ended early, and why (James, 2026-11-19: a test
+--- ended with nothing in the log). breakRoutine has already cleared the routine, so the test's
+--- run is passed in from before.
+--- @param routine table sheet.routine
+--- @param run table|nil the test's run, if it was a test of figures
+--- @param why string
+local function logLost(routine, run, why)
+    if run ~= nil then
+        Log:info("Dressage test: lost (%s), movement %d/%d, errors %d", why, (run.cur or 1) - 1, #run.test.moves, run.errors or 0)
+    else
+        Log:info("Dressage routine: lost (%s)", why)
+    end
+end
+
+
 local function routineShown()
     local view = EqTrainingHooks.getView()
     return view == "freestyle" or view == "temperament" or view == "condensed"
@@ -847,7 +862,15 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
 
     local now = g_time or 0
     local stamina = record ~= nil and record.trained.stamina or nil
-    if sheet.clock ~= nil and now - sheet.clock > 1000 then EqTraining.rest(sheet, now - sheet.clock, stamina) end
+    if sheet.clock ~= nil and now - sheet.clock > 1000 then
+        -- A pause or a menu while in the saddle: the horse rests, a dressage test waits.
+        local routine = sheet.routine
+        if routine ~= nil and routine.active then
+            Log:info("Dressage %s: %.1f s without a riding update (paused?), it carries on",
+                routine.kind == "path" and "test" or "routine", (now - sheet.clock) / 1000)
+        end
+        EqTraining.rest(sheet, now - sheet.clock, stamina, true)
+    end
     sheet.clock = now
 
     local worn = isTired(spec.cluster)
@@ -905,7 +928,17 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         -- Running into the next fence of a show jumping round is a refusal (EqCourseHooks).
         if refusal or not (ok and fell) then EqCourseHooks.onCrash() end
         local knock = EqTraining.knockCombo(sheet)
-        if EqTraining.breakRoutine(sheet) and knock == nil then EqTrainingHud.pop("routineLost") end
+        local routine = sheet.routine
+        local run = routine.active and routine.kind == "path" and routine.path or nil
+        if run ~= nil and run.started then
+            -- A dressage test carries on: marks off the movement under way (James, 2026-11-19).
+            local crashes = EqDressagePath.crash(run)
+            Log:info("Dressage test: crash in movement %d/%d, -%s marks (%d on it)", run.cur, #run.test.moves,
+                tostring(EqDressagePath.CRASH_PEN), crashes)
+        elseif EqTraining.breakRoutine(sheet) then
+            logLost(routine, run, "crash")
+            if knock == nil then EqTrainingHud.pop("routineLost") end
+        end
         popKnock(knock)
     end
     spec.eqHalted = halted
@@ -943,7 +976,9 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             elseif event == "fault" then EqTrainingHud.pop("routineError", path.errors)
             elseif event == "test" then EqTrainingHud.pop("routineScore", path.percent)
             elseif event == "lost" then EqTrainingHud.pop("routineLost") end
-            if event ~= nil and event ~= "request" then
+            if event == "lost" then
+                logLost(before, path, path.lostWhy or "away from the arena's markers")
+            elseif event ~= nil and event ~= "request" then
                 Log:info("Dressage test: %s, movement %d/%d, mark %s, errors %d, %s%%", event, path.cur - 1, #path.test.moves,
                     tostring(path.lastMark), path.errors, tostring(path.percent or EqDressagePath.percent(path)))
             end
@@ -957,8 +992,13 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             Log:info("Dressage routine: %s x%d, now %s%s", event, sheet.routine.mult, tostring(sheet.routine.request),
                 task ~= nil and task.marker ~= nil and string.format(" %s to %s", task.gait, task.marker.letter) or "")
         end
-    elseif EqTraining.breakRoutine(sheet) and not coursing then
-        EqTrainingHud.pop("routineLost")
+    elseif not coursing then
+        local before = sheet.routine
+        local path = before.active and before.kind == "path" and before.path or nil
+        if EqTraining.breakRoutine(sheet) then
+            logLost(before, path, "training panel switched to a view without the routine")
+            EqTrainingHud.pop("routineLost")
+        end
     end
     -- A dressage test under way keeps the courses quiet: no start line, hint or countdown.
     EqCourseHooks.dressageActive = sheet.routine.active or EqDressageEditor.isEditing()
@@ -1365,7 +1405,12 @@ function EqTrainingHooks.onJump(vehicle)
         judgeJump(spec, sheet, isTired(spec.cluster), last, math.abs(spec.currentSpeed or 0), g_time or 0, vehicle)
     end
     EqTraining.addJump(sheet)
-    if EqTraining.breakRoutine(sheet) then EqTrainingHud.pop("routineLost") end
+    local routine = sheet.routine
+    local run = routine.active and routine.kind == "path" and routine.path or nil
+    if EqTraining.breakRoutine(sheet) then
+        logLost(routine, run, "jumped")
+        EqTrainingHud.pop("routineLost")
+    end
     spec.eqJump = { startedAt = g_time or 0, best = 0, airborne = false, speed = math.abs(spec.currentSpeed or 0), gait = spec.eqLastGait }
     spec.eqJumpGait, spec.eqJumpHoldUntil = spec.eqLastGait, nil
     EqTrainingHooks.startLaunch(spec)
