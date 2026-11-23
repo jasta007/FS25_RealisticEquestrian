@@ -204,10 +204,14 @@
         <text name="eq_dressage_haltAt" text="Parada em %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) em %s: manter Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Pirueta à esquerda (%s) em %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Pirueta à esquerda (%s) em %s: Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Pirueta à direita (%s) em %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Pirueta à direita (%s) em %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Piaffe (%s)! Mantenha Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="Pirueta à esquerda (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Pirueta à esquerda (%s)! Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="Pirueta à direita (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Pirueta à direita (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Volte para a linha!"/>
         <text name="eq_dressage_mark" text="Última nota: %s"/>
         <text name="eq_pop_routineError" text="Erro de percurso %d/%d"/>

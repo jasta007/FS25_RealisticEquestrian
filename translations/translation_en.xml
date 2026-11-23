@@ -202,10 +202,14 @@
         <text name="eq_dressage_haltAt" text="Halt at %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) at %s: hold Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Left Pirouette (%s) at %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Left Pirouette (%s) at %s: Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Right Pirouette (%s) at %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Right Pirouette (%s) at %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Piaffe (%s)! Hold Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="Left Pirouette (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Left Pirouette (%s)! Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="Right Pirouette (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Right Pirouette (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Back on the line!"/>
         <text name="eq_dressage_mark" text="Last mark: %s"/>
         <text name="eq_pop_routineError" text="Error of course %d/%d"/>

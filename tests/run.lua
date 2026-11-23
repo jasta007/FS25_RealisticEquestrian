@@ -4170,11 +4170,17 @@ end
     check("on the spot the animation slows but stays in the gait", EqLateral.shownSpeed(4, 2, 0) == 4
         and math.abs(EqLateral.shownSpeed(4, 2, 1) - 3.2) < 1e-9 and EqLateral.shownSpeed(4, 2, 1) > 2)
     -- Ctrl + A/D a volte sized by temperament, Ctrl + Shift + A/D a pirouette round the hind feet (James, 2026-11-23).
-    check("Ctrl + A/D is a pirouette at a walk or trot and a volte at a canter, with Shift or asked a canter pirouette",
+    check("Ctrl + A/D is a pirouette at a walk or trot and a volte at a canter, Ctrl + Shift + A/D a canter pirouette",
         EqLateral.spotMode("CANTER", true, false, false) == "volte" and EqLateral.spotMode("TROT", true, false, false) == "pirouette"
         and EqLateral.spotMode("WALK", true, false, false) == "pirouette" and EqLateral.spotMode("CANTER", true, true, false) == "pirouette"
-        and EqLateral.spotMode("CANTER", true, false, false, true) == "pirouette" and EqLateral.spotMode("CANTER", false, true, false) == nil
+        and EqLateral.spotMode("CANTER", false, true, false) == nil
         and EqLateral.spotMode("CANTER", true, false, true) == nil and EqLateral.spotMode(nil, true, false, false) == nil)
+    local trotSpec = { currentTurnSpeed = 0.9, maxTurnSpeed = 1 }
+    check("a hard turn at a trot, ridden free, is a trot volte", EqLateral.trotVolte(trotSpec, "TROT", false)
+        and not EqLateral.trotVolte(trotSpec, "TROT", true) and not EqLateral.trotVolte(trotSpec, "CANTER", false)
+        and not EqLateral.trotVolte({ currentTurnSpeed = -0.5, maxTurnSpeed = 1 }, "TROT", false)
+        and EqLateral.trotVolte({ currentTurnSpeed = -0.9, maxTurnSpeed = 1 }, "TROT", false)
+        and not EqLateral.trotVolte({ currentTurnSpeed = 0.9, maxTurnSpeed = 1, eqCollect = 1 }, "TROT", false))
     check("a volte is 6 m across from temperament 70, widening evenly to 10 m at 0", EqLateral.volteDiameter(70) == 6
         and EqLateral.volteDiameter(100) == 6 and EqLateral.volteDiameter(0) == 10 and EqLateral.volteDiameter(nil) == 10
         and math.abs(EqLateral.volteDiameter(35) - 8) < 1e-9)

@@ -239,8 +239,8 @@ behind the horse's middle (its hind feet), so the forehand swings round them. At
 across at temperament 70 or more, widening evenly to 10 m at 0. Its turn is capped to what that
 circle needs, and its speed follows the turn it actually makes, so the circle keeps its size while
 the turn eases in (the log says "volte ridden N m across" once a second). A canter pirouette is
-**Ctrl + Shift + A/D**, or plain Ctrl + A/D where a test asks for one (James: Ctrl + Shift + A/D is
-"too much finger gymnastics").
+**Ctrl + Shift + A/D** only (James: for the top levels; tests prompt "Ctrl + Shift + A"). A hard turn
+at a trot (80% of full lock or more) ridden free, not in a test, is named a Volte under the panel.
 Ctrl alone also makes for a precise halt. Let go and it
 moves on at the gait. On the spot the animation plays slower (60% of the way from the gait below's
 top speed) and the horse creeps on at 8% of its speed at a trot and 15% at a canter, so the hooves
@@ -253,7 +253,7 @@ arena), 15% of the time between figures and in 40% of canters or walks between t
 Started near the gold pole (marked like a halt); letting go early (off the spot for 4.5 s, so a fumbled start can be put right) costs
 up to 5, riding past 5. Coming in it is ridden from the asked gait: a full stop first costs 2, and
 each second in another gait on the way costs 1 (up to 3), so a fumbled one marks near 1. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
-(Canter) at B: Ctrl + A". Gold symbols on the line show what is coming: a bar across for a halt,
+(Canter) at B: Ctrl + Shift + A". Gold symbols on the line show what is coming: a bar across for a halt,
 for a piaffe a short stretch of trot and walk dashes in turn (it creeps forward a little), a ring with an arrowhead the way to turn for a pirouette.
 Single player for now (the keys and mouse are read on the rider's machine).
 

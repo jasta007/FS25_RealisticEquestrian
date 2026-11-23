@@ -204,10 +204,14 @@
         <text name="eq_dressage_haltAt" text="%sで停止"/>
         <text name="eq_dressage_piaffeAt" text="ピアッフェ（%s）%sで：Ctrlを押し続ける"/>
         <text name="eq_dressage_pirouetteLeftAt" text="左ピルエット（%s）%sで：Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="左ピルエット（%s）%sで：Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="右ピルエット（%s）%sで：Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="右ピルエット（%s）%sで：Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="ピアッフェ（%s）！Ctrlを押し続ける"/>
         <text name="eq_dressage_pirouetteLeft" text="左ピルエット（%s）！Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="左ピルエット（%s）！Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="右ピルエット（%s）！Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="右ピルエット（%s）！Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="ラインに戻れ！"/>
         <text name="eq_dressage_mark" text="前回の得点：%s"/>
         <text name="eq_pop_routineError" text="経路違反 %d/%d"/>

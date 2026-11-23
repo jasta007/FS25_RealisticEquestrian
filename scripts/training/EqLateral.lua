@@ -19,8 +19,8 @@
 
     Holding Ctrl collects the horse to a stop while it keeps the gait's animation (James,
     2026-10-30): trotting on the spot is a piaffe. Ctrl + A/D at a walk or trot is a pirouette
-    round the hind feet, at a canter a volte, a small circle sized by temperament (Ctrl + Shift +
-    A/D a canter pirouette) (James, 2026-11-23). The base game still works out the gait's speed; the move made is cut to nothing
+    round the hind feet, at a canter a volte, a small circle sized by temperament, and Ctrl +
+    Shift + A/D a canter pirouette (James, 2026-11-23). The base game still works out the gait's speed; the move made is cut to nothing
     (and the stuck check's record of it with it, or it would halt the horse), and the animation is
     shown the gait's speed instead of the horse's real one.
 
@@ -101,10 +101,9 @@ EqLateral.VOLTE_MIN = 6
 EqLateral.VOLTE_MAX = 10
 EqLateral.VOLTE_CALM = 70
 -- A pirouette is on the spot, turned round the hind feet (PIVOT_BACK metres behind the horse's
--- middle), so the forehand swings round them. Ctrl + A/D at a walk or trot (James, 2026-11-23:
--- Ctrl + Shift + A/D "is too much finger gymnastics"); at a canter Ctrl + A/D is a volte, and a
--- pirouette is Ctrl + Shift + A/D, or Ctrl + A/D where a test asks for one. A frame's turn bigger
--- than PIVOT_JUMP radians (a reset or teleport) moves nothing.
+-- middle), so the forehand swings round them. Ctrl + A/D at a walk or trot; at a canter Ctrl + A/D
+-- is a volte and only Ctrl + Shift + A/D a pirouette (James, 2026-11-23: canter pirouettes are for
+-- the top levels). A frame's turn bigger than PIVOT_JUMP radians (a reset or teleport) moves nothing.
 EqLateral.PIROUETTE_GAITS = { WALK = true, TROT = true }
 EqLateral.PIVOT_BACK = 0.9
 EqLateral.PIVOT_JUMP = 0.5
@@ -227,19 +226,30 @@ function EqLateral.keep(collect, gait, creep)
 end
 
 
---- What Ctrl is doing (pure): "pirouette" (Ctrl + A/D at a walk or trot; at a canter with Shift
---- or where a test asks for one), "volte" (Ctrl + A/D at a canter), or nil (on the spot, or
---- Ctrl + W forward).
+--- What Ctrl is doing (pure): "pirouette" (Ctrl + A/D at a walk or trot, Ctrl + Shift + A/D at a
+--- canter), "volte" (Ctrl + A/D at a canter), or nil (on the spot, or Ctrl + W forward).
 --- @param gait string|nil gait name
 --- @param turning boolean A or D held
 --- @param shift boolean lateral (Shift) held
 --- @param passage boolean Ctrl + W
---- @param asked boolean|nil a test asks for a pirouette now
 --- @return string|nil
-function EqLateral.spotMode(gait, turning, shift, passage, asked)
+function EqLateral.spotMode(gait, turning, shift, passage)
     if not turning or passage or gait == nil or not EqLateral.GAITS[gait] then return nil end
-    if EqLateral.PIROUETTE_GAITS[gait] or shift or asked then return "pirouette" end
+    if EqLateral.PIROUETTE_GAITS[gait] or shift then return "pirouette" end
     return "volte"
+end
+
+
+-- A hard turn at a trot, ridden free, is named a volte (James, 2026-11-23): at least this share
+-- of full lock.
+EqLateral.TROT_VOLTE_TURN = 0.8
+
+
+--- (pure) @return boolean true when riding free (no test) at a trot, turning hard, not collected or drifting
+function EqLateral.trotVolte(spec, gait, testing)
+    if testing or gait ~= "TROT" or spec.isOnGround == false or (spec.eqCollect or 0) > 0 or (spec.eqLateralSide or 0) ~= 0 then return false end
+    if type(spec.currentTurnSpeed) ~= "number" or type(spec.maxTurnSpeed) ~= "number" or spec.maxTurnSpeed <= 0 then return false end
+    return math.abs(spec.currentTurnSpeed) / spec.maxTurnSpeed >= EqLateral.TROT_VOLTE_TURN
 end
 
 
@@ -550,9 +560,7 @@ local function before(vehicle, dt)
     if spot then
         local left, right = EqRidingInput.steerSides()
         turn = EqLateral.spotSteer(left, right, gait)
-        local run = EqDressageHooks ~= nil and EqDressageHooks.testOn ~= nil and EqDressageHooks.testOn() or nil
-        local asked = run ~= nil and run.spot ~= nil and run.spot.event ~= nil and run.spot.event.style == "pirouette"
-        mode = EqLateral.spotMode(gait, turn ~= 0, entered and shiftHeld(), passage ~= nil, asked)
+        mode = EqLateral.spotMode(gait, turn ~= 0, entered and shiftHeld(), passage ~= nil)
         if spec.eqTemperFor ~= spec.cluster then
             local record = spec.cluster ~= nil and EqRegistry ~= nil and EqRegistry.getOrCreate(spec.cluster) or nil
             spec.eqTemperFor, spec.eqTemper = spec.cluster, record ~= nil and record.trained ~= nil and record.trained.temperament or nil

@@ -204,10 +204,14 @@
         <text name="eq_dressage_haltAt" text="Зупинка в %s"/>
         <text name="eq_dressage_piaffeAt" text="Піаффе (%s) у %s: утримуйте Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Піруєт ліворуч (%s) у %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Піруєт ліворуч (%s) у %s: Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Піруєт праворуч (%s) у %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Піруєт праворуч (%s) у %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Піаффе (%s)! Утримуйте Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="Піруєт ліворуч (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Піруєт ліворуч (%s)! Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="Піруєт праворуч (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Піруєт праворуч (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Поверніться на лінію!"/>
         <text name="eq_dressage_mark" text="Остання оцінка: %s"/>
         <text name="eq_pop_routineError" text="Помилка маршруту %d/%d"/>

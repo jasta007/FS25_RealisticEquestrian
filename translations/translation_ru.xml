@@ -204,10 +204,14 @@
         <text name="eq_dressage_haltAt" text="Остановка у %s"/>
         <text name="eq_dressage_piaffeAt" text="Пиаффе (%s) у %s: удерживайте Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Пируэт влево (%s) у %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Пируэт влево (%s) у %s: Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Пируэт вправо (%s) у %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Пируэт вправо (%s) у %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Пиаффе (%s)! Удерживайте Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="Пируэт влево (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Пируэт влево (%s)! Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="Пируэт вправо (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Пируэт вправо (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Вернитесь на линию!"/>
         <text name="eq_dressage_mark" text="Последняя оценка: %s"/>
         <text name="eq_pop_routineError" text="Ошибка схемы %d/%d"/>

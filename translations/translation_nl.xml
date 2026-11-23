@@ -204,10 +204,14 @@
         <text name="eq_dressage_haltAt" text="Halt bij %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) bij %s: Ctrl ingedrukt"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Linkspirouette (%s) bij %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Linkspirouette (%s) bij %s: Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Rechtspirouette (%s) bij %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Rechtspirouette (%s) bij %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Piaffe (%s)! Houd Ctrl ingedrukt"/>
         <text name="eq_dressage_pirouetteLeft" text="Linkspirouette (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Linkspirouette (%s)! Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="Rechtspirouette (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Rechtspirouette (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Terug op de lijn!"/>
         <text name="eq_dressage_mark" text="Laatste cijfer: %s"/>
         <text name="eq_pop_routineError" text="Fout in de proef %d/%d"/>
