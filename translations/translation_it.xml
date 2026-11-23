@@ -1237,5 +1237,26 @@
         <text name="eq_help_courseEdit_1" text="Traccia il percorso passando gli ostacoli in ordine, a qualsiasi andatura. Gli ostacoli di questa mod non hanno collisioni mentre tracci. Se sbagli, torna all&apos;ultimo punto buono finché una linea non vi si aggancia e premi [[EQ_COURSE_REWIND]] per ritracciare da lì. Premi di nuovo [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] per il cross) per salvare."/>
         <text name="eq_help_dressageEdit_title" text="Modifica ripresa"/>
         <text name="eq_help_dressageEdit_1" text="Crea la tua ripresa di dressage con figure, movimenti e andature. [[EQ_DT_PREV]] e [[EQ_DT_NEXT]] cambiano la figura, [[EQ_DT_GAIT]] l&apos;andatura e [[EQ_DT_MODE]] passa ai movimenti laterali o sul posto. [[EQ_DT_ACCEPT]] tiene un passo e prosegue, [[EQ_DT_UNDO]] torna indietro e [[EQ_DT_RANDOM]] sceglie un passo a caso. Premi [[EQ_DRESSAGE_TEST]] per salvare la ripresa."/>
+        <text name="input_EQ_DT_TYPE" text="Tipo di ripresa di dressage"/>
+        <text name="input_EQ_DT_LEVEL" text="Livello di ripresa di dressage"/>
+        <text name="eq_dt_typeAction" text="Ripresa: %s"/>
+        <text name="eq_dt_levelAction" text="Livello: %s"/>
+        <text name="eq_dt_type_own" text="La tua"/>
+        <text name="eq_dt_type_random" text="Casuale"/>
+        <text name="eq_dt_type_set" text="Ripresa fissa"/>
+        <text name="eq_dlevel_novice" text="Principiante"/>
+        <text name="eq_dlevel_elementary" text="Elementare"/>
+        <text name="eq_dlevel_medium" text="Medio"/>
+        <text name="eq_dlevel_advanced" text="Avanzato"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermedia"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="La tua ripresa (Ctrl+N: tipo)"/>
+        <text name="eq_dt_choiceRandom" text="Ripresa casuale, %s (Ctrl+N: tipo, Ctrl+M: livello)"/>
+        <text name="eq_dt_choiceSet" text="Ripresa fissa, %s (Ctrl+N: tipo, Ctrl+M: livello)"/>
+        <text name="eq_dt_choiceFallback" text="Nessuna ripresa fissa entra in questo rettangolo: ripresa casuale, %s"/>
+        <text name="eq_dt_choiceEvent" text="Ripresa della gara: casuale, %s"/>
+        <text name="eq_fig_canterSide" text="Galoppo %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Galoppo %s-X-%s"/>
     </texts>
 </l10n>

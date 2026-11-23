@@ -73,7 +73,9 @@ EqDressagePath.GAIT_WEIGHTS = { walk = 2, trot = 5, canter = 3 }
 EqDressagePath.FIGURE_WEIGHTS = { circle = 1.5, longDiagonal = 1.5, shortDiagonal = 1.5, halfVolte = 2, across = 1.5, acrossChange = 1.5,
     centreToX = 1, centreFromX = 1, serpentine = 1.2, shallowLoop = 1.2, throughCircle = 1.2, eight = 1.2,
     -- Four kinds of lateral work along the rail share what one had (James, 2026-10-31).
-    shoulderIn = 0.5, renvers = 0.5, travers = 0.5, legYieldRail = 0.5, passageRail = 0.7 }
+    shoulderIn = 0.5, renvers = 0.5, travers = 0.5, legYieldRail = 0.5, passageRail = 0.7,
+    -- Canter on a straight in the smallest arena (EqDressageLevels): as often as a canter figure.
+    canterDiagonal = 0.6, canterSide = 0.6 }
 -- Chances in 100: on the track before a figure, a stretch at another gait between two letters
 -- (INTERLUDES: which gait, by the gait the horse is in), else a halt at a letter; a change down
 -- inside a figure (DOWN); a halt at X on a centre line.
@@ -974,13 +976,45 @@ FIGURES.passageDiagonal = function(g, frame, gait)
 end
 
 
+--- Canter on a straight in the smallest arena (James 2026-11-23: "canters back into the small
+--- arena but ONLY if they are on straights. No turns."): a trot figure along a long side or the
+--- long diagonal, cantered from just after the turn onto it to just before the turn off it.
+--- Ridden only in a level's test (levelOnly), never in a player's own. canter = { from, to }.
+FIGURES.canterStretch = function(g, frame, gait)
+    if gait ~= "trot" or g.wt >= 8 or g.sides[1] == nil then return {} end
+    local list = {}
+    local straight = g.straight.trot
+    do
+        local pen = newPen(g.wt, -straight, 0, 1)
+        lineTo(pen, g.wt, straight)
+        local lead = math.floor(1 / EqDressagePath.STEP)
+        if #pen.pts > 2 * lead + 4 then
+            table.insert(list, { key = "canterSide", pts = pen.pts, labels = { { g.wt, g.sides[1] }, { g.wt, g.sides[#g.sides] } }, marks = {},
+                canter = { from = 1 + lead, to = #pen.pts - lead }, levelOnly = true })
+        end
+    end
+    local last = g.sides[#g.sides]
+    local pts = diagonalLine(g, gait, last)
+    local from, to = nil, nil
+    for i, p in ipairs(pts) do
+        if from == nil and p.x < g.wt - 0.8 then from = i end
+        if p.x > -g.wt + 0.8 then to = i end
+    end
+    if from ~= nil and to ~= nil and to > from then
+        table.insert(list, { key = "canterDiagonal", pts = pts, labels = { { g.wt, g.sides[1] }, { -g.wt, last } }, marks = {},
+            canter = { from = from, to = to }, levelOnly = true })
+    end
+    return list
+end
+
+
 -- For the tests.
 EqDressagePath.FIGURES = FIGURES
 
 
 EqDressagePath.FIGURE_ORDER = { "legYield", "halfPass", "shoulderIn", "legYieldRail", "renvers", "travers", "halfPassCentre", "legYieldCentre",
     "passageRail", "passageDiagonal", "circleEnd", "circleMid", "volte", "diagonals", "halfVolte", "across", "centre", "centreToX", "centreFromX", "serpentine",
-    "shallowLoop", "throughCircle", "eight" }
+    "shallowLoop", "throughCircle", "eight", "canterStretch" }
 
 
 --- The tightest turn along a line of points (metres of radius), from each point and the ones
@@ -1047,7 +1081,7 @@ function EqDressagePath.library(frame)
                             end
                             table.insert(list, {
                                 -- Saved in a player's own test (EqDressageTests): the same figure on every load.
-                                id = string.format("%s/%s/%d/%d", name, gait, k, mi),
+                                id = string.format("%s/%s/%d/%d", name, gait, k, mi), name = name,
                                 key = figure.key, gait = gait, weight = weight * EqDressagePath.GAIT_WEIGHTS[gait],
                                 size = figure.size, loops = figure.loops, labels = labels,
                                 turn = figure.turn ~= nil and figure.turn * sx * sy or nil,
@@ -1055,6 +1089,7 @@ function EqDressagePath.library(frame)
                                 entry = entry, entryRein = reinAt(track, entry, pts[2].x - pts[1].x, pts[2].y - pts[1].y),
                                 exitRein = reinAt(track, exit, pts[n].x - pts[n - 1].x, pts[n].y - pts[n - 1].y),
                                 fromA = pts[1].y < 0, finalOnly = figure.finalOnly, passage = figure.passage,
+                                canter = figure.canter, levelOnly = figure.levelOnly,
                             })
                         end
                     end
@@ -1220,12 +1255,18 @@ end
 --- @param rng function (n) -> 1..n; a seeded one rides the same test every time (no plan)
 --- @param plan table|nil { turn = 1|-1, seed, steps = { { kind = "figure", id, seed } | { kind = "spot", style, letter, seed } } }
 --- @param open boolean|nil true for the editor: stop before the final centre line, with test.options
+--- @param level table|nil a test level (EqDressageLevels.forBuild): { pool = { ["name/gait"] = true },
+---   straight (canter only on straights), reinBack, spots = { walkPirouette, canterPirouette, piaffe },
+---   lateralWeight, plainWeight, spotTrack }. A random test picks only from its pool; a set test
+---   (plan.set) rides its steps, which may name figures ({ kind = "find", name, gait, letters, size }).
 --- @return table test { pts = { x, y, s, m }, moves = { s0, s1, key, ... }, events = { s, kind, gait, letter, m }, length, frame }
-function EqDressagePath.build(frame, figures, rng, plan, open)
+function EqDressagePath.build(frame, figures, rng, plan, open, level)
     local library, byGait, g = EqDressagePath.library(frame)
     if plan ~= nil then rng = seededRng(plan.seed) end
     local test = { pts = {}, moves = {}, events = {}, sections = {}, passages = {}, frame = frame, g = g }
     local events = test.events
+    -- A set test (EqDressageLevels) rides its steps like a player's own, but its walks may be long.
+    local own = plan ~= nil and not plan.set
 
     -- Changes: never closer than CHANGE_GAP to the last one (unless forced), and walks kept short.
     local gait, lastChange, walkFrom = EqDressagePath.PROCEED, 0, nil
@@ -1247,6 +1288,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
     end
     local function halt(s, letter, m, final, after, reinBack)
         local back = not final and rng(100) <= EqDressagePath.REIN_BACK_CHANCE or nil
+        if level ~= nil and level.reinBack == false then back = nil end
         if reinBack ~= nil then back = reinBack or nil end
         table.insert(events, { s = s, kind = "halt", gait = final and "halt" or after, letter = letter, m = m, final = final, reinBack = back })
         gait, lastChange = after, s
@@ -1256,6 +1298,11 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
     local function spot(s, letter, m, turn, style)
         if s < lastChange + EqDressagePath.CHANGE_GAP then return end
         style = style or (gait == "trot" and "piaffe" or "pirouette")
+        -- A random test asks only for the movements on the spot its level has.
+        if plan == nil and level ~= nil and level.spots ~= nil then
+            local kind = style == "piaffe" and "piaffe" or (gait == "canter" and "canterPirouette" or "walkPirouette")
+            if not level.spots[kind] then return end
+        end
         table.insert(events, { s = s, kind = "spot", style = style, gait = gait, letter = letter, m = m, turn = turn })
         lastChange = s
     end
@@ -1378,6 +1425,12 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             -- A stretch at another gait between two letters, then back: a canter only along
             -- one long side (the track's corners are sized for the gait it is ridden at).
             local options = EqDressagePath.INTERLUDES[gait]
+            -- Canter on a straight only (the smallest arena in a level's test): no canter between figures.
+            if level ~= nil and level.straight then
+                local kept = {}
+                for _, o in ipairs(options) do if o[1] ~= "canter" then table.insert(kept, o) end end
+                options = kept
+            end
             local other = pick(options, rng)
             local from = usable[1]
             local to = nil
@@ -1421,7 +1474,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             if test.pts[#test.pts].s >= lastChange + EqDressagePath.CHANGE_GAP then
                 halt(test.pts[#test.pts].s, at.letter, m, false, gait)
             end
-        elseif #usable >= 1 and roll <= EqDressagePath.INTERLUDE + EqDressagePath.HALT_TRACK + EqDressagePath.SPOT_TRACK then
+        elseif #usable >= 1 and roll <= EqDressagePath.INTERLUDE + EqDressagePath.HALT_TRACK + (level ~= nil and level.spotTrack or EqDressagePath.SPOT_TRACK) then
             local at = usable[rng(#usable)]
             track(at.x, at.y, m)
             spot(test.pts[#test.pts].s, at.letter, m, rein)
@@ -1438,6 +1491,12 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         for _, sec in ipairs(figure.sections or {}) do
             table.insert(test.sections, { s0 = sAt(sec.from), s1 = sAt(sec.to), m = m, kind = sec.kind or figure.key, hx = sec.hx, hy = sec.hy,
                 bend = sec.bend, drift = sec.drift })
+        end
+        if figure.canter ~= nil then
+            -- Canter on the straight, trot again before the turn off it.
+            local labels = move.labels or {}
+            change(sAt(figure.canter.from), "canter", labels[1], m, true)
+            change(sAt(figure.canter.to), figure.gait, labels[#labels], m, true)
         end
         if figure.passage ~= nil then
             local labels = move.labels or {}
@@ -1489,21 +1548,33 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             if collected and figure.gait ~= gait and plan == nil then step = false end
             -- All walks short in a player's test (James 2026-10-31: a giant walk path was
             -- easy to make): the walk to a walking figure and the figure itself.
-            if plan ~= nil and figure.gait == "walk" then
+            if own and figure.gait == "walk" then
                 figure.length = figure.length or pathLength(figure.pts)
                 if figure.length > EqDressagePath.WALK_MAX then step = false end
             end
-            if figure.entryRein == rein and (figure.key ~= lastKey or plan ~= nil) and step and not figure.finalOnly then
+            -- A level's test: its own figures (canter on straights) and, when random, only its pool.
+            local fits = true
+            if figure.levelOnly and (level == nil or not level.straight) then fits = false end
+            if plan == nil and level ~= nil then
+                if level.pool ~= nil and not level.pool[figure.name .. "/" .. figure.gait] then fits = false end
+                if level.straight and figure.gait == "canter" then fits = false end
+            end
+            if fits and figure.entryRein == rein and (figure.key ~= lastKey or plan ~= nil) and step and not figure.finalOnly then
                 local d = trackDistance(t.pts, t.length, from, onTrack(t.pts, figure.pts[1].x, figure.pts[1].y), rein)
                 local least = figure.gait == gait and EqDressagePath.CONNECT_MIN or EqDressagePath.CHANGE_LEAD
                 local clear = not collected or here.s + d - lastChange >= EqDressagePath.LATERAL_CLEAR
                 if collected and figure.gait ~= gait then
                     clear = d >= (figure.gait == "walk" and EqDressagePath.CHANGE_LEAD or EqDressagePath.LATERAL_CLEAR) + 2
                 end
-                local walkOk = plan == nil or figure.gait ~= "walk" or gait ~= "walk" or d + figure.length <= walkLeft()
+                local walkOk = not own or figure.gait ~= "walk" or gait ~= "walk" or d + figure.length <= walkLeft()
                 if d >= least and d <= t.length * 0.6 and clear and walkOk then
                     local near = d <= EqDressagePath.CONNECT_GOOD and 4 or (d <= 2 * EqDressagePath.CONNECT_GOOD and 2 or 1)
-                    table.insert(list, { figure, figure.weight * near, d = d })
+                    local weight = figure.weight
+                    if plan == nil and level ~= nil then
+                        if collected then weight = weight * (level.lateralWeight or 1)
+                        elseif PLAIN_KEYS[figure.key] then weight = weight * (level.plainWeight or 1) end
+                    end
+                    table.insert(list, { figure, weight * near, d = d })
                 end
             end
         end
@@ -1528,7 +1599,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         local list = {}
         -- A player's test at a walk stays short (WALK_MAX) on the way to a letter too.
         local reach = length * EqDressagePath.SPOT_REACH
-        if plan ~= nil and gait == "walk" then reach = math.min(reach, math.max(EqDressagePath.CONNECT_MIN + 6, walkLeft())) end
+        if own and gait == "walk" then reach = math.min(reach, math.max(EqDressagePath.CONNECT_MIN + 6, walkLeft())) end
         for _, l in ipairs(letters) do
             if l.d >= EqDressagePath.CONNECT_MIN and l.d <= reach then table.insert(list, l) end
         end
@@ -1605,6 +1676,18 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             local done = false
             if step.kind == "spot" then
                 done = addSpot(step)
+            elseif step.kind == "find" then
+                -- A set test's step by name: the first figure that fits with that name, gait and
+                -- letters (and size) on the rein the horse is on.
+                for _, c in ipairs(choices()) do
+                    local f = c[1]
+                    if not done and f.name == step.name and f.gait == step.gait and table.concat(f.labels, "-") == step.letters
+                        and (step.size == nil or f.size ~= nil and math.abs(f.size - step.size) < 0.5)
+                        and (step.exitRein == nil or f.exitRein == step.exitRein) then
+                        addFigure(f)
+                        done = true
+                    end
+                end
             else
                 for _, c in ipairs(choices()) do
                     if not done and c[1].id == step.id then

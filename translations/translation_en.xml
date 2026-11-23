@@ -1237,5 +1237,26 @@
         <text name="eq_help_courseEdit_1" text="Trace out the course by riding through the jumps in order, at any speed. Obstacles from this mod have no collision while you trace. If you make a mistake, ride back to the last good point until a line snaps to it, then press [[EQ_COURSE_REWIND]] to trace again from there. Press [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] for cross country) again to save."/>
         <text name="eq_help_dressageEdit_title" text="Dressage test editing"/>
         <text name="eq_help_dressageEdit_1" text="Build your own dressage test from figures, movements and gaits. Press [[EQ_DT_PREV]] and [[EQ_DT_NEXT]] to swap figures, [[EQ_DT_GAIT]] to change gait and [[EQ_DT_MODE]] for lateral or on-the-spot movements. Press [[EQ_DT_ACCEPT]] to keep a step and move on, [[EQ_DT_UNDO]] to go back, or [[EQ_DT_RANDOM]] for a random step. Press [[EQ_DRESSAGE_TEST]] to save the test."/>
+        <text name="input_EQ_DT_TYPE" text="Dressage test type"/>
+        <text name="input_EQ_DT_LEVEL" text="Dressage test level"/>
+        <text name="eq_dt_typeAction" text="Test: %s"/>
+        <text name="eq_dt_levelAction" text="Level: %s"/>
+        <text name="eq_dt_type_own" text="Your own"/>
+        <text name="eq_dt_type_random" text="Random"/>
+        <text name="eq_dt_type_set" text="Set test"/>
+        <text name="eq_dlevel_novice" text="Novice"/>
+        <text name="eq_dlevel_elementary" text="Elementary"/>
+        <text name="eq_dlevel_medium" text="Medium"/>
+        <text name="eq_dlevel_advanced" text="Advanced"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermediate"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Your own test (Ctrl+N: test type)"/>
+        <text name="eq_dt_choiceRandom" text="Random test, %s (Ctrl+N: test type, Ctrl+M: level)"/>
+        <text name="eq_dt_choiceSet" text="Set test, %s (Ctrl+N: test type, Ctrl+M: level)"/>
+        <text name="eq_dt_choiceFallback" text="No set test fits this ring: random test, %s"/>
+        <text name="eq_dt_choiceEvent" text="Event test: random, %s"/>
+        <text name="eq_fig_canterSide" text="Canter %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Canter %s-X-%s"/>
     </texts>
 </l10n>

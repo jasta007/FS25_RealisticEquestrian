@@ -1237,5 +1237,26 @@
         <text name="eq_help_courseEdit_1" text="Trace o percurso passando pelos obstáculos em ordem, em qualquer velocidade. Os obstáculos deste mod ficam sem colisão enquanto você traça. Se errar, volte ao último ponto bom até uma linha se prender a ele e pressione [[EQ_COURSE_REWIND]] para traçar de novo dali. Pressione [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] no cross country) de novo para salvar."/>
         <text name="eq_help_dressageEdit_title" text="Edição de reprise"/>
         <text name="eq_help_dressageEdit_1" text="Monte sua própria reprise de adestramento com figuras, movimentos e andamentos. [[EQ_DT_PREV]] e [[EQ_DT_NEXT]] trocam a figura, [[EQ_DT_GAIT]] o andamento e [[EQ_DT_MODE]] passa para movimentos laterais ou no lugar. [[EQ_DT_ACCEPT]] mantém um passo e segue, [[EQ_DT_UNDO]] volta e [[EQ_DT_RANDOM]] sorteia um passo. Pressione [[EQ_DRESSAGE_TEST]] para salvar a reprise."/>
+        <text name="input_EQ_DT_TYPE" text="Tipo de prova de adestramento"/>
+        <text name="input_EQ_DT_LEVEL" text="Nível de prova de adestramento"/>
+        <text name="eq_dt_typeAction" text="Prova: %s"/>
+        <text name="eq_dt_levelAction" text="Nível: %s"/>
+        <text name="eq_dt_type_own" text="A sua"/>
+        <text name="eq_dt_type_random" text="Aleatória"/>
+        <text name="eq_dt_type_set" text="Prova fixa"/>
+        <text name="eq_dlevel_novice" text="Iniciante"/>
+        <text name="eq_dlevel_elementary" text="Elementar"/>
+        <text name="eq_dlevel_medium" text="Médio"/>
+        <text name="eq_dlevel_advanced" text="Avançado"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermediária"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Sua própria prova (Ctrl+N: tipo)"/>
+        <text name="eq_dt_choiceRandom" text="Prova aleatória, %s (Ctrl+N: tipo, Ctrl+M: nível)"/>
+        <text name="eq_dt_choiceSet" text="Prova fixa, %s (Ctrl+N: tipo, Ctrl+M: nível)"/>
+        <text name="eq_dt_choiceFallback" text="Nenhuma prova fixa cabe nesta pista: prova aleatória, %s"/>
+        <text name="eq_dt_choiceEvent" text="Prova do evento: aleatória, %s"/>
+        <text name="eq_fig_canterSide" text="Galope %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Galope %s-X-%s"/>
     </texts>
 </l10n>

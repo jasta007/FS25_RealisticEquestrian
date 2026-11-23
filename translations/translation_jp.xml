@@ -1237,5 +1237,26 @@
         <text name="eq_help_courseEdit_1" text="障害物を順番に通り抜けてコースを描きます。速さは自由です。描いている間、このMODの障害物には当たり判定がありません。間違えたら最後の正しい地点まで戻り、線がそこに吸い付いたら[[EQ_COURSE_REWIND]]でそこから描き直せます。もう一度[[EQ_COURSE_RECORD]]（クロスカントリーは[[EQ_COURSE_RECORD_XC]]）で保存します。"/>
         <text name="eq_help_dressageEdit_title" text="馬場馬術演技の編集"/>
         <text name="eq_help_dressageEdit_1" text="図形、運動、歩法から自分の演技を作れます。[[EQ_DT_PREV]]と[[EQ_DT_NEXT]]で図形を、[[EQ_DT_GAIT]]で歩法を切り替え、[[EQ_DT_MODE]]で側方運動やその場の運動に切り替えます。[[EQ_DT_ACCEPT]]で手順を確定して次へ、[[EQ_DT_UNDO]]で戻り、[[EQ_DT_RANDOM]]でランダムな手順を選びます。[[EQ_DRESSAGE_TEST]]で演技を保存します。"/>
+        <text name="input_EQ_DT_TYPE" text="馬場馬術経路の種類"/>
+        <text name="input_EQ_DT_LEVEL" text="馬場馬術経路のレベル"/>
+        <text name="eq_dt_typeAction" text="経路：%s"/>
+        <text name="eq_dt_levelAction" text="レベル：%s"/>
+        <text name="eq_dt_type_own" text="自作"/>
+        <text name="eq_dt_type_random" text="ランダム"/>
+        <text name="eq_dt_type_set" text="規定経路"/>
+        <text name="eq_dlevel_novice" text="ノービス"/>
+        <text name="eq_dlevel_elementary" text="エレメンタリー"/>
+        <text name="eq_dlevel_medium" text="ミディアム"/>
+        <text name="eq_dlevel_advanced" text="アドバンスト"/>
+        <text name="eq_dlevel_prixStGeorges" text="プリ・サンジョルジュ"/>
+        <text name="eq_dlevel_intermediate" text="インターメディエイト"/>
+        <text name="eq_dlevel_grandPrix" text="グランプリ"/>
+        <text name="eq_dt_choiceOwn" text="自作の経路（Ctrl+N：種類）"/>
+        <text name="eq_dt_choiceRandom" text="ランダム経路、%s（Ctrl+N：種類、Ctrl+M：レベル）"/>
+        <text name="eq_dt_choiceSet" text="規定経路、%s（Ctrl+N：種類、Ctrl+M：レベル）"/>
+        <text name="eq_dt_choiceFallback" text="このアリーナに合う規定経路はありません：ランダム経路、%s"/>
+        <text name="eq_dt_choiceEvent" text="競技会の経路：ランダム、%s"/>
+        <text name="eq_fig_canterSide" text="駈歩 %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="駈歩 %s-X-%s"/>
     </texts>
 </l10n>

@@ -348,6 +348,8 @@ end
 EqDressageHooks.POLE_HEIGHT = 1.2
 -- The run drawn, kept by EqTrainingHooks each frame while a test is on (pathAt: when).
 EqDressageHooks.pathRun = nil
+-- Set by the test type and level keys (EqDressageEditor.onType/onLevel): build the waiting test again.
+EqDressageHooks.restartTest = nil
 EqDressageHooks.pathAt = nil
 
 

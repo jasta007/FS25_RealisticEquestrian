@@ -1237,5 +1237,26 @@
         <text name="eq_help_courseEdit_1" text="Vyznačte trať průjezdem překážkami po pořadí, v jakémkoli tempu. Překážky z tohoto modu při vyznačování nemají kolize. Když uděláte chybu, vraťte se k poslednímu dobrému bodu, až se k němu přichytí čára, a stiskem [[EQ_COURSE_REWIND]] pokračujte odtud. Znovu stiskněte [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] pro terén) a trať se uloží."/>
         <text name="eq_help_dressageEdit_title" text="Úprava drezurní úlohy"/>
         <text name="eq_help_dressageEdit_1" text="Sestavte si vlastní drezurní úlohu z figur, cviků a chodů. [[EQ_DT_PREV]] a [[EQ_DT_NEXT]] mění figuru, [[EQ_DT_GAIT]] chod a [[EQ_DT_MODE]] přepíná na boční pohyby nebo cviky na místě. [[EQ_DT_ACCEPT]] krok ponechá a pokračuje, [[EQ_DT_UNDO]] se vrátí a [[EQ_DT_RANDOM]] vybere náhodný krok. Stiskem [[EQ_DRESSAGE_TEST]] úlohu uložíte."/>
+        <text name="input_EQ_DT_TYPE" text="Typ drezurní úlohy"/>
+        <text name="input_EQ_DT_LEVEL" text="Úroveň drezurní úlohy"/>
+        <text name="eq_dt_typeAction" text="Úloha: %s"/>
+        <text name="eq_dt_levelAction" text="Úroveň: %s"/>
+        <text name="eq_dt_type_own" text="Vlastní"/>
+        <text name="eq_dt_type_random" text="Náhodná"/>
+        <text name="eq_dt_type_set" text="Pevná úloha"/>
+        <text name="eq_dlevel_novice" text="Začátečník"/>
+        <text name="eq_dlevel_elementary" text="Základní"/>
+        <text name="eq_dlevel_medium" text="Střední"/>
+        <text name="eq_dlevel_advanced" text="Pokročilá"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermediate"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Vaše vlastní úloha (Ctrl+N: typ)"/>
+        <text name="eq_dt_choiceRandom" text="Náhodná úloha, %s (Ctrl+N: typ, Ctrl+M: úroveň)"/>
+        <text name="eq_dt_choiceSet" text="Pevná úloha, %s (Ctrl+N: typ, Ctrl+M: úroveň)"/>
+        <text name="eq_dt_choiceFallback" text="Do této jízdárny se nevejde žádná pevná úloha: náhodná úloha, %s"/>
+        <text name="eq_dt_choiceEvent" text="Úloha závodů: náhodná, %s"/>
+        <text name="eq_fig_canterSide" text="Cval %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Cval %s-X-%s"/>
     </texts>
 </l10n>

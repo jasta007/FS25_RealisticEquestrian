@@ -1237,5 +1237,26 @@
         <text name="eq_help_courseEdit_1" text="Wyznacz parkur, przejeżdżając przez przeszkody po kolei w dowolnym tempie. Przeszkody z tego moda nie mają kolizji podczas wyznaczania. Jeśli się pomylisz, wróć do ostatniego dobrego punktu, aż linia się do niego przyczepi, i naciśnij [[EQ_COURSE_REWIND]], aby wyznaczać od tego miejsca. Naciśnij ponownie [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] dla crossu), aby zapisać."/>
         <text name="eq_help_dressageEdit_title" text="Edycja programu"/>
         <text name="eq_help_dressageEdit_1" text="Ułóż własny program ujeżdżenia z figur, ruchów i chodów. [[EQ_DT_PREV]] i [[EQ_DT_NEXT]] zmieniają figurę, [[EQ_DT_GAIT]] chód, a [[EQ_DT_MODE]] przełącza na ruchy boczne lub w miejscu. [[EQ_DT_ACCEPT]] zatwierdza krok i przechodzi dalej, [[EQ_DT_UNDO]] cofa, a [[EQ_DT_RANDOM]] losuje krok. Naciśnij [[EQ_DRESSAGE_TEST]], aby zapisać program."/>
+        <text name="input_EQ_DT_TYPE" text="Rodzaj programu ujeżdżenia"/>
+        <text name="input_EQ_DT_LEVEL" text="Poziom programu ujeżdżenia"/>
+        <text name="eq_dt_typeAction" text="Program: %s"/>
+        <text name="eq_dt_levelAction" text="Poziom: %s"/>
+        <text name="eq_dt_type_own" text="Własny"/>
+        <text name="eq_dt_type_random" text="Losowy"/>
+        <text name="eq_dt_type_set" text="Stały program"/>
+        <text name="eq_dlevel_novice" text="Początkujący"/>
+        <text name="eq_dlevel_elementary" text="Podstawowy"/>
+        <text name="eq_dlevel_medium" text="Średni"/>
+        <text name="eq_dlevel_advanced" text="Zaawansowany"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermediate"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Twój własny program (Ctrl+N: rodzaj)"/>
+        <text name="eq_dt_choiceRandom" text="Losowy program, %s (Ctrl+N: rodzaj, Ctrl+M: poziom)"/>
+        <text name="eq_dt_choiceSet" text="Stały program, %s (Ctrl+N: rodzaj, Ctrl+M: poziom)"/>
+        <text name="eq_dt_choiceFallback" text="Żaden stały program nie mieści się w tym czworoboku: losowy program, %s"/>
+        <text name="eq_dt_choiceEvent" text="Program zawodów: losowy, %s"/>
+        <text name="eq_fig_canterSide" text="Galop %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Galop %s-X-%s"/>
     </texts>
 </l10n>

@@ -1237,5 +1237,26 @@
         <text name="eq_help_courseEdit_1" text="Проложите маршрут, проехав через препятствия по порядку на любой скорости. Препятствия этого мода не имеют столкновений, пока вы прокладываете путь. Если ошиблись, вернитесь к последней хорошей точке, пока к ней не притянется линия, и нажмите [[EQ_COURSE_REWIND]], чтобы продолжить оттуда. Снова нажмите [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] для кросса), чтобы сохранить."/>
         <text name="eq_help_dressageEdit_title" text="Редактирование езды"/>
         <text name="eq_help_dressageEdit_1" text="Составьте свою езду по выездке из фигур, элементов и аллюров. [[EQ_DT_PREV]] и [[EQ_DT_NEXT]] меняют фигуру, [[EQ_DT_GAIT]] — аллюр, [[EQ_DT_MODE]] переключает на боковые движения или элементы на месте. [[EQ_DT_ACCEPT]] сохраняет шаг и идёт дальше, [[EQ_DT_UNDO]] возвращает назад, [[EQ_DT_RANDOM]] выбирает случайный шаг. Нажмите [[EQ_DRESSAGE_TEST]], чтобы сохранить езду."/>
+        <text name="input_EQ_DT_TYPE" text="Тип езды по выездке"/>
+        <text name="input_EQ_DT_LEVEL" text="Уровень езды по выездке"/>
+        <text name="eq_dt_typeAction" text="Езда: %s"/>
+        <text name="eq_dt_levelAction" text="Уровень: %s"/>
+        <text name="eq_dt_type_own" text="Своя"/>
+        <text name="eq_dt_type_random" text="Случайная"/>
+        <text name="eq_dt_type_set" text="Готовая езда"/>
+        <text name="eq_dlevel_novice" text="Новичок"/>
+        <text name="eq_dlevel_elementary" text="Начальный"/>
+        <text name="eq_dlevel_medium" text="Средний"/>
+        <text name="eq_dlevel_advanced" text="Продвинутый"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Интермедиат"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Ваша собственная езда (Ctrl+N: тип)"/>
+        <text name="eq_dt_choiceRandom" text="Случайная езда, %s (Ctrl+N: тип, Ctrl+M: уровень)"/>
+        <text name="eq_dt_choiceSet" text="Готовая езда, %s (Ctrl+N: тип, Ctrl+M: уровень)"/>
+        <text name="eq_dt_choiceFallback" text="Ни одна готовая езда не помещается на этот плац: случайная езда, %s"/>
+        <text name="eq_dt_choiceEvent" text="Езда турнира: случайная, %s"/>
+        <text name="eq_fig_canterSide" text="Галоп %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Галоп %s-X-%s"/>
     </texts>
 </l10n>

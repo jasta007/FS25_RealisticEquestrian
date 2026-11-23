@@ -142,6 +142,8 @@ Por Jasta007.]]>
         <action name="EQ_DT_MODE"/>
         <action name="EQ_DT_ACCEPT"/>
         <action name="EQ_DT_UNDO"/>
+        <action name="EQ_DT_TYPE"/>
+        <action name="EQ_DT_LEVEL"/>
         <action name="EQ_DT_PREV_LETTER"/>
         <action name="EQ_DT_NEXT_LETTER"/>
         <action name="EQ_DT_GAIT"/>
@@ -192,6 +194,12 @@ Por Jasta007.]]>
         </actionBinding>
         <actionBinding action="EQ_DRESSAGE_TEST">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_l" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_DT_TYPE">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_n" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_DT_LEVEL">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_m" index="1"/>
         </actionBinding>
         <actionBinding action="EQ_DT_PREV">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_n" index="1"/>

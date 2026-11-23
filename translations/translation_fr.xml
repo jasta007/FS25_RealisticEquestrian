@@ -1239,5 +1239,26 @@
         <text name="eq_help_courseEdit_1" text="Tracez le parcours en passant les obstacles dans l&apos;ordre, à n&apos;importe quelle allure. Les obstacles de ce mod n&apos;ont pas de collision pendant le tracé. En cas d&apos;erreur, revenez au dernier bon point jusqu&apos;à ce qu&apos;une ligne s&apos;y accroche, puis appuyez sur [[EQ_COURSE_REWIND]] pour reprendre le tracé à partir de là. Appuyez de nouveau sur [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] pour le cross) pour enregistrer."/>
         <text name="eq_help_dressageEdit_title" text="Édition de reprise"/>
         <text name="eq_help_dressageEdit_1" text="Créez votre propre reprise de dressage à partir de figures, mouvements et allures. [[EQ_DT_PREV]] et [[EQ_DT_NEXT]] changent la figure, [[EQ_DT_GAIT]] l&apos;allure et [[EQ_DT_MODE]] passe aux mouvements latéraux ou sur place. [[EQ_DT_ACCEPT]] garde une étape et passe à la suivante, [[EQ_DT_UNDO]] revient en arrière, [[EQ_DT_RANDOM]] propose une étape au hasard. Appuyez sur [[EQ_DRESSAGE_TEST]] pour enregistrer la reprise."/>
+        <text name="input_EQ_DT_TYPE" text="Type de reprise de dressage"/>
+        <text name="input_EQ_DT_LEVEL" text="Niveau de reprise de dressage"/>
+        <text name="eq_dt_typeAction" text="Reprise : %s"/>
+        <text name="eq_dt_levelAction" text="Niveau : %s"/>
+        <text name="eq_dt_type_own" text="La vôtre"/>
+        <text name="eq_dt_type_random" text="Aléatoire"/>
+        <text name="eq_dt_type_set" text="Reprise imposée"/>
+        <text name="eq_dlevel_novice" text="Débutant"/>
+        <text name="eq_dlevel_elementary" text="Élémentaire"/>
+        <text name="eq_dlevel_medium" text="Moyen"/>
+        <text name="eq_dlevel_advanced" text="Avancé"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermédiaire"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Votre propre reprise (Ctrl+N : type)"/>
+        <text name="eq_dt_choiceRandom" text="Reprise aléatoire, %s (Ctrl+N : type, Ctrl+M : niveau)"/>
+        <text name="eq_dt_choiceSet" text="Reprise imposée, %s (Ctrl+N : type, Ctrl+M : niveau)"/>
+        <text name="eq_dt_choiceFallback" text="Aucune reprise imposée ne tient dans cette carrière : reprise aléatoire, %s"/>
+        <text name="eq_dt_choiceEvent" text="Reprise du concours : aléatoire, %s"/>
+        <text name="eq_fig_canterSide" text="Galop %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Galop %s-X-%s"/>
     </texts>
 </l10n>

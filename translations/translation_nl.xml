@@ -1237,5 +1237,26 @@
         <text name="eq_help_courseEdit_1" text="Leg het parcours vast door in volgorde door de hindernissen te rijden, in elk tempo. Hindernissen uit deze mod hebben dan geen botsing. Maak je een fout, rijd dan terug naar het laatste goede punt tot er een lijn aan vastklikt en druk op [[EQ_COURSE_REWIND]] om vanaf daar verder te gaan. Druk opnieuw op [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] voor cross) om op te slaan."/>
         <text name="eq_help_dressageEdit_title" text="Dressuurproef bewerken"/>
         <text name="eq_help_dressageEdit_1" text="Bouw je eigen dressuurproef uit figuren, bewegingen en gangen. [[EQ_DT_PREV]] en [[EQ_DT_NEXT]] wisselen de figuur, [[EQ_DT_GAIT]] de gang en [[EQ_DT_MODE]] schakelt naar zijwaartse bewegingen of bewegingen op de plaats. [[EQ_DT_ACCEPT]] houdt een stap en gaat verder, [[EQ_DT_UNDO]] gaat terug en [[EQ_DT_RANDOM]] kiest een willekeurige stap. Druk op [[EQ_DRESSAGE_TEST]] om de proef op te slaan."/>
+        <text name="input_EQ_DT_TYPE" text="Soort dressuurproef"/>
+        <text name="input_EQ_DT_LEVEL" text="Niveau dressuurproef"/>
+        <text name="eq_dt_typeAction" text="Proef: %s"/>
+        <text name="eq_dt_levelAction" text="Niveau: %s"/>
+        <text name="eq_dt_type_own" text="Eigen"/>
+        <text name="eq_dt_type_random" text="Willekeurig"/>
+        <text name="eq_dt_type_set" text="Vaste proef"/>
+        <text name="eq_dlevel_novice" text="Beginner"/>
+        <text name="eq_dlevel_elementary" text="Basis"/>
+        <text name="eq_dlevel_medium" text="Midden"/>
+        <text name="eq_dlevel_advanced" text="Gevorderd"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermediair"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Je eigen proef (Ctrl+N: soort)"/>
+        <text name="eq_dt_choiceRandom" text="Willekeurige proef, %s (Ctrl+N: soort, Ctrl+M: niveau)"/>
+        <text name="eq_dt_choiceSet" text="Vaste proef, %s (Ctrl+N: soort, Ctrl+M: niveau)"/>
+        <text name="eq_dt_choiceFallback" text="Geen vaste proef past in deze bak: willekeurige proef, %s"/>
+        <text name="eq_dt_choiceEvent" text="Wedstrijdproef: willekeurig, %s"/>
+        <text name="eq_fig_canterSide" text="Galop %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Galop %s-X-%s"/>
     </texts>
 </l10n>

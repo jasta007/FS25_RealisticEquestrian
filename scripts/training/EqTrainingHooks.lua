@@ -923,6 +923,14 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             local startDistance = EqCourseHooks.beginDistance()
             if startDistance ~= nil and startDistance < EqDressage.startDistance(course) then course = nil end
         end
+        -- Ctrl+N / Ctrl+M changed the test waiting at its start: build it again (EqDressageEditor).
+        if EqDressageHooks.restartTest then
+            EqDressageHooks.restartTest = nil
+            local r = sheet.routine
+            if course ~= nil and r.active and r.kind == "path" and r.path ~= nil and not r.path.started then
+                EqLog.try("EqTrainingHooks restart dressage test", EqDressage.start, r, course, math.random)
+            end
+        end
         -- A competition test (in your own event) counts when it ends, with its score.
         local before = sheet.routine
         local path = before ~= nil and before.active and before.kind == "path" and before.path or nil
@@ -1730,6 +1738,9 @@ local function pathRows(rows, routine)
             -- own event it says whether this test counts, gold like a course's start line.
             EqTrainingHud.drawPanelNote(note or string.format(g_i18n:getText("eq_dressage_begin"), "A"),
                 note ~= nil and EqTrainingHud.GOLD or color, true)
+            -- Which test it is (own, random or set, and its level) and the keys to change it.
+            local ok, choice = EqLog.try("EqTrainingHooks dressage choice", EqDressageEditor.choiceText, run.choice)
+            if ok and choice ~= nil then EqTrainingHud.drawPanelNote(choice, nil, false) end
         end
         return
     end

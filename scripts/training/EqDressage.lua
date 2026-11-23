@@ -512,12 +512,46 @@ local function seeded(seed)
 end
 
 
+--- The test for an arena (EqDressageLevels): in your own event its own test, else a random test
+--- at a level drawn from the event's rating, fixed for the month; otherwise the arena's choice:
+--- its own test, a random test or a set test at the chosen level.
+--- @param frame table
+--- @param fixed table|nil course.test: your own event's
+--- @param rng function
+--- @return table test, table choice { type, level, hosted }
+function EqDressage.testFor(frame, fixed, rng)
+    -- The player's own test for this arena (EqDressageTests).
+    local plan = EqDressageTests ~= nil and EqDressageTests.planFor(frame) or nil
+    if fixed ~= nil then
+        if plan ~= nil then return EqDressagePath.build(frame, nil, nil, plan), { type = "own", hosted = true } end
+        local level = EqDressageLevels.hostedLevel(fixed.rating, frame, seeded(tostring(fixed.seed) .. " level"))
+        if level == nil then
+            -- An event from before levels: as long as its rating says.
+            return EqDressagePath.build(frame, EqDressagePath.figuresFor(fixed.moves), seeded(fixed.seed)), { type = "random", hosted = true }
+        end
+        return EqDressagePath.build(frame, EqDressageLevels.figuresOf(level), seeded(fixed.seed), nil, nil, EqDressageLevels.forBuild(level, frame)),
+            { type = "random", level = level, hosted = true }
+    end
+    local kind, level = EqDressageLevels.choiceFor(frame, plan ~= nil)
+    if kind == "own" and plan ~= nil then return EqDressagePath.build(frame, nil, nil, plan), { type = "own", level = level } end
+    local forBuild = EqDressageLevels.forBuild(level, frame)
+    if kind == "set" then
+        local setPlan = EqDressageLevels.setPlan(level, EqDressageLevels.arenaOf(frame))
+        local test = setPlan ~= nil and EqDressagePath.build(frame, nil, nil, setPlan, nil, forBuild) or nil
+        if test ~= nil and test.broken == nil then return test, { type = "set", level = level } end
+        -- A ring that isn't one of our arenas may not fit every step: a random test at that level.
+        if EqLog ~= nil then EqLog:info("Dressage set test %s does not fit this arena (step %s): random instead", level, tostring(test ~= nil and test.broken or "none")) end
+    end
+    return EqDressagePath.build(frame, EqDressageLevels.figuresOf(level), rng, nil, nil, forBuild), { type = kind == "set" and "set" or "random", level = level,
+        fallback = kind == "set" or nil }
+end
+
+
 --- Start the routine on a course. Near one of our arenas it is a test of figures
---- (EqDressagePath): the arena's own test when the player made one, else a hosted event's fixed
---- test when course.test says so, else a new one.
---- Elsewhere the first leg is asked for at once.
+--- (EqDressagePath, EqDressage.testFor): the arena's own test, a random or a set test, or in your
+--- own event its fixed test. Elsewhere the first leg is asked for at once.
 --- @param routine table
---- @param course table { x, z, markers, test = { seed, moves, counts }|nil, temperament }
+--- @param course table { x, z, markers, test = { seed, moves, counts, rating }|nil, temperament }
 --- @param rng function
 function EqDressage.start(routine, course, rng)
     routine.kind, routine.from, routine.lastDone = "markers", nil, nil
@@ -526,17 +560,11 @@ function EqDressage.start(routine, course, rng)
     local frame = x ~= nil and EqDressagePath.frameFor(course.markers, x) or nil
     if frame ~= nil then
         local fixed = course.test
-        -- The player's own test for this arena (EqDressageTests) rides instead of a random one,
-        -- in training and in your own events.
         local plan = EqDressageTests ~= nil and EqDressageTests.planFor(frame) or nil
-        local test
-        if plan ~= nil then
-            test = EqDressagePath.build(frame, nil, nil, plan)
-        else
-            test = EqDressagePath.build(frame, EqDressagePath.figuresFor(fixed ~= nil and fixed.moves or nil),
-                fixed ~= nil and seeded(fixed.seed) or rng)
-        end
+        local test, choice = EqDressage.testFor(frame, fixed, rng)
         routine.kind, routine.path = "path", EqDressagePath.newRun(test, course.temperament)
+        -- What the test is, for the note at A and the Ctrl+N / Ctrl+M keys (not in your own event).
+        routine.path.choice = choice
         routine.competing = fixed ~= nil and fixed.counts or nil
         -- For the notice at A (EqTrainingHooks.pathRows): your own event, and whether it counts.
         routine.hosted = fixed ~= nil and fixed.status ~= nil and { event = fixed.event, status = fixed.status } or nil

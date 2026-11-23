@@ -1239,5 +1239,26 @@
         <text name="eq_help_courseEdit_1" text="Прокладіть маршрут, проїжджаючи перешкоди по порядку на будь-якій швидкості. Перешкоди цього мода не мають зіткнень, поки ви прокладаєте маршрут. Якщо помилилися, поверніться до останньої правильної точки, доки лінія не прилипне до неї, потім натисніть [[EQ_COURSE_REWIND]], щоб прокладати знову звідти. Натисніть [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] для кросу) ще раз, щоб зберегти."/>
         <text name="eq_help_dressageEdit_title" text="Редагування тесту виїздки"/>
         <text name="eq_help_dressageEdit_1" text="Складіть власний тест виїздки з фігур, рухів і алюрів. Натискайте [[EQ_DT_PREV]] і [[EQ_DT_NEXT]], щоб змінювати фігури, [[EQ_DT_GAIT]], щоб змінити алюр, і [[EQ_DT_MODE]] для бокових рухів чи рухів на місці. Натисніть [[EQ_DT_ACCEPT]], щоб залишити крок і рухатися далі, [[EQ_DT_UNDO]], щоб повернутися, або [[EQ_DT_RANDOM]] для випадкового кроку. Натисніть [[EQ_DRESSAGE_TEST]], щоб зберегти тест."/>
+        <text name="input_EQ_DT_TYPE" text="Тип тесту з виїздки"/>
+        <text name="input_EQ_DT_LEVEL" text="Рівень тесту з виїздки"/>
+        <text name="eq_dt_typeAction" text="Тест: %s"/>
+        <text name="eq_dt_levelAction" text="Рівень: %s"/>
+        <text name="eq_dt_type_own" text="Власний"/>
+        <text name="eq_dt_type_random" text="Випадковий"/>
+        <text name="eq_dt_type_set" text="Готовий тест"/>
+        <text name="eq_dlevel_novice" text="Новачок"/>
+        <text name="eq_dlevel_elementary" text="Початковий"/>
+        <text name="eq_dlevel_medium" text="Середній"/>
+        <text name="eq_dlevel_advanced" text="Просунутий"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Інтермедіат"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Ваш власний тест (Ctrl+N: тип)"/>
+        <text name="eq_dt_choiceRandom" text="Випадковий тест, %s (Ctrl+N: тип, Ctrl+M: рівень)"/>
+        <text name="eq_dt_choiceSet" text="Готовий тест, %s (Ctrl+N: тип, Ctrl+M: рівень)"/>
+        <text name="eq_dt_choiceFallback" text="Жоден готовий тест не вміщується в цей манеж: випадковий тест, %s"/>
+        <text name="eq_dt_choiceEvent" text="Тест змагань: випадковий, %s"/>
+        <text name="eq_fig_canterSide" text="Галоп %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Галоп %s-X-%s"/>
     </texts>
 </l10n>

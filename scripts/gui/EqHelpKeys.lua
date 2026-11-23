@@ -37,6 +37,8 @@ EqHelpKeys.KEYBOARD = {
     EQ_DT_PREV_LETTER = "Shift+N",
     EQ_DT_NEXT_LETTER = "Shift+M",
     EQ_DT_GAIT = "G",
+    EQ_DT_TYPE = "Ctrl+N",
+    EQ_DT_LEVEL = "Ctrl+M",
 }
 
 -- Our default gamepad buttons (modDesc.xml), PlayStation / Xbox. Actions without one keep their key.

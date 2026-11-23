@@ -1237,5 +1237,26 @@
         <text name="eq_help_courseEdit_1" text="按順序騎過各個障礙來描繪路線，速度不限。描繪時，本模組的障礙物沒有碰撞。如果出錯，騎回最後一個正確的點，直到有一條線吸附過去，然後按[[EQ_COURSE_REWIND]]從那裡重新描繪。再次按[[EQ_COURSE_RECORD]]（越野為[[EQ_COURSE_RECORD_XC]]）儲存。"/>
         <text name="eq_help_dressageEdit_title" text="編輯舞步測試"/>
         <text name="eq_help_dressageEdit_1" text="用圖形、動作和步法編寫你自己的舞步測試。[[EQ_DT_PREV]]和[[EQ_DT_NEXT]]切換圖形，[[EQ_DT_GAIT]]切換步法，[[EQ_DT_MODE]]切換到橫向動作或原地動作。[[EQ_DT_ACCEPT]]保留當前步驟並繼續，[[EQ_DT_UNDO]]返回上一步，[[EQ_DT_RANDOM]]隨機選一步。按[[EQ_DRESSAGE_TEST]]儲存測試。"/>
+        <text name="input_EQ_DT_TYPE" text="盛裝舞步路線類型"/>
+        <text name="input_EQ_DT_LEVEL" text="盛裝舞步路線等級"/>
+        <text name="eq_dt_typeAction" text="路線：%s"/>
+        <text name="eq_dt_levelAction" text="等級：%s"/>
+        <text name="eq_dt_type_own" text="自己的"/>
+        <text name="eq_dt_type_random" text="隨機"/>
+        <text name="eq_dt_type_set" text="固定路線"/>
+        <text name="eq_dlevel_novice" text="新手"/>
+        <text name="eq_dlevel_elementary" text="初級"/>
+        <text name="eq_dlevel_medium" text="中級"/>
+        <text name="eq_dlevel_advanced" text="高級"/>
+        <text name="eq_dlevel_prixStGeorges" text="聖喬治級"/>
+        <text name="eq_dlevel_intermediate" text="中級賽"/>
+        <text name="eq_dlevel_grandPrix" text="大獎賽"/>
+        <text name="eq_dt_choiceOwn" text="你自己的路線（Ctrl+N：類型）"/>
+        <text name="eq_dt_choiceRandom" text="隨機路線，%s（Ctrl+N：類型，Ctrl+M：等級）"/>
+        <text name="eq_dt_choiceSet" text="固定路線，%s（Ctrl+N：類型，Ctrl+M：等級）"/>
+        <text name="eq_dt_choiceFallback" text="沒有固定路線適合此場地：隨機路線，%s"/>
+        <text name="eq_dt_choiceEvent" text="賽事路線：隨機，%s"/>
+        <text name="eq_fig_canterSide" text="跑步 %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="跑步 %s-X-%s"/>
     </texts>
 </l10n>
