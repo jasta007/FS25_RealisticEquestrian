@@ -177,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="Pasáž %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="原地踏步"/>
         <text name="eq_now_pirouette" text="定后肢旋转"/>
+        <text name="eq_now_volte" text="小圈"/>
         <text name="eq_now_collected" text="收缩"/>
         <text name="eq_now_collectedCanter" text="收缩跑步"/>
         <text name="eq_now_passage" text="Pasáž"/>
@@ -205,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="在%s立定"/>
         <text name="eq_dressage_piaffeAt" text="原地踏步（%s）在%s：按住Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="向左定后肢旋转（%s）在%s：Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="向左定后肢旋转（%s）在%s：Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="向右定后肢旋转（%s）在%s：Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="向右定后肢旋转（%s）在%s：Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="原地踏步（%s）！按住Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="向左定后肢旋转（%s）！Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="向左定后肢旋转（%s）！Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="向右定后肢旋转（%s）！Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="向右定后肢旋转（%s）！Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="回到线上！"/>
         <text name="eq_dressage_mark" text="上一项得分：%s"/>
         <text name="eq_pop_routineError" text="路线错误 %d/%d"/>
@@ -1238,7 +1243,7 @@
         <text name="eq_help_lateral_title" text="横向动作"/>
         <text name="eq_help_lateral_1" text="横向动作是盛装舞步中最难的部分之一，需要组合多种操作。按住[[EQ_LATERAL]]并按A或D向侧面移动，即为腿部让步；同时按住[[EQ_REIN]]可以弯曲马的颈部和肩部，做出腰向内、腰向外或斜横步。在舞步测试中，路线上的图标会显示如何摆放马的姿势。"/>
         <text name="eq_help_collect_title" text="收缩"/>
-        <text name="eq_help_collect_1" text="收缩主要用于盛装舞步，让马以某种步法前进却不带平常的速度。快步时按住[[EQ_COLLECT]]做原地踏步（原地快步），再按W做正步（缓慢有弹性的快步）。在慢步或跑步时收缩并用A或D转向，即为定后肢旋转。"/>
+        <text name="eq_help_collect_1" text="收缩主要用于盛装舞步，让马以某种步法前进却不带平常的速度。快步时按住[[EQ_COLLECT]]做原地踏步（原地快步），再按W做正步（缓慢有弹性的快步）。收缩并用A或D转向：慢步或快步时为绕后肢的定后肢旋转，跑步时为小圈（马越沉稳圈越小）。跑步中的定后肢旋转需再按住[[EQ_LATERAL]]。"/>
         <text name="eq_help_rein_title" text="鼠标转向"/>
         <text name="eq_help_rein_1" text="按住[[EQ_REIN]]会把镜头转到马的身后，让你用鼠标精细转向，这在盛装舞步中至关重要，在场地障碍中有时也有用。同时按住[[EQ_LATERAL]]时，鼠标会弯曲马的头部来做横向动作。"/>
         <text name="eq_help_courseEdit_title" text="编辑路线"/>

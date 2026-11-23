@@ -85,6 +85,7 @@
         <text name="eq_dressage_passageAt" text="Passage %s-%s : Ctrl + W"/>
         <text name="eq_now_piaffe" text="Piaffer"/>
         <text name="eq_now_pirouette" text="Pirouette"/>
+        <text name="eq_now_volte" text="Volte"/>
         <text name="eq_now_collected" text="Rassemblé"/>
         <text name="eq_now_collectedCanter" text="Galop rassemblé"/>
         <text name="eq_now_passage" text="Passage"/>
@@ -113,10 +114,14 @@
         <text name="eq_dressage_haltAt" text="Arrêt en %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffer (%s) à %s : maintenir Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Pirouette à gauche (%s) à %s : Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Pirouette à gauche (%s) à %s : Ctrl + Maj + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Pirouette à droite (%s) à %s : Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Pirouette à droite (%s) à %s : Ctrl + Maj + D"/>
         <text name="eq_dressage_piaffe" text="Piaffer (%s) ! Maintenez Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="Pirouette à gauche (%s) ! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Pirouette à gauche (%s) ! Ctrl + Maj + A"/>
         <text name="eq_dressage_pirouetteRight" text="Pirouette à droite (%s) ! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Pirouette à droite (%s) ! Ctrl + Maj + D"/>
         <text name="eq_dressage_line" text="Revenez sur la ligne !"/>
         <text name="eq_dressage_mark" text="Dernière note : %s"/>
         <text name="eq_pop_routineError" text="Erreur de parcours %d/%d"/>
@@ -1240,7 +1245,7 @@
         <text name="eq_help_lateral_title" text="Mouvements latéraux"/>
         <text name="eq_help_lateral_1" text="Les mouvements latéraux sont parmi les plus difficiles du dressage et combinent plusieurs commandes. Maintenez [[EQ_LATERAL]] et appuyez sur A ou D pour vous décaler en cession à la jambe, et maintenez aussi [[EQ_REIN]] pour plier l&apos;encolure et les épaules en travers, renvers ou appuyer. Pendant une reprise, les icônes sur le tracé montrent comment placer votre cheval."/>
         <text name="eq_help_collect_title" text="Rassembler"/>
-        <text name="eq_help_collect_1" text="Le rassembler sert surtout en dressage, pour monter une allure sans sa vitesse habituelle. Maintenez [[EQ_COLLECT]] au trot pour un piaffer, un trot sur place, et appuyez aussi sur W pour un passage, un trot lent et cadencé. Rassemblez au pas ou au galop et tournez avec A ou D pour une pirouette."/>
+        <text name="eq_help_collect_1" text="Le rassembler sert surtout en dressage, pour monter une allure sans sa vitesse habituelle. Maintenez [[EQ_COLLECT]] au trot pour un piaffer, un trot sur place, et appuyez aussi sur W pour un passage, un trot lent et cadencé. Rassemblez et tournez avec A ou D pour une pirouette au pas ou au trot, autour des postérieurs, ou une volte au galop, un petit cercle (plus petit si le cheval est calme). Maintenez aussi [[EQ_LATERAL]] pour une pirouette au galop."/>
         <text name="eq_help_rein_title" text="Direction à la souris"/>
         <text name="eq_help_rein_1" text="En maintenant [[EQ_REIN]], la caméra passe derrière votre cheval et vous dirigez finement à la souris, ce qui est essentiel en dressage et parfois en saut d&apos;obstacles. Si vous maintenez aussi [[EQ_LATERAL]], la souris plie la tête de votre cheval pour les mouvements latéraux."/>
         <text name="eq_help_courseEdit_title" text="Édition de parcours"/>

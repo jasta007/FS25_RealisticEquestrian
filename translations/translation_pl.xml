@@ -177,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="Pasaż %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Piaff"/>
         <text name="eq_now_pirouette" text="Piruet"/>
+        <text name="eq_now_volte" text="Wolta"/>
         <text name="eq_now_collected" text="Zebrany"/>
         <text name="eq_now_collectedCanter" text="Zebrany galop"/>
         <text name="eq_now_passage" text="Pasaż"/>
@@ -205,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="Zatrzymanie w %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaff (%s) przy %s: przytrzymaj Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Piruet w lewo (%s) przy %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Piruet w lewo (%s) przy %s: Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Piruet w prawo (%s) przy %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Piruet w prawo (%s) przy %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Piaff (%s)! Przytrzymaj Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="Piruet w lewo (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Piruet w lewo (%s)! Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="Piruet w prawo (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Piruet w prawo (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Wróć na linię!"/>
         <text name="eq_dressage_mark" text="Ostatnia ocena: %s"/>
         <text name="eq_pop_routineError" text="Błąd trasy %d/%d"/>
@@ -1238,7 +1243,7 @@
         <text name="eq_help_lateral_title" text="Ruchy boczne"/>
         <text name="eq_help_lateral_1" text="Ruchy boczne należą do najtrudniejszych elementów ujeżdżenia i łączą kilka sterowań. Przytrzymaj [[EQ_LATERAL]] i naciśnij A lub D, aby przesuwać się w bok w ustępowaniu od łydki, a przytrzymując też [[EQ_REIN]], wyginaj szyję i łopatki konia w trawers, renwers lub ciąg. W programie ikony na linii pokazują, jak ustawić konia."/>
         <text name="eq_help_collect_title" text="Zbieranie"/>
-        <text name="eq_help_collect_1" text="Zbieranie służy głównie w ujeżdżeniu, by jechać chodem bez jego zwykłej prędkości. Przytrzymaj [[EQ_COLLECT]] w kłusie, aby wykonać piaff, kłus w miejscu, i naciśnij też W, aby wykonać pasaż, powolny, sprężysty kłus. Zbierz konia w stępie lub galopie i skręcaj A lub D, aby wykonać piruet."/>
+        <text name="eq_help_collect_1" text="Zbieranie służy głównie w ujeżdżeniu, by jechać chodem bez jego zwykłej prędkości. Przytrzymaj [[EQ_COLLECT]] w kłusie, aby wykonać piaff, kłus w miejscu, i naciśnij też W, aby wykonać pasaż, powolny, sprężysty kłus. Zbierz konia i skręcaj A lub D, aby wykonać piruet w stępie lub kłusie, wokół zadu, albo woltę w galopie, małe koło (mniejsze, im spokojniejszy koń). Przytrzymaj też [[EQ_LATERAL]], aby wykonać piruet w galopie."/>
         <text name="eq_help_rein_title" text="Kierowanie myszą"/>
         <text name="eq_help_rein_1" text="Przytrzymanie [[EQ_REIN]] ustawia kamerę za koniem i pozwala precyzyjnie kierować myszą, co jest kluczowe w ujeżdżeniu i czasem w skokach. Gdy przytrzymasz też [[EQ_LATERAL]], mysz wygina głowę konia do ruchów bocznych."/>
         <text name="eq_help_courseEdit_title" text="Edycja parkuru"/>

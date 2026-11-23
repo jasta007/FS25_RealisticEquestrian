@@ -46,6 +46,10 @@ EqDressagePath.CENTRE_CANTER = { before = 10, radius = 7, ease = 10 }
 EqDressagePath.BIG_CIRCLE = 10
 -- Circles at the side letters by gait (radius): 8 m at a walk, 10 or 15 m at a trot, 15 m at a canter.
 EqDressagePath.VOLTES = { walk = { 4 }, trot = { 5, 7.5 }, canter = { 7.5 } }
+-- Tighter voltes only a level's test asks for, sized by its level (EqDressageLevels voltes,
+-- James 2026-11-23: a 6 m canter volte at Grand Prix, ridden with Ctrl + A/D; "if you can't
+-- ride that... that's tough"). Radii; built after the ones above so saved figure ids hold.
+EqDressagePath.LEVEL_VOLTES = { walk = {}, trot = { 3, 3.5, 4, 4.5 }, canter = { 3, 3.5, 4, 4.5, 5 } }
 -- The tightest turn a figure may ask for at each gait (radius; at most half the track's width).
 -- The base game turns a ridden horse on about 3.5 m (log, 2026-10-27), but a canter needs room.
 EqDressagePath.MIN_RADIUS = { walk = 3.5, trot = 4, canter = 7 }
@@ -563,18 +567,35 @@ end
 --- trot or canter where the arena is wide enough.
 FIGURES.volte = function(g, frame, gait)
     local list = {}
-    for _, r in ipairs(EqDressagePath.VOLTES[gait]) do
-        if 2 * r <= 2 * g.wt and r < g.wt then
-            for _, y in ipairs(g.sides) do
-                if math.abs(y) <= g.straight[gait] and math.abs(y) + r <= g.lt then
-                    local pen = newPen(g.wt, y, 0, 1)
-                    arc(pen, r, math.pi * 2)
-                    table.insert(list, { key = "circle", size = r * 2, pts = pen.pts, labels = { { g.wt, y } }, marks = {} })
+    local function add(radii, levelVolte)
+        for _, r in ipairs(radii) do
+            if 2 * r <= 2 * g.wt and r < g.wt then
+                for _, y in ipairs(g.sides) do
+                    if math.abs(y) <= g.straight[gait] and math.abs(y) + r <= g.lt then
+                        local pen = newPen(g.wt, y, 0, 1)
+                        arc(pen, r, math.pi * 2)
+                        table.insert(list, { key = "circle", size = r * 2, pts = pen.pts, labels = { { g.wt, y } }, marks = {},
+                            levelVolte = levelVolte })
+                    end
                 end
             end
         end
     end
+    add(EqDressagePath.VOLTES[gait], nil)
+    add(EqDressagePath.LEVEL_VOLTES[gait] or {}, true)
     return list
+end
+
+
+--- Whether a volte fits a test's level (pure): a level with a volte size for the gait asks for
+--- that size only; with none (a player's own test, no level) only the usual sizes.
+--- @param figure table { name, gait, size, levelVolte }
+--- @param level table|nil EqDressageLevels.forBuild
+function EqDressagePath.volteFits(figure, level)
+    if figure.name ~= "volte" then return true end
+    local want = level ~= nil and level.voltes ~= nil and level.voltes[figure.gait] or nil
+    if want == nil then return not figure.levelVolte end
+    return figure.size ~= nil and math.abs(figure.size - want) < 0.5
 end
 
 
@@ -1091,7 +1112,8 @@ function EqDressagePath.library(frame)
             for k, figure in ipairs(FIGURES[name](g, frame, gait)) do
                 local weight = EqDressagePath.FIGURE_WEIGHTS[figure.key] or 1
                 -- Lateral work drifts without turning: its kinks are not turns.
-                if figure.lateral or EqDressagePath.tightest(figure.pts) >= g.minR[gait] * 0.9 then
+                -- A level's volte is as tight as its level asks (ridden with Ctrl + A/D at a canter).
+                if figure.lateral or figure.levelVolte or EqDressagePath.tightest(figure.pts) >= g.minR[gait] * 0.9 then
                     for mi, mirror in ipairs({ { 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 } }) do
                         local sx, sy = mirror[1], mirror[2]
                         local pts = {}
@@ -1119,7 +1141,7 @@ function EqDressagePath.library(frame)
                                 entry = entry, entryRein = reinAt(track, entry, pts[2].x - pts[1].x, pts[2].y - pts[1].y),
                                 exitRein = reinAt(track, exit, pts[n].x - pts[n - 1].x, pts[n].y - pts[n - 1].y),
                                 fromA = pts[1].y < 0, finalOnly = figure.finalOnly, passage = figure.passage,
-                                canter = figure.canter, levelOnly = figure.levelOnly,
+                                canter = figure.canter, levelOnly = figure.levelOnly, levelVolte = figure.levelVolte,
                             })
                         end
                     end
@@ -1585,6 +1607,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open, level)
             -- A level's test: its own figures (canter on straights) and, when random, only its pool.
             local fits = true
             if figure.levelOnly and (level == nil or not level.straight) then fits = false end
+            if not EqDressagePath.volteFits(figure, level) then fits = false end
             if plan == nil and level ~= nil then
                 if level.pool ~= nil and not level.pool[figure.name .. "/" .. figure.gait] then fits = false end
                 if level.straight and figure.gait == "canter" then fits = false end
@@ -2094,6 +2117,8 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
         run.stallMs = 0
         local spot, done = run.spot, false
         local on = look ~= nil and look.spot and EqDressagePath.matches(move, spot.event.gait)
+        -- A volte (Ctrl + A/D at a canter, EqLateral.spotMode) leaves the spot; a pirouette doesn't.
+        if on and spot.event.style == "pirouette" and look.pirouette == false then on = false end
         if on then
             spot.offMs = 0
             spot.ms = spot.ms + dt

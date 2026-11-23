@@ -27,45 +27,53 @@ EqDressageLevels.TYPES = { "own", "random", "set" }
 -- The level a test starts at the first time: it suits every arena.
 EqDressageLevels.DEFAULT = "elementary"
 
--- Each level: the arenas it is ridden in (first, second, third), figures in a random test, what
+-- Each level: its voltes' size across by gait (James, 2026-11-23: a 6 m canter volte at Grand
+-- Prix, wider for the easier levels; trot 10 m from Elementary to 6 m at Intermediate, none at
+-- Grand Prix (removes)), the arenas it is ridden in (first, second, third), figures in a random test, what
 -- it adds to the random pool ("name/gait", EqDressagePath.FIGURE_ORDER) and to the movements on
 -- the spot, and how it weighs lateral work and plain figures.
 EqDressageLevels.LEVELS = {
     novice = {
         arenas = { true, true, false }, figures = 6, reinBack = false,
-        adds = { "circleEnd/trot", "circleMid/trot", "volte/trot", "halfVolte/trot", "diagonals/trot", "across/trot", "centre/trot",
+        adds = { "circleEnd/trot", "circleMid/trot", "halfVolte/trot", "diagonals/trot", "across/trot", "centre/trot",
             "centreToX/trot", "centreFromX/trot", "serpentine/trot", "shallowLoop/trot", "throughCircle/trot", "legYield/trot",
-            "legYieldCentre/trot", "diagonals/walk", "circleEnd/canter", "circleMid/canter", "volte/canter", "diagonals/canter",
+            "legYieldCentre/trot", "diagonals/walk", "circleEnd/canter", "circleMid/canter", "diagonals/canter",
             "canterStretch/trot" },
         spots = {},
     },
     elementary = {
+        voltes = { trot = 10 },
         arenas = { true, true, true }, figures = 7, reinBack = true,
-        adds = { "shoulderIn/walk", "shoulderIn/trot", "travers/walk", "travers/trot", "legYieldRail/walk", "legYieldRail/trot",
-            "legYield/walk", "legYieldCentre/walk", "halfVolte/walk", "volte/walk", "across/walk", "centreToX/walk", "centreFromX/walk",
+        adds = { "volte/trot", "shoulderIn/walk", "shoulderIn/trot", "travers/walk", "travers/trot", "legYieldRail/walk", "legYieldRail/trot",
+            "legYield/walk", "legYieldCentre/walk", "halfVolte/walk", "across/walk", "centreToX/walk", "centreFromX/walk",
             "shallowLoop/walk", "eight/trot", "eight/canter", "shallowLoop/canter" },
         spots = { "walkPirouette" },
     },
     medium = {
+        voltes = { walk = 8, trot = 9, canter = 10 },
         arenas = { false, true, true }, figures = 8, reinBack = true,
-        adds = { "halfPass/trot", "halfPass/canter", "halfPassCentre/trot", "renvers/walk", "renvers/trot" },
+        adds = { "volte/walk", "volte/canter", "halfPass/trot", "halfPass/canter", "halfPassCentre/trot", "renvers/walk", "renvers/trot" },
         spots = {},
     },
     advanced = {
+        voltes = { walk = 8, trot = 8, canter = 9 },
         arenas = { false, true, true }, figures = 9, reinBack = true,
         adds = { "halfPassCentre/canter" },
         spots = { "canterPirouette" },
     },
     prixStGeorges = {
+        voltes = { walk = 8, trot = 7, canter = 8 },
         arenas = { false, false, true }, figures = 10, reinBack = true, lateralWeight = 2, plainWeight = 0.6, spotTrack = 20,
         adds = {}, spots = {},
     },
     intermediate = {
+        voltes = { walk = 8, trot = 6, canter = 7 },
         arenas = { false, false, true }, figures = 11, reinBack = true, lateralWeight = 2, plainWeight = 0.6, spotTrack = 20,
         adds = { "passageRail/trot" },
         spots = { "piaffe" },
     },
     grandPrix = {
+        voltes = { walk = 8, canter = 6 }, removes = { "volte/trot" },
         arenas = { false, false, true }, figures = 12, reinBack = true, lateralWeight = 2, plainWeight = 0.5, spotTrack = 25,
         adds = { "passageDiagonal/trot" },
         spots = {},
@@ -87,30 +95,30 @@ EqDressageLevels.HOSTED = {
 --- "spot style letter gait" (a movement on the spot at a letter).
 EqDressageLevels.SET = {
     novice = {
-        [1] = { turn = 1, steps = { "volte trot E 10", "volte trot B 10", "circleEnd trot C 15", "diagonals trot H-F", "diagonals walk K-M",
+        [1] = { turn = 1, steps = { "circleMid trot E", "circleMid trot B", "circleEnd trot C 15", "diagonals trot H-F", "diagonals walk K-M",
             "canterStretch trot H-K", "canterStretch trot F-H", "shallowLoop trot M-B-F" } },
         [2] = { turn = 1, steps = { "halfVolte trot E", "halfVolte trot B", "circleEnd trot C 20", "diagonals trot H-F", "diagonals walk K-M",
-            "volte canter E 15", "diagonals canter F-H", "volte canter B 15", "legYield trot K" } },
+            "circleMid canter E", "diagonals canter F-H", "circleMid canter B", "legYield trot K" } },
     },
     elementary = {
         [1] = { turn = 1, steps = { "shoulderIn trot E-K", "diagonals trot F-H", "shoulderIn trot M-B", "spot reinBack A trot",
             "diagonals walk K-M", "spot pirouetteLeft H walk", "canterStretch trot F-M", "canterStretch trot H-F", "travers trot K-E" } },
         [2] = { turn = 1, steps = { "shoulderIn trot E-K", "diagonals trot F-H", "shoulderIn trot M-B", "spot reinBack A trot",
-            "diagonals walk K-M", "spot pirouetteLeft H walk", "volte canter E 15", "shallowLoop canter F-B-M", "diagonals canter H-F",
+            "diagonals walk K-M", "spot pirouetteLeft H walk", "circleMid canter E", "shallowLoop canter F-B-M", "diagonals canter H-F",
             "travers trot K-E" } },
         [3] = { turn = 1, steps = { "shoulderIn trot S-V", "diagonals trot F-H", "shoulderIn trot R-P", "spot reinBack A trot",
-            "diagonals walk K-M", "spot pirouetteLeft H walk", "volte canter S 15", "shallowLoop canter F-B-M", "diagonals canter H-F",
+            "diagonals walk K-M", "spot pirouetteLeft H walk", "circleMid canter E", "shallowLoop canter F-B-M", "diagonals canter H-F",
             "travers trot K-V" } },
     },
     medium = {
         [2] = { turn = 1, steps = { "shoulderIn trot E-K", "halfPassCentre trot F-C L", "renvers trot E-K", "diagonals trot F-H",
             "halfPassCentre trot M-A R", "spot reinBack C trot", "diagonals walk M-K", "spot pirouetteRight B walk",
-            "spot pirouetteLeft H walk", "volte canter E 15", "eight canter A-C", "diagonals canter M-K",
-            "volte canter B 15", "diagonals trot H-F" } },
+            "spot pirouetteLeft H walk", "volte canter E", "eight canter A-C", "diagonals canter M-K",
+            "volte canter B", "diagonals trot H-F" } },
         [3] = { turn = 1, steps = { "shoulderIn trot S-V", "halfPassCentre trot P-C L", "shoulderIn trot E-V", "diagonals trot F-H",
             "halfPassCentre trot R-A R", "renvers trot V-E", "spot reinBack C trot", "diagonals walk M-K",
-            "spot pirouetteRight P walk", "spot pirouetteLeft H walk", "volte canter V 15", "halfPassCentre canter P-C L",
-            "volte canter S 15", "diagonals canter F-H", "diagonals trot M-K" } },
+            "spot pirouetteRight P walk", "spot pirouetteLeft H walk", "volte canter V", "halfPassCentre canter P-C L",
+            "volte canter S", "diagonals canter F-H", "diagonals trot M-K" } },
     },
     advanced = {
         [2] = { turn = 1, steps = { "shoulderIn trot E-K", "halfPassCentre trot F-C R", "halfPassCentre trot K-C L", "diagonals trot F-H",
@@ -123,13 +131,13 @@ EqDressageLevels.SET = {
             "circleEnd canter C 20", "eight canter A-C", "halfPassCentre canter S-A L", "diagonals trot H-F" } },
     },
     prixStGeorges = {
-        [3] = { turn = -1, steps = { "shoulderIn trot R-B", "volte trot P 10", "halfPassCentre trot V-C L", "diagonals trot F-H",
-            "shoulderIn trot M-R", "volte trot B 10", "halfPassCentre trot V-C R", "diagonals walk K-M", "halfPassCentre canter S-A R",
+        [3] = { turn = -1, steps = { "shoulderIn trot R-B", "volte trot P", "halfPassCentre trot V-C L", "diagonals trot F-H",
+            "shoulderIn trot M-R", "volte trot B", "halfPassCentre trot V-C R", "diagonals walk K-M", "halfPassCentre canter S-A R",
             "halfPassCentre canter V-C L", "spot pirouetteLeft S canter", "spot pirouetteRight K canter",
             "shallowLoop canter F-B-M", "diagonals canter H-F", "diagonals canter K-M", "diagonals canter H-F" } },
     },
     intermediate = {
-        [3] = { turn = 1, steps = { "shoulderIn trot S-V", "volte trot P 10", "halfPassCentre trot B-C R", "halfPassCentre trot V-C L",
+        [3] = { turn = 1, steps = { "shoulderIn trot S-V", "volte trot P", "halfPassCentre trot B-C R", "halfPassCentre trot V-C L",
             "spot reinBack A trot", "passageRail trot P-B", "spot piaffe R trot", "passageRail trot H-S",
             "diagonals walk F-H", "halfPassCentre canter R-A L", "halfPassCentre canter P-C R",
             "spot pirouetteLeft R canter", "spot pirouetteRight P canter", "diagonals canter K-M", "diagonals canter H-F",
@@ -209,12 +217,13 @@ function EqDressageLevels.forBuild(name, frame)
     for _, n in ipairs(EqDressageLevels.ORDER) do
         local level = EqDressageLevels.LEVELS[n]
         for _, entry in ipairs(level.adds) do pool[entry] = true end
+        for _, entry in ipairs(level.removes or {}) do pool[entry] = nil end
         for _, spot in ipairs(level.spots) do spots[spot] = true end
         if n == name then break end
     end
     return { name = name, pool = pool, spots = spots, reinBack = own ~= nil and own.reinBack or false,
         lateralWeight = own ~= nil and own.lateralWeight or nil, plainWeight = own ~= nil and own.plainWeight or nil,
-        spotTrack = own ~= nil and own.spotTrack or nil, straight = EqDressageLevels.arenaOf(frame) == 1 }
+        spotTrack = own ~= nil and own.spotTrack or nil, voltes = own ~= nil and own.voltes or nil, straight = EqDressageLevels.arenaOf(frame) == 1 }
 end
 
 

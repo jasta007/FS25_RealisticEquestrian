@@ -4142,7 +4142,9 @@ end
     -- The movement named under the panel (James, 2026-11-01).
     local function nowName(t) return EqLateral.movementName(t) end
     check("the movement under the panel is named from Ctrl, the drift, the bend and the rail",
-        nowName({ gait = "TROT", spot = true }) == "piaffe" and nowName({ gait = "CANTER", spot = true, turning = true }) == "pirouette"
+        nowName({ gait = "TROT", spot = true }) == "piaffe" and nowName({ gait = "CANTER", spot = true, turning = true }) == "volte"
+        and nowName({ gait = "CANTER", spot = true, turning = true, pirouette = true }) == "pirouette"
+        and nowName({ gait = "TROT", spot = true, turning = true, pirouette = true }) == "pirouette"
         and nowName({ gait = "WALK", spot = true }) == "collected" and nowName({ gait = "TROT", spot = true, passage = true }) == "passage"
         and nowName({ gait = "TROT", side = 1, bend = 0 }) == "legYield" and nowName({ gait = "TROT", side = 1, bend = 0.8 }) == "halfPass"
         and nowName({ gait = "TROT", side = 1, bend = -0.8, rail = "in" }) == "shoulderIn"
@@ -4176,6 +4178,49 @@ end
         and EqLateral.keep(1, "WALK") == 0)
     check("on the spot the animation slows but stays in the gait", EqLateral.shownSpeed(4, 2, 0) == 4
         and math.abs(EqLateral.shownSpeed(4, 2, 1) - 3.2) < 1e-9 and EqLateral.shownSpeed(4, 2, 1) > 2)
+    -- Ctrl + A/D a volte sized by temperament, Ctrl + Shift + A/D a pirouette round the hind feet (James, 2026-11-23).
+    check("Ctrl + A/D is a pirouette at a walk or trot and a volte at a canter, Ctrl + Shift + A/D a canter pirouette",
+        EqLateral.spotMode("CANTER", true, false, false) == "volte" and EqLateral.spotMode("TROT", true, false, false) == "pirouette"
+        and EqLateral.spotMode("WALK", true, false, false) == "pirouette" and EqLateral.spotMode("CANTER", true, true, false) == "pirouette"
+        and EqLateral.spotMode("CANTER", false, true, false) == nil
+        and EqLateral.spotMode("CANTER", true, false, true) == nil and EqLateral.spotMode(nil, true, false, false) == nil)
+    local trotSpec = { currentTurnSpeed = 0.9, maxTurnSpeed = 1 }
+    check("a hard turn at a trot, ridden free, is a trot volte", EqLateral.trotVolte(trotSpec, "TROT", false)
+        and not EqLateral.trotVolte(trotSpec, "TROT", true) and not EqLateral.trotVolte(trotSpec, "CANTER", false)
+        and not EqLateral.trotVolte({ currentTurnSpeed = -0.5, maxTurnSpeed = 1 }, "TROT", false)
+        and EqLateral.trotVolte({ currentTurnSpeed = -0.9, maxTurnSpeed = 1 }, "TROT", false)
+        and not EqLateral.trotVolte({ currentTurnSpeed = 0.9, maxTurnSpeed = 1, eqCollect = 1 }, "TROT", false))
+    check("a level asks for its own volte size, a player's own test only the usual ones",
+        EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 6, levelVolte = true }, { voltes = { canter = 6 } })
+        and not EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 15 }, { voltes = { canter = 6 } })
+        and not EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 6, levelVolte = true }, nil)
+        and EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 15 }, nil)
+        and EqDressagePath.volteFits({ name = "circle", gait = "canter", size = 20 }, { voltes = { canter = 6 } })
+        and EqDressageLevels.LEVELS.grandPrix.voltes.canter == 6 and EqDressageLevels.LEVELS.medium.voltes.canter == 10
+        and EqDressageLevels.LEVELS.advanced.voltes.canter == 9 and EqDressageLevels.LEVELS.novice.voltes == nil
+        and not EqDressageLevels.forBuild("elementary", { halfW = 10, halfL = 20 }).pool["volte/canter"]
+        and EqDressageLevels.forBuild("elementary", { halfW = 10, halfL = 20 }).pool["volte/trot"]
+        and EqDressageLevels.LEVELS.elementary.voltes.trot == 10 and EqDressageLevels.LEVELS.intermediate.voltes.trot == 6
+        and not EqDressageLevels.forBuild("grandPrix", { halfW = 10, halfL = 30 }).pool["volte/trot"])
+    check("a volte is 6 m across from temperament 70, widening evenly to 10 m at 0", EqLateral.volteDiameter(70) == 6
+        and EqLateral.volteDiameter(100) == 6 and EqLateral.volteDiameter(0) == 10 and EqLateral.volteDiameter(nil) == 10
+        and math.abs(EqLateral.volteDiameter(35) - 8) < 1e-9)
+    check("a volte goes at the collected pace and turns only as hard as its circle needs", EqLateral.volteShare("WALK", tops) == 1
+        and EqLateral.volteShare("CANTER", tops) == EqLateral.passageShare("CANTER", tops)
+        and math.abs(EqLateral.volteSteer(1, 3, 6, 2) - 0.5) < 1e-9 and math.abs(EqLateral.volteSteer(-1, 3, 6, 2) + 0.5) < 1e-9
+        and EqLateral.volteSteer(1, 9, 6, 2) == 1 and EqLateral.volteSteer(0, 3, 6, 2) == 0)
+    -- Its speed follows the turn: speed / turn = the radius, within creep..share.
+    check("a volte's speed keeps the circle's size as the turn eases in", math.abs(EqLateral.volteKeep(1, 6, 6, 0.9, 0.1) - 0.5) < 1e-9
+        and EqLateral.volteKeep(0, 6, 6, 0.9, 0.1) == 0.1 and EqLateral.volteKeep(5, 6, 6, 0.9, 0.1) == 0.9
+        and EqLateral.volteKeep(1, 0, 6, 0.9, 0.1) == 0.1)
+    -- The hind feet sit back metres behind the middle, against the heading (dir = sin, cos).
+    local back, from, to = 0.9, 0.2, 0.5
+    local px, pz = EqLateral.pivot(from, to, back)
+    local hindX, hindZ = -back * math.sin(from), -back * math.cos(from)
+    local nowHindX, nowHindZ = px - back * math.sin(to), pz - back * math.cos(to)
+    local jx, jz = EqLateral.pivot(0, EqLateral.PIVOT_JUMP + 0.1, back)
+    check("a pirouette turns round the hind feet, and a jump in heading moves nothing",
+        math.abs(nowHindX - hindX) < 1e-9 and math.abs(nowHindZ - hindZ) < 1e-9 and (px ~= 0 or pz ~= 0) and jx == 0 and jz == 0)
     check("Ctrl + A/D turns on the spot at a riding gait", EqLateral.spotSteer(true, false, "TROT") > 0
         and EqLateral.spotSteer(false, true, "CANTER") < 0 and EqLateral.spotSteer(true, false, "WALK") > 0
         and EqLateral.spotSteer(true, false, nil) == 0
@@ -4381,7 +4426,8 @@ end)()
         for _, figure in ipairs(library) do
             keys[figure.key] = true
             -- Lateral work drifts without turning, so its kinks are not turns.
-            if figure.sections == nil and EqDressagePath.tightest(figure.pts) < g.minR[figure.gait] * 0.9 then tight = tight + 1 end
+            -- A level's volte is as tight as its level asks (James, 2026-11-23).
+            if figure.sections == nil and not figure.levelVolte and EqDressagePath.tightest(figure.pts) < g.minR[figure.gait] * 0.9 then tight = tight + 1 end
             if figure.gait == "canter" then canters[figure.key] = true end
         end
         -- Each figure is ridden at one gait, its turns sized for it (James 2026-10-29); a

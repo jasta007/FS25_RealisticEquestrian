@@ -177,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="正步 %s-%s：Ctrl + W"/>
         <text name="eq_now_piaffe" text="原地踏步"/>
         <text name="eq_now_pirouette" text="定後肢旋轉"/>
+        <text name="eq_now_volte" text="小圈"/>
         <text name="eq_now_collected" text="收縮"/>
         <text name="eq_now_collectedCanter" text="收縮跑步"/>
         <text name="eq_now_passage" text="正步"/>
@@ -205,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="在%s立定"/>
         <text name="eq_dressage_piaffeAt" text="原地踏步（%s）在%s：按住Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="向左定後肢旋轉（%s）在%s：Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="向左定後肢旋轉（%s）在%s：Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="向右定後肢旋轉（%s）在%s：Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="向右定後肢旋轉（%s）在%s：Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="原地踏步（%s）！按住Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="向左定後肢旋轉（%s）！Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="向左定後肢旋轉（%s）！Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="向右定後肢旋轉（%s）！Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="向右定後肢旋轉（%s）！Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="回到線上！"/>
         <text name="eq_dressage_mark" text="上一項得分：%s"/>
         <text name="eq_pop_routineError" text="路線錯誤 %d/%d"/>
@@ -1238,7 +1243,7 @@
         <text name="eq_help_lateral_title" text="橫向動作"/>
         <text name="eq_help_lateral_1" text="橫向動作是盛裝舞步中最難的部分之一，需要組合多種操作。按住[[EQ_LATERAL]]並按A或D向側面移動，即為腿部讓步；同時按住[[EQ_REIN]]可以彎曲馬的頸部和肩部，做出腰向內、腰向外或斜橫步。在舞步測試中，路線上的圖示會顯示如何擺放馬的姿勢。"/>
         <text name="eq_help_collect_title" text="收縮"/>
-        <text name="eq_help_collect_1" text="收縮主要用於盛裝舞步，讓馬以某種步法前進卻不帶平常的速度。快步時按住[[EQ_COLLECT]]做原地踏步（原地快步），再按W做正步（緩慢有彈性的快步）。在慢步或跑步時收縮並用A或D轉向，即為定後肢旋轉。"/>
+        <text name="eq_help_collect_1" text="收縮主要用於盛裝舞步，讓馬以某種步法前進卻不帶平常的速度。快步時按住[[EQ_COLLECT]]做原地踏步（原地快步），再按W做正步（緩慢有彈性的快步）。收縮並用A或D轉向：慢步或快步時為繞後肢的定後肢旋轉，跑步時為小圈（馬越沉穩圈越小）。跑步中的定後肢旋轉需再按住[[EQ_LATERAL]]。"/>
         <text name="eq_help_rein_title" text="滑鼠轉向"/>
         <text name="eq_help_rein_1" text="按住[[EQ_REIN]]會把鏡頭轉到馬的身後，讓你用滑鼠精細轉向，這在盛裝舞步中至關重要，在場地障礙中有時也有用。同時按住[[EQ_LATERAL]]時，滑鼠會彎曲馬的頭部來做橫向動作。"/>
         <text name="eq_help_courseEdit_title" text="編輯路線"/>

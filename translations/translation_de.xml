@@ -177,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="Passage %s-%s: Strg + W"/>
         <text name="eq_now_piaffe" text="Piaffe"/>
         <text name="eq_now_pirouette" text="Pirouette"/>
+        <text name="eq_now_volte" text="Volte"/>
         <text name="eq_now_collected" text="Versammelt"/>
         <text name="eq_now_collectedCanter" text="Versammelter Galopp"/>
         <text name="eq_now_passage" text="Passage"/>
@@ -205,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="Halten bei %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) bei %s: Strg halten"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Linkspirouette (%s) bei %s: Strg + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Linkspirouette (%s) bei %s: Strg + Umschalt + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Rechtspirouette (%s) bei %s: Strg + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Rechtspirouette (%s) bei %s: Strg + Umschalt + D"/>
         <text name="eq_dressage_piaffe" text="Piaffe (%s)! Strg halten"/>
         <text name="eq_dressage_pirouetteLeft" text="Linkspirouette (%s)! Strg + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Linkspirouette (%s)! Strg + Umschalt + A"/>
         <text name="eq_dressage_pirouetteRight" text="Rechtspirouette (%s)! Strg + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Rechtspirouette (%s)! Strg + Umschalt + D"/>
         <text name="eq_dressage_line" text="Zurück auf die Linie!"/>
         <text name="eq_dressage_mark" text="Letzte Note: %s"/>
         <text name="eq_pop_routineError" text="Verritten %d/%d"/>
@@ -1240,7 +1245,7 @@
         <text name="eq_help_lateral_title" text="Seitengänge"/>
         <text name="eq_help_lateral_1" text="Seitengänge gehören zum Schwierigsten in der Dressur und kombinieren mehrere Steuerungen. Halten Sie [[EQ_LATERAL]] und drücken Sie A oder D, um im Schenkelweichen seitwärts zu treten, und halten Sie zusätzlich [[EQ_REIN]], um Hals und Schultern in Travers, Renvers oder Traversale zu stellen. In einer Dressuraufgabe zeigen die Symbole auf der Linie, wie Sie Ihr Pferd stellen."/>
         <text name="eq_help_collect_title" text="Versammeln"/>
-        <text name="eq_help_collect_1" text="Versammeln braucht man vor allem in der Dressur, um eine Gangart ohne ihr übliches Tempo zu reiten. Halten Sie im Trab [[EQ_COLLECT]] für eine Piaffe, einen Trab auf der Stelle, und drücken Sie zusätzlich W für eine Passage, einen langsamen, schwebenden Trab. Versammeln Sie im Schritt oder Galopp und wenden Sie mit A oder D für eine Pirouette."/>
+        <text name="eq_help_collect_1" text="Versammeln braucht man vor allem in der Dressur, um eine Gangart ohne ihr übliches Tempo zu reiten. Halten Sie im Trab [[EQ_COLLECT]] für eine Piaffe, einen Trab auf der Stelle, und drücken Sie zusätzlich W für eine Passage, einen langsamen, schwebenden Trab. Versammeln Sie und wenden Sie mit A oder D für eine Pirouette im Schritt oder Trab, um die Hinterbeine, oder eine Volte im Galopp, einen kleinen Zirkel (je gelassener das Pferd, desto kleiner). Halten Sie zusätzlich [[EQ_LATERAL]] für eine Galopppirouette."/>
         <text name="eq_help_rein_title" text="Mauslenkung"/>
         <text name="eq_help_rein_1" text="Mit gehaltener [[EQ_REIN]] schwenkt die Kamera hinter Ihr Pferd, und Sie lenken fein mit der Maus, unverzichtbar in der Dressur und manchmal im Springreiten. Halten Sie dabei auch [[EQ_LATERAL]], stellt die Maus den Kopf Ihres Pferdes für Seitengänge."/>
         <text name="eq_help_courseEdit_title" text="Parcours bearbeiten"/>

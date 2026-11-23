@@ -177,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="パッサージュ %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="ピアッフェ"/>
         <text name="eq_now_pirouette" text="ピルエット"/>
+        <text name="eq_now_volte" text="ボルト"/>
         <text name="eq_now_collected" text="収縮"/>
         <text name="eq_now_collectedCanter" text="収縮駈歩"/>
         <text name="eq_now_passage" text="パッサージュ"/>
@@ -205,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="%sで停止"/>
         <text name="eq_dressage_piaffeAt" text="ピアッフェ（%s）%sで：Ctrlを押し続ける"/>
         <text name="eq_dressage_pirouetteLeftAt" text="左ピルエット（%s）%sで：Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="左ピルエット（%s）%sで：Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="右ピルエット（%s）%sで：Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="右ピルエット（%s）%sで：Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="ピアッフェ（%s）！Ctrlを押し続ける"/>
         <text name="eq_dressage_pirouetteLeft" text="左ピルエット（%s）！Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="左ピルエット（%s）！Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="右ピルエット（%s）！Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="右ピルエット（%s）！Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="ラインに戻れ！"/>
         <text name="eq_dressage_mark" text="前回の得点：%s"/>
         <text name="eq_pop_routineError" text="経路違反 %d/%d"/>
@@ -1238,7 +1243,7 @@
         <text name="eq_help_lateral_title" text="側方運動"/>
         <text name="eq_help_lateral_1" text="側方運動は馬場馬術でも特に難しく、いくつかの操作を組み合わせます。[[EQ_LATERAL]]を押しながらAかDで横へ動くと脚への譲歩になり、さらに[[EQ_REIN]]を押し続けると馬の首と肩を曲げてトラバース、レンバース、ハーフパスになります。演技中は線上のアイコンが馬の姿勢を示します。"/>
         <text name="eq_help_collect_title" text="収縮"/>
-        <text name="eq_help_collect_1" text="収縮は主に馬場馬術で、歩法をいつもの速さなしで行うために使います。速歩中に[[EQ_COLLECT]]を押し続けるとピアッフェ（その場での速歩）、さらにWでパッサージュ（ゆっくり弾む速歩）になります。常歩か駈歩で収縮してAかDで回るとピルエットです。"/>
+        <text name="eq_help_collect_1" text="収縮は主に馬場馬術で、歩法をいつもの速さなしで行うために使います。速歩中に[[EQ_COLLECT]]を押し続けるとピアッフェ（その場での速歩）、さらにWでパッサージュ（ゆっくり弾む速歩）になります。収縮してAかDで回ると、常歩か速歩では後肢を軸に回るピルエット、駈歩ではボルト（小さな輪乗り、馬が落ち着いているほど小さい）です。駈歩のピルエットはさらに[[EQ_LATERAL]]を押します。"/>
         <text name="eq_help_rein_title" text="マウス操作"/>
         <text name="eq_help_rein_1" text="[[EQ_REIN]]を押し続けるとカメラが馬の後ろに回り、マウスで細かく操作できます。馬場馬術では欠かせず、障害飛越でも役立ちます。[[EQ_LATERAL]]も押していると、マウスで馬の頭を曲げて側方運動ができます。"/>
         <text name="eq_help_courseEdit_title" text="コースの編集"/>

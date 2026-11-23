@@ -177,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="Пассаж %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Пиаффе"/>
         <text name="eq_now_pirouette" text="Пируэт"/>
+        <text name="eq_now_volte" text="Вольт"/>
         <text name="eq_now_collected" text="Собранность"/>
         <text name="eq_now_collectedCanter" text="Собранный галоп"/>
         <text name="eq_now_passage" text="Пассаж"/>
@@ -205,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="Остановка у %s"/>
         <text name="eq_dressage_piaffeAt" text="Пиаффе (%s) у %s: удерживайте Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Пируэт влево (%s) у %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Пируэт влево (%s) у %s: Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Пируэт вправо (%s) у %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Пируэт вправо (%s) у %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Пиаффе (%s)! Удерживайте Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="Пируэт влево (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Пируэт влево (%s)! Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="Пируэт вправо (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Пируэт вправо (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Вернитесь на линию!"/>
         <text name="eq_dressage_mark" text="Последняя оценка: %s"/>
         <text name="eq_pop_routineError" text="Ошибка схемы %d/%d"/>
@@ -1238,7 +1243,7 @@
         <text name="eq_help_lateral_title" text="Боковые движения"/>
         <text name="eq_help_lateral_1" text="Боковые движения — одна из самых сложных частей выездки, они сочетают несколько управлений. Удерживайте [[EQ_LATERAL]] и нажимайте A или D, чтобы смещаться вбок в уступке шенкелю, а удерживая также [[EQ_REIN]], сгибайте шею и плечи лошади в траверс, ренверс или принимание. В езде значки на линии показывают, как поставить лошадь."/>
         <text name="eq_help_collect_title" text="Сбор"/>
-        <text name="eq_help_collect_1" text="Сбор нужен в основном в выездке, чтобы ехать аллюром без его обычной скорости. Удерживайте [[EQ_COLLECT]] на рыси для пиаффе, рыси на месте, и нажмите ещё W для пассажа, медленной упругой рыси. Соберите лошадь на шагу или галопе и поворачивайте A или D для пируэта."/>
+        <text name="eq_help_collect_1" text="Сбор нужен в основном в выездке, чтобы ехать аллюром без его обычной скорости. Удерживайте [[EQ_COLLECT]] на рыси для пиаффе, рыси на месте, и нажмите ещё W для пассажа, медленной упругой рыси. Соберите лошадь и поворачивайте A или D для пируэта на шагу или рыси, вокруг задних ног, или вольта на галопе, маленького круга (тем меньше, чем спокойнее лошадь). Для пируэта на галопе удерживайте ещё [[EQ_LATERAL]]."/>
         <text name="eq_help_rein_title" text="Управление мышью"/>
         <text name="eq_help_rein_1" text="Удерживая [[EQ_REIN]], вы переводите камеру за спину лошади и точно управляете мышью — это важно в выездке и иногда в конкуре. Если удерживать ещё и [[EQ_LATERAL]], мышь сгибает голову лошади для боковых движений."/>
         <text name="eq_help_courseEdit_title" text="Редактирование маршрута"/>

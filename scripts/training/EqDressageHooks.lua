@@ -284,7 +284,7 @@ function EqDressageHooks.courseFor(vehicle, spec)
     -- Collected going forward (Ctrl + W) for a passage.
     local passage = spot and spec.eqPassage == true
     return { x = x, z = z, markers = spec.eqCourse, test = spec.eqTest, temperament = spec.eqTemperament, dirX = dirX, dirZ = dirZ,
-        bend = bend, spot = spot, passage = passage }
+        bend = bend, spot = spot, passage = passage, pirouette = spot and spec.eqSpotMode == "pirouette" }
 end
 
 

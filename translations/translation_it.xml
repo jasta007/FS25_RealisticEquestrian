@@ -177,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="Passage %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Piaffe"/>
         <text name="eq_now_pirouette" text="Piroetta"/>
+        <text name="eq_now_volte" text="Volta"/>
         <text name="eq_now_collected" text="Riunito"/>
         <text name="eq_now_collectedCanter" text="Galoppo riunito"/>
         <text name="eq_now_passage" text="Passage"/>
@@ -205,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="Alt in %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) a %s: tieni Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Piroetta a sinistra (%s) a %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Piroetta a sinistra (%s) a %s: Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Piroetta a destra (%s) a %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Piroetta a destra (%s) a %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Piaffe (%s)! Tieni Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="Piroetta a sinistra (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Piroetta a sinistra (%s)! Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="Piroetta a destra (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Piroetta a destra (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Torna sulla linea!"/>
         <text name="eq_dressage_mark" text="Ultimo voto: %s"/>
         <text name="eq_pop_routineError" text="Errore di percorso %d/%d"/>
@@ -1238,7 +1243,7 @@
         <text name="eq_help_lateral_title" text="Movimenti laterali"/>
         <text name="eq_help_lateral_1" text="I movimenti laterali sono tra le parti più difficili del dressage e combinano più comandi. Tieni premuto [[EQ_LATERAL]] e premi A o D per spostarti di lato in una cessione alla gamba, e tieni anche [[EQ_REIN]] per flettere collo e spalle in un travers, renvers o appoggiata. In una ripresa, le icone sul percorso mostrano come posizionare il cavallo."/>
         <text name="eq_help_collect_title" text="Riunire"/>
-        <text name="eq_help_collect_1" text="Riunire serve soprattutto nel dressage, per eseguire un&apos;andatura senza la sua solita velocità. Tieni premuto [[EQ_COLLECT]] al trotto per un piaffe, un trotto sul posto, e premi anche W per un passage, un trotto lento e cadenzato. Riunisci al passo o al galoppo e gira con A o D per una piroetta."/>
+        <text name="eq_help_collect_1" text="Riunire serve soprattutto nel dressage, per eseguire un&apos;andatura senza la sua solita velocità. Tieni premuto [[EQ_COLLECT]] al trotto per un piaffe, un trotto sul posto, e premi anche W per un passage, un trotto lento e cadenzato. Riunisci e gira con A o D per una piroetta al passo o al trotto, attorno ai posteriori, o una volta al galoppo, un piccolo circolo (più piccolo quanto più calmo è il cavallo). Tieni premuto anche [[EQ_LATERAL]] per una piroetta al galoppo."/>
         <text name="eq_help_rein_title" text="Guida con il mouse"/>
         <text name="eq_help_rein_1" text="Tenendo premuto [[EQ_REIN]] la telecamera passa dietro al cavallo e puoi guidare con precisione con il mouse, fondamentale nel dressage e a volte nel salto ostacoli. Se tieni premuto anche [[EQ_LATERAL]], il mouse flette la testa del cavallo per i movimenti laterali."/>
         <text name="eq_help_courseEdit_title" text="Modifica percorso"/>

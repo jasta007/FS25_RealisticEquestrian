@@ -1644,6 +1644,8 @@ local function pathEventText(event)
         local gaitName = g_i18n:getText("eq_dressage_gait_" .. event.gait)
         if event.style == "piaffe" then return string.format(g_i18n:getText("eq_dressage_piaffeAt"), gaitName, event.letter or "X") end
         local key = (event.turn or 1) > 0 and "eq_dressage_pirouetteLeftAt" or "eq_dressage_pirouetteRightAt"
+        -- A canter pirouette is Ctrl + Shift + A/D.
+        if event.gait == "canter" then key = key:gsub("At$", "ShiftAt") end
         return string.format(g_i18n:getText(key), gaitName, event.letter or "X")
     end
     local gait = g_i18n:getText("eq_dressage_gait_" .. event.gait)
@@ -1734,18 +1736,22 @@ function EqTrainingHooks.lateralNow(vehicle, spec)
             if out <= -EqTrainingHooks.RAIL_ANGLE then rail = "in" elseif out >= EqTrainingHooks.RAIL_ANGLE then rail = "out" end
         end
     end
+    -- The turn asked on the spot as EqLateral read it (the base game clears axisSteer before the
+    -- draw, so a turn read from it showed "Collected").
     local key = EqLateral.movementName({ gait = gait, spot = spot, passage = spot and spec.eqPassage == true,
-        turning = math.abs(spec.inputValues ~= nil and spec.inputValues.axisSteer or 0) > 0.1, side = side, bend = EqLateral.bend, rail = rail })
+        turning = (spec.eqSpotTurn or 0) ~= 0, pirouette = spec.eqSpotMode == "pirouette", side = side, bend = EqLateral.bend, rail = rail })
     return key
 end
 
 
 local function nowDoing(vehicle, spec)
     local key = EqTrainingHooks.lateralNow(vehicle, spec)
+    local run = EqDressageHooks.testOn ~= nil and EqDressageHooks.testOn() or nil
+    if key == nil and EqLateral ~= nil and EqLateral.vehicle == vehicle
+        and EqLateral.trotVolte(spec, (EqLateral.gaitName(spec)), run ~= nil) then key = "volte" end
     if key == nil then return nil end
     -- What a test asks for now, if anything.
     local color = COLOR.white
-    local run = EqDressageHooks.testOn ~= nil and EqDressageHooks.testOn() or nil
     if run ~= nil then
         local asked = nil
         local sec, inside = EqDressagePath.section(run)
@@ -1807,7 +1813,10 @@ local function pathRows(rows, routine)
         local event = run.spot.event
         local gaitName = g_i18n:getText("eq_dressage_gait_" .. event.gait)
         local key = "eq_dressage_piaffe"
-        if event.style == "pirouette" then key = (event.turn or 1) > 0 and "eq_dressage_pirouetteLeft" or "eq_dressage_pirouetteRight" end
+        if event.style == "pirouette" then
+            key = (event.turn or 1) > 0 and "eq_dressage_pirouetteLeft" or "eq_dressage_pirouetteRight"
+            if event.gait == "canter" then key = key .. "Shift" end
+        end
         local text = string.format(g_i18n:getText(key), gaitName)
         EqTrainingHud.drawPrompt(text, 1 - EqDressagePath.spotShare(run.spot), color)
     elseif run.hold ~= nil then
