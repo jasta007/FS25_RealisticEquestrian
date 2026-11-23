@@ -21,6 +21,7 @@ source(modDirectory .. "scripts/core/EqRLRM.lua")
 source(modDirectory .. "scripts/core/EqBase.lua")
 source(modDirectory .. "scripts/core/EqMessages.lua")
 source(modDirectory .. "scripts/core/EqConstants.lua")
+source(modDirectory .. "scripts/core/EqAge.lua")
 source(modDirectory .. "scripts/core/EqSettings.lua")
 source(modDirectory .. "scripts/core/EqRandom.lua")
 source(modDirectory .. "scripts/core/EqStats.lua")
@@ -272,6 +273,10 @@ function EqMain.activate()
 
     if EqMain.isActive and EqRLRM.features.menuLayout then
         guarded("menu layout hooks", function() EqInfoDisplay.installMenu(guarded) end)
+    end
+
+    if EqMain.isActive then
+        guarded("horse age hooks", function() EqAge.install(guarded) end)
     end
 
     if EqMain.isActive and not EqMain.withoutRLRM then

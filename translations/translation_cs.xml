@@ -596,7 +596,6 @@
         <text name="eq_ui_col_success" text="胜算"/>
         <text name="eq_ui_col_training" text="训练"/>
         <text name="eq_ui_trainingBenefit" text="训练收益"/>
-        <text name="eq_ui_ageLong" text="%d个月"/>
         <text name="eq_success_favourite" text="热门"/>
         <text name="eq_success_contender" text="有力竞争者"/>
         <text name="eq_success_outsider" text="冷门"/>
@@ -612,6 +611,13 @@
         <text name="eq_ui_canEnter" text="%d匹可报名"/>
         <text name="eq_ui_noneEligible" text="无符合条件的马"/>
         <text name="eq_ui_ageMonths" text="%d个月"/>
+        <text name="eq_age_year" text="%d岁"/>
+        <text name="eq_age_years" text="%d岁"/>
+        <text name="eq_age_yearsFew" text="%d岁"/>
+        <text name="eq_age_join" text="%s%s"/>
+        <text name="eq_age_short" text="%d岁%d个月"/>
+        <text name="eq_age_shortYears" text="%d岁"/>
+        <text name="eq_ui_ages_rangeYears" text="%d-%d岁"/>
         <text name="eq_ui_day" text="第%d天"/>
         <text name="eq_ui_status_ok" text="可报名"/>
         <text name="eq_ui_status_lowHealth" text="健康低：%d%%退赛"/>
@@ -661,8 +667,8 @@
         <text name="eq_ui_noHorses" text="你没有马。"/>
         <text name="eq_ui_clientNote" text="比赛由主机运行。从多人游戏客户端报名将在以后的版本中提供。"/>
         <text name="eq_ui_noConfig" text="无法加载赛事列表；请查看日志。"/>
-        <text name="eq_ui_ages_range" text="%d-%d个月"/>
-        <text name="eq_ui_ages_from" text="%d个月起"/>
+        <text name="eq_ui_ages_range" text="%s至%s"/>
+        <text name="eq_ui_ages_from" text="%s起"/>
         <text name="eq_ui_summary_event" text="%s：%s，评分%.0f-%.0f，%d匹参赛。选择一匹马并按Enter。"/>
         <text name="eq_enter_noEvent" text="该赛事不接受报名。"/>
         <text name="eq_enter_retired" text="这匹马已退出比赛。"/>
@@ -670,8 +676,8 @@
         <text name="eq_enter_foaled" text="这匹母马仍在产后恢复中。产驹三个月后可以参赛。"/>
         <text name="eq_enter_already" text="这匹马已报名%s。"/>
         <text name="eq_enter_eventFull" text="一场赛事最多可报名%d匹马。"/>
-        <text name="eq_enter_tooYoung" text="太年轻：该赛事面向%d个月及以上的马，你的马%d个月。"/>
-        <text name="eq_enter_tooOld" text="太老：该赛事面向%d个月以下的马，你的马%d个月。"/>
+        <text name="eq_enter_tooYoung" text="太年轻：该赛事面向%s及以上的马，你的马%s。"/>
+        <text name="eq_enter_tooOld" text="太老：该赛事面向%s以下的马，你的马%s。"/>
         <text name="eq_enter_ratingLow" text="评分%.0f低于该赛事的%.0f-%.0f范围。"/>
         <text name="eq_enter_ratingHigh" text="评分%.0f高于该赛事的%.0f-%.0f范围：请报名更高级别。"/>
         <text name="eq_enter_noMoney" text="资金不足：报名需要%s（报名费%s，运输费%s）。"/>
@@ -1224,7 +1230,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s正在隔离，回家前不能骑乘。"/>
         <text name="eq_ride_blocked_away" text="%s外出参赛，不能骑乘。"/>
         <text name="eq_ride_blocked_injured" text="%s受伤了，痊愈前不能骑乘。"/>
-        <text name="eq_ride_blocked_tooYoung" text="%s还太小，不能骑乘。马满%d个月后才能骑乘。"/>
+        <text name="eq_ride_blocked_tooYoung" text="%s还太小，不能骑乘。马满%s后才能骑乘。"/>
         <text name="eq_loose_sentHome_quarantine" text="%s正在隔离，已被带回%s。"/>
         <text name="eq_loose_sentHome_away" text="%s外出参赛，已被带回%s。"/>
         <text name="eq_loose_sentHome_injured" text="%s受伤了，已被带回%s休息。"/>

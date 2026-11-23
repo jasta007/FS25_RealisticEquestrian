@@ -112,11 +112,10 @@ end
 
 
 --- @param months number
---- @return string such as "4 years 2 months"
-function EqHorsesFrame.ageText(months)
-    months = math.max(math.floor(months or 0), 0)
-    if g_i18n.formatNumMonth ~= nil then return g_i18n:formatNumMonth(months) end
-    return tostring(months)
+--- @param short boolean|nil true for the list cell ("3y 4m")
+--- @return string such as "3 years, 4 months"
+function EqHorsesFrame.ageText(months, short)
+    return short and EqAge.short(months) or EqAge.long(months)
 end
 
 
@@ -326,7 +325,7 @@ function EqHorsesFrame:populateCellForItemInSection(_list, _section, index, cell
     local texts = {
         name = row.name,
         role = EqRole.text(EqRole.shown(record)),
-        age = EqHorsesFrame.ageText(row.animal.age),
+        age = EqHorsesFrame.ageText(row.animal.age, true),
         status = status,
     }
     for _, name in ipairs(EqHorsesFrame.CELLS) do

@@ -596,7 +596,6 @@
         <text name="eq_ui_col_success" text="Szanse"/>
         <text name="eq_ui_col_training" text="Trening"/>
         <text name="eq_ui_trainingBenefit" text="Korzyść treningowa"/>
-        <text name="eq_ui_ageLong" text="%d mies."/>
         <text name="eq_success_favourite" text="Faworyt"/>
         <text name="eq_success_contender" text="Pretendent"/>
         <text name="eq_success_outsider" text="Outsider"/>
@@ -612,6 +611,13 @@
         <text name="eq_ui_canEnter" text="Mogą startować: %d"/>
         <text name="eq_ui_noneEligible" text="Brak uprawnionych"/>
         <text name="eq_ui_ageMonths" text="%d mies."/>
+        <text name="eq_age_year" text="%d rok"/>
+        <text name="eq_age_years" text="%d lat"/>
+        <text name="eq_age_yearsFew" text="%d lata"/>
+        <text name="eq_age_join" text="%s, %s"/>
+        <text name="eq_age_short" text="%d l. %d mies."/>
+        <text name="eq_age_shortYears" text="%d l."/>
+        <text name="eq_ui_ages_rangeYears" text="wiek %d-%d lat"/>
         <text name="eq_ui_day" text="Dzień %d"/>
         <text name="eq_ui_status_ok" text="Może startować"/>
         <text name="eq_ui_status_lowHealth" text="Słabe zdrowie: %d%% wycofania"/>
@@ -661,8 +667,8 @@
         <text name="eq_ui_noHorses" text="Nie masz koni."/>
         <text name="eq_ui_clientNote" text="Zawody prowadzi gospodarz. Zgłaszanie z klienta w trybie wieloosobowym pojawi się w przyszłej wersji."/>
         <text name="eq_ui_noConfig" text="Nie udało się wczytać listy zawodów; zobacz log."/>
-        <text name="eq_ui_ages_range" text="wiek %d-%d mies."/>
-        <text name="eq_ui_ages_from" text="od %d mies."/>
+        <text name="eq_ui_ages_range" text="wiek od %s do %s"/>
+        <text name="eq_ui_ages_from" text="od %s"/>
         <text name="eq_ui_summary_event" text="%s: %s, ocena %.0f-%.0f, uczestników: %d. Wybierz konia i naciśnij Enter."/>
         <text name="eq_enter_noEvent" text="Te zawody nie przyjmują zgłoszeń."/>
         <text name="eq_enter_retired" text="Ten koń zakończył karierę sportową."/>
@@ -670,8 +676,8 @@
         <text name="eq_enter_foaled" text="Ta klacz wciąż dochodzi do siebie po wyźrebieniu. Może startować trzy miesiące po porodzie."/>
         <text name="eq_enter_already" text="Ten koń jest już zgłoszony: %s."/>
         <text name="eq_enter_eventFull" text="Na jedne zawody możesz zgłosić najwyżej %d koni."/>
-        <text name="eq_enter_tooYoung" text="Za młody: te zawody są dla koni od %d miesięcy, a twój ma %d miesięcy."/>
-        <text name="eq_enter_tooOld" text="Za stary: te zawody są dla koni do %d miesięcy, a twój ma %d miesięcy."/>
+        <text name="eq_enter_tooYoung" text="Za młody: te zawody są dla koni od %s, a twój ma %s."/>
+        <text name="eq_enter_tooOld" text="Za stary: te zawody są dla koni do %s, a twój ma %s."/>
         <text name="eq_enter_ratingLow" text="Ocena %.0f jest poniżej zakresu %.0f-%.0f tych zawodów."/>
         <text name="eq_enter_ratingHigh" text="Ocena %.0f jest powyżej zakresu %.0f-%.0f tych zawodów: zgłoś się na wyższy poziom."/>
         <text name="eq_enter_noMoney" text="Za mało pieniędzy: zgłoszenie kosztuje %s (wpisowe %s, transport %s)."/>
@@ -1224,7 +1230,7 @@
         <text name="eq_ride_blocked_quarantine" text="Koń %s jest na kwarantannie i nie można na nim jeździć, dopóki nie wróci do domu."/>
         <text name="eq_ride_blocked_away" text="Koń %s jest na zawodach i nie można na nim jeździć."/>
         <text name="eq_ride_blocked_injured" text="Koń %s jest kontuzjowany i nie można na nim jeździć, dopóki się nie wyleczy."/>
-        <text name="eq_ride_blocked_tooYoung" text="Koń %s jest za młody, aby na nim jeździć. Na koniach można jeździć od %d. miesiąca życia."/>
+        <text name="eq_ride_blocked_tooYoung" text="Koń %s jest za młody, aby na nim jeździć. Na koniach można jeździć w wieku od %s."/>
         <text name="eq_loose_sentHome_quarantine" text="Koń %s jest na kwarantannie, więc wrócił do: %s."/>
         <text name="eq_loose_sentHome_away" text="Koń %s jest na zawodach, więc wrócił do: %s."/>
         <text name="eq_loose_sentHome_injured" text="Koń %s jest kontuzjowany, więc wrócił do: %s, aby odpocząć."/>

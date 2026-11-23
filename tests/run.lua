@@ -10,6 +10,7 @@ assert(rlrmPath, "usage: luajit tests/run.lua <path to FS25_RealisticLivestockRM
 
 dofile(rlrmPath .. "/scripts/animal/BreedingMath.lua")
 dofile("scripts/core/EqConstants.lua")
+dofile("scripts/core/EqAge.lua")
 dofile("scripts/core/EqSettings.lua")
 dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
@@ -7029,6 +7030,53 @@ end)()
     check("base: plain breeding centres on the parents", math.abs(total / n - 1.3) < 0.05)
     check("base: plain breeding is the same on every machine",
         EqRegistry.plainBreeder(EqRandom.new("x"))(1, 1, {}) == EqRegistry.plainBreeder(EqRandom.new("x"))(1, 1, {}))
+-- Horse ages read as years and months (James, 2026-11-22), in each language's own words.
+;(function()
+    local savedI18n = g_i18n
+    local function load(lang)
+        local texts = {}
+        local xml = io.open("translations/translation_" .. lang .. ".xml"):read("*a")
+        for name, text in xml:gmatch('<text name="([^"]+)" text="([^"]*)"/>') do
+            texts[name] = text:gsub("&quot;", '"'):gsub("&apos;", "'"):gsub("&amp;", "&")
+        end
+        g_i18n = { getText = function(_, key) return texts[key] or ("Missing " .. key) end }
+    end
+    load("en")
+    check("age: months under a year", EqAge.long(8) == "8 months" and EqAge.long(1) == "1 month" and EqAge.long(0) == "0 months")
+    check("age: years and months", EqAge.long(40) == "3 years, 4 months", EqAge.long(40))
+    check("age: one year, one month", EqAge.long(13) == "1 year, 1 month", EqAge.long(13))
+    check("age: a birthday is years only", EqAge.long(36) == "3 years" and EqAge.long(12) == "1 year")
+    check("age: short forms", EqAge.short(40) == "3y 4m" and EqAge.short(36) == "3y" and EqAge.short(8) == "8m",
+        EqAge.short(40) .. " / " .. EqAge.short(36) .. " / " .. EqAge.short(8))
+    check("age: fractions and nil round down to whole months", EqAge.long(40.9) == "3 years, 4 months" and EqAge.long(nil) == "0 months")
+    check("age: whole-year event range", EqAge.range(24, 35) == "ages 2 to 3 years", EqAge.range(24, 35))
+    check("age: open-ended event range", EqAge.range(36, 0) == "from 3 years", EqAge.range(36, 0))
+    check("age: uneven event range", EqAge.range(18, 30) == "ages 1 year, 6 months to 2 years, 6 months", EqAge.range(18, 30))
+    check("age: few form for 2-4 years", EqAge.yearsKey(2) == "eq_age_yearsFew" and EqAge.yearsKey(4) == "eq_age_yearsFew"
+        and EqAge.yearsKey(5) == "eq_age_years" and EqAge.yearsKey(12) == "eq_age_years" and EqAge.yearsKey(22) == "eq_age_yearsFew"
+        and EqAge.yearsKey(1) == "eq_age_year")
+    load("pl")
+    check("age: Polish years", EqAge.long(24) == "2 lata" and EqAge.long(60) == "5 lat", EqAge.long(24) .. " / " .. EqAge.long(60))
+    load("de")
+    check("age: German", EqAge.long(40) == "3 Jahre, 4 Monate" and EqAge.short(40) == "3 J. 4 M.", EqAge.long(40))
+    for _, lang in ipairs({ "en", "de", "fr", "es", "br", "pt", "ru", "pl", "it", "nl", "cz", "jp", "cs", "ct", "uk" }) do
+        load(lang)
+        local all = EqAge.long(40) .. EqAge.long(26) .. EqAge.long(1) .. EqAge.short(40) .. EqAge.short(5) .. EqAge.short(24)
+            .. EqAge.range(24, 35) .. EqAge.range(36, 0) .. EqAge.range(18, 30)
+        check("age: " .. lang .. " texts all resolve", not all:find("Missing") and not all:find("%%"), all)
+    end
+
+    local horseAnimal = { age = 40, isHorse = function() return true end }
+    local cow = { age = 40, isHorse = function() return false end }
+    load("en")
+    g_i18n.getText = (function(get) return function(self, key) if key == "ui_age" then return "Age" end return get(self, key) end end)(g_i18n.getText)
+    local rows = { { title = "Age", valueText = "40 months" }, { title = "Health", valueText = "90%" } }
+    EqAge.relabelRows(rows, horseAnimal, "valueText")
+    check("age: a horse's Age row is rewritten", rows[1].valueText == "3 years, 4 months" and rows[2].valueText == "90%")
+    local cowRows = { { title = "Age", value = "40 months" } }
+    EqAge.relabelRows(cowRows, cow, "value")
+    check("age: other animals keep months", cowRows[1].value == "40 months")
+    g_i18n = savedI18n
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))
