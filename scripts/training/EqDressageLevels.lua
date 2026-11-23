@@ -54,7 +54,7 @@ EqDressageLevels.LEVELS = {
         spots = {},
     },
     advanced = {
-        voltes = { walk = 8, trot = 8, canter = 9 },
+        voltes = { walk = 8, trot = 9, canter = 9 },
         arenas = { false, true, true }, figures = 9, reinBack = true,
         adds = { "halfPassCentre/canter" },
         spots = { "canterPirouette" },
@@ -65,13 +65,13 @@ EqDressageLevels.LEVELS = {
         adds = {}, spots = {},
     },
     intermediate = {
-        voltes = { walk = 8, trot = 8, canter = 7 },
+        voltes = { walk = 8, trot = 7, canter = 7 },
         arenas = { false, false, true }, figures = 11, reinBack = true, lateralWeight = 2, plainWeight = 0.6, spotTrack = 20,
         adds = { "passageRail/trot" },
         spots = { "piaffe" },
     },
     grandPrix = {
-        voltes = { walk = 8, trot = 8, canter = 6 },
+        voltes = { walk = 8, trot = 6, canter = 6 },
         arenas = { false, false, true }, figures = 12, reinBack = true, lateralWeight = 2, plainWeight = 0.5, spotTrack = 25,
         adds = { "passageDiagonal/trot" },
         spots = {},

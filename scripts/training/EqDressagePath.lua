@@ -45,7 +45,7 @@ EqDressagePath.VOLTES = { walk = { 4 }, trot = { 5, 7.5 }, canter = { 7.5 } }
 -- Tighter voltes only a level's test asks for, sized by its level (EqDressageLevels voltes,
 -- James 2026-11-23: a 6 m canter volte at Grand Prix, ridden with Ctrl + A/D; "if you can't
 -- ride that... that's tough"). Radii; built after the ones above so saved figure ids hold.
-EqDressagePath.LEVEL_VOLTES = { walk = {}, trot = { 4 }, canter = { 3, 3.5, 4, 4.5, 5 } }
+EqDressagePath.LEVEL_VOLTES = { walk = {}, trot = { 3, 3.5, 4, 4.5 }, canter = { 3, 3.5, 4, 4.5, 5 } }
 -- The tightest turn a figure may ask for at each gait (radius; at most half the track's width).
 -- The base game turns a ridden horse on about 3.5 m (log, 2026-10-27), but a canter needs room.
 EqDressagePath.MIN_RADIUS = { walk = 3.5, trot = 4, canter = 7 }
