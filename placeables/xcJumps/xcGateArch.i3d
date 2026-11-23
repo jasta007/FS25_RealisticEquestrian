@@ -47,10 +47,10 @@
     <TransformGroup name="xcGateArch" nodeId="21">
       <Shape name="frame" shapeId="1" clipDistance="600" nodeId="22" castsShadows="true" receiveShadows="true" materialIds="5"/>
       <Shape name="eqPaint" shapeId="2" clipDistance="600" nodeId="23" castsShadows="true" receiveShadows="true" materialIds="6"/>
-      <Shape name="eqSponsor_2" shapeId="3" clipDistance="600" nodeId="24" castsShadows="false" receiveShadows="true" materialIds="8"/>
-      <Shape name="eqSponsor_2b" shapeId="4" clipDistance="600" nodeId="25" castsShadows="false" receiveShadows="true" materialIds="8"/>
-      <Shape name="eqSponsor_3" shapeId="5" clipDistance="600" nodeId="26" castsShadows="false" receiveShadows="true" materialIds="8"/>
-      <Shape name="eqSponsor_3b" shapeId="6" clipDistance="600" nodeId="27" castsShadows="false" receiveShadows="true" materialIds="8"/>
+      <Shape name="eqSponsor_2" translation="0.87046 0.58031 0.063582" scale="0.74769 0.74769 0.74769" shapeId="3" clipDistance="600" nodeId="24" castsShadows="false" receiveShadows="true" materialIds="8"/>
+      <Shape name="eqSponsor_2b" translation="0.87046 0.58031 -0.063582" scale="0.74769 0.74769 0.74769" shapeId="4" clipDistance="600" nodeId="25" castsShadows="false" receiveShadows="true" materialIds="8"/>
+      <Shape name="eqSponsor_3" translation="-0.87046 0.58031 0.063582" scale="0.74769 0.74769 0.74769" shapeId="5" clipDistance="600" nodeId="26" castsShadows="false" receiveShadows="true" materialIds="8"/>
+      <Shape name="eqSponsor_3b" translation="-0.87046 0.58031 -0.063582" scale="0.74769 0.74769 0.74769" shapeId="6" clipDistance="600" nodeId="27" castsShadows="false" receiveShadows="true" materialIds="8"/>
       <Shape name="eqSponsor_1" shapeId="7" clipDistance="600" nodeId="28" castsShadows="false" receiveShadows="true" materialIds="8"/>
       <Shape name="eqSponsor_1b" shapeId="8" clipDistance="600" nodeId="29" castsShadows="false" receiveShadows="true" materialIds="8"/>
       <TransformGroup name="collision" nodeId="30">
