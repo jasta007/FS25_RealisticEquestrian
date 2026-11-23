@@ -320,7 +320,8 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   counts as having stopped (then as moving during the halt).
 - **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or
   canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back; on a
-  diagonal, a half pass from a side letter to the centre line and on up it to C, and a leg yield
+  diagonal, a half pass from a side letter to the centre line and on up it to C (at a canter it
+  swings out and turns onto the track in one 7 m half circle, not two tight quarters), and a leg yield
   off the centre line from A to a side letter (James, 2026-10-31: none went across the arena);
   shoulder-in, renvers, travers and leg yield along the rail (walk or trot) over one or two
   letter gaps (10 to 26 m).

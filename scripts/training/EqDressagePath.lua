@@ -39,6 +39,10 @@ EqDressagePath.CORNER_SMALL = { walk = 3.5, trot = 3.5, canter = 7 }
 EqDressagePath.MARKER_GAP = 0.6
 -- Turns down the centre line (radius), and how wide a "20 m" circle may be (radius).
 EqDressagePath.CENTRE_TURN = 4
+-- A canter half pass to the centre line turns onto the track in a teardrop: off the centre
+-- line `before` metres ahead of the turn (an S eased with corners of `ease`), then one half
+-- circle of `radius` onto the track.
+EqDressagePath.CENTRE_CANTER = { before = 10, radius = 7, ease = 10 }
 EqDressagePath.BIG_CIRCLE = 10
 -- Circles at the side letters by gait (radius): 8 m at a walk, 10 or 15 m at a trot, 15 m at a canter.
 EqDressagePath.VOLTES = { walk = { 4 }, trot = { 5, 7.5 }, canter = { 7.5 } }
@@ -901,15 +905,32 @@ local function lateralCentre(g, gait, key)
     local run = g.wt / EqDressagePath.DRIFT
     if key == "halfPassCentre" then
         if gait == "walk" or gait == "canter" and g.wt < 8 then return {} end
+        -- At a canter the end of the centre line is too narrow to turn onto the track in two
+        -- quarter circles (James, 2026-11-23: about 4 m, "incredibly hard"): it swings out the
+        -- other way first and comes round in one wide teardrop (CENTRE_CANTER).
+        local cc = gait == "canter" and EqDressagePath.CENTRE_CANTER or nil
+        local need = cc ~= nil and cc.before + cc.radius or a
         for _, y in ipairs(g.sides) do
-            if y >= -g.straight[gait] - 1 and y + 2 + run + 3 <= g.lt - a then
+            if y >= -g.straight[gait] - 1 and y + 2 + run + 3 <= g.lt - need then
                 for _, turn in ipairs({ 1, -1 }) do
                     local pen = newPen(g.wt, y, 0, 1)
                     forward(pen, 2)
                     local from = #pen.pts
                     lineTo(pen, 0, pen.y + run)
                     local to = #pen.pts
-                    rounded(pen, { { x = 0, y = g.lt }, { x = -turn * g.wt, y = g.lt }, { x = -turn * g.wt, y = g.lt - a - 1 } }, a)
+                    if cc ~= nil then
+                        -- One half circle of cc.radius touching the short side and the far long
+                        -- side; an easy S out to it first.
+                        local r = math.min(cc.radius, g.wt)
+                        local out = turn * (2 * r - g.wt)
+                        local y1 = g.lt - r - cc.before
+                        rounded(pen, { { x = 0, y = y1 }, { x = out, y = y1 + cc.before * 0.6 }, { x = out, y = g.lt - r } }, cc.ease)
+                        pen.hx, pen.hy = 0, 1
+                        arc(pen, r, turn * math.pi)
+                        forward(pen, 1)
+                    else
+                        rounded(pen, { { x = 0, y = g.lt }, { x = -turn * g.wt, y = g.lt }, { x = -turn * g.wt, y = g.lt - a - 1 } }, a)
+                    end
                     table.insert(list, { key = key, pts = pen.pts, labels = { { g.wt, y }, { 0, g.lt } }, marks = {}, lateral = true,
                         sections = { { from = from, to = to, hx = 0, hy = 1, bend = -1, drift = -1, kind = "halfPass" } } })
                 end
@@ -2165,7 +2186,11 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
                         - math.min(EqDressagePath.SPOT_WRONG_MAX, before / 1000 * EqDressagePath.SPOT_WRONG_PER_S)
                     if pen > 0 then addPen(run, next.m, pen) end
                 end
-                if look ~= nil and look.spot and EqDressagePath.matches(move, next.gait) then
+                -- A canter volte (Ctrl while turning) is not the pirouette coming up: it doesn't
+                -- start it (James, 2026-11-23: a volte near the letter cost the pirouette).
+                local starting = look ~= nil and look.spot and EqDressagePath.matches(move, next.gait)
+                if starting and next.style == "pirouette" and look.pirouette == false then starting = false end
+                if starting then
                     local hx, hy = pts[run.i].x, pts[run.i].y
                     for k = run.i, #pts do
                         if pts[k].s >= next.s then

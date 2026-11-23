@@ -4908,6 +4908,28 @@ end)()
                     check(string.format("levels: %s set test builds in arena %d", name, n), set.broken == nil and set.steps == #plan.steps
                         and #set.moves == #plan.steps + 3 and set.length == again.length,
                         string.format("broken at %s of %d", tostring(set.broken), #plan.steps))
+                    -- A canter half pass to the centre line turns onto the track no tighter than a
+                    -- canter's corners (James, 2026-11-23: about 4 m was "incredibly hard").
+                    local tight = nil
+                    for _, sec in ipairs(set.sections) do
+                        local move = set.moves[sec.m] or {}
+                        if move.key == "halfPassCentre" and move.gait == "canter" then
+                            local pts = set.pts
+                            for i = 4, #pts - 3 do
+                                local a, b, c = pts[i - 3], pts[i], pts[i + 3]
+                                if b.s > sec.s1 + 2 and b.s < sec.s1 + 40 then
+                                    local ab = math.sqrt((b.x - a.x) ^ 2 + (b.y - a.y) ^ 2)
+                                    local bc = math.sqrt((c.x - b.x) ^ 2 + (c.y - b.y) ^ 2)
+                                    local ac = math.sqrt((c.x - a.x) ^ 2 + (c.y - a.y) ^ 2)
+                                    local cross = math.abs((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x))
+                                    local r = cross > 1e-6 and ab * bc * ac / (2 * cross) or 1e9
+                                    if r < EqDressagePath.MIN_RADIUS.canter - 0.2 and (tight == nil or r < tight) then tight = r end
+                                end
+                            end
+                        end
+                    end
+                    check(string.format("levels: %s canter half passes in arena %d turn onto the track wide enough", name, n), tight == nil,
+                        string.format("%.1f m", tight or 0))
                     local run, event = ride(set, frame, 0, 0)
                     check(string.format("levels: a rider on the line finishes the %s set test in arena %d", name, n), event == "test" and run.percent >= 70,
                         string.format("%s %s%%", event, tostring(run.percent)))
