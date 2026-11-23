@@ -524,6 +524,7 @@ local function before(vehicle, dt)
     if spec == nil or spec.inputValues == nil then return end
     local entered = vehicle.getIsEntered ~= nil and vehicle:getIsEntered()
     local side, spot = 0, false
+    local mouseTurn = 0
     if entered then
         EqLateral.vehicle = vehicle
         local held, shift = rightHeld(), shiftHeld()
@@ -538,7 +539,11 @@ local function before(vehicle, dt)
         if not spot then
             side = EqLateral.side(shift or held, left, right, gaitOk(spec))
         end
-        EqLateral.steering = held and not shift and not spot
+        -- Mouse steering works collected too (James, 2026-11-23): a lighter turn, a wider volte.
+        EqLateral.steering = held and not shift
+        if held and not shift and spot then
+            mouseTurn = EqLateral.curve(EqLateral.deadZone(EqLateral.steer))
+        end
         if held and not spot then
             spec.inputValues.axisSteer = shift and 0 or EqLateral.curve(EqLateral.deadZone(EqLateral.steer))
         elseif side ~= 0 or (shift and gaitOk(spec)) then
@@ -560,6 +565,7 @@ local function before(vehicle, dt)
     if spot then
         local left, right = EqRidingInput.steerSides()
         turn = EqLateral.spotSteer(left, right, gait)
+        if turn == 0 and mouseTurn ~= 0 then turn = mouseTurn * (EqLateral.SPOT_TURN[gait or ""] or 0) end
         mode = EqLateral.spotMode(gait, turn ~= 0, entered and shiftHeld(), passage ~= nil)
         if spec.eqTemperFor ~= spec.cluster then
             local record = spec.cluster ~= nil and EqRegistry ~= nil and EqRegistry.getOrCreate(spec.cluster) or nil
@@ -572,7 +578,9 @@ local function before(vehicle, dt)
     local diameter = EqLateral.volteDiameter(spec.eqTemper)
     local share = mode == "volte" and EqLateral.volteShare(gait, tops) or nil
     if share ~= nil and type(spec.currentTurnSpeed) == "number" then
-        target = EqLateral.volteKeep(spec.currentTurnSpeed, math.abs(spec.currentSpeed or 0), diameter, share, creep)
+        -- Part lock (the mouse) rides a wider circle at the same pace.
+        local wide = diameter / math.max(0.05, math.abs(turn))
+        target = EqLateral.volteKeep(spec.currentTurnSpeed, math.abs(spec.currentSpeed or 0), wide, share, creep)
     elseif mode == "pirouette" then
         -- Round the hind feet (EqLateral.pivot), not creeping forward.
         target = 0
