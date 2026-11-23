@@ -175,6 +175,7 @@
         <text name="eq_dressage_passageAt" text="Pasáž %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Piafa"/>
         <text name="eq_now_pirouette" text="Piruet"/>
+        <text name="eq_now_volte" text="Volta"/>
         <text name="eq_now_collected" text="Shromážděný"/>
         <text name="eq_now_collectedCanter" text="Shromážděný cval"/>
         <text name="eq_now_passage" text="Pasáž"/>
@@ -202,11 +203,11 @@
         <text name="eq_fig_final" text="Střední čára v %s, zastavení v %s"/>
         <text name="eq_dressage_haltAt" text="Zastavení v %s"/>
         <text name="eq_dressage_piaffeAt" text="Piafa (%s) u %s: držte Ctrl"/>
-        <text name="eq_dressage_pirouetteLeftAt" text="Piruet vlevo (%s) u %s: Ctrl + A"/>
-        <text name="eq_dressage_pirouetteRightAt" text="Piruet vpravo (%s) u %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Piruet vlevo (%s) u %s: Ctrl + Shift + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Piruet vpravo (%s) u %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Piafa (%s)! Držte Ctrl"/>
-        <text name="eq_dressage_pirouetteLeft" text="Piruet vlevo (%s)! Ctrl + A"/>
-        <text name="eq_dressage_pirouetteRight" text="Piruet vpravo (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteLeft" text="Piruet vlevo (%s)! Ctrl + Shift + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Piruet vpravo (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Zpět na čáru!"/>
         <text name="eq_dressage_mark" text="Poslední známka: %s"/>
         <text name="eq_pop_routineError" text="Chyba v úloze %d/%d"/>
@@ -1230,7 +1231,7 @@
         <text name="eq_help_lateral_title" text="Boční pohyby"/>
         <text name="eq_help_lateral_1" text="Boční pohyby patří k nejtěžším částem drezury a kombinují několik ovládání. Držte [[EQ_LATERAL]] a mačkejte A nebo D pro posun stranou v ustupování na holeň, a když držíte i [[EQ_REIN]], ohnete krk a plece koně do travers, renvers nebo převodu. V úloze ukazují ikony na trase, jak koně postavit."/>
         <text name="eq_help_collect_title" text="Shromáždění"/>
-        <text name="eq_help_collect_1" text="Shromáždění se používá hlavně v drezuře, k jízdě chodem bez jeho obvyklé rychlosti. Držte [[EQ_COLLECT]] v klusu pro piafu, klus na místě, a stiskněte i W pro pasáž, pomalý pérovaný klus. Shromážděte koně v kroku nebo cvalu a otáčejte A nebo D pro piruetu."/>
+        <text name="eq_help_collect_1" text="Shromáždění se používá hlavně v drezuře, k jízdě chodem bez jeho obvyklé rychlosti. Držte [[EQ_COLLECT]] v klusu pro piafu, klus na místě, a stiskněte i W pro pasáž, pomalý pérovaný klus. Shromážděte koně a otáčejte A nebo D pro voltu, malý kruh (tím menší, čím klidnější kůň), a v kroku nebo cvalu držte i [[EQ_LATERAL]] pro piruetu kolem zadních nohou."/>
         <text name="eq_help_rein_title" text="Řízení myší"/>
         <text name="eq_help_rein_1" text="Držením [[EQ_REIN]] se kamera přesune za koně a můžete jemně řídit myší, což je zásadní v drezuře a občas v parkuru. Když držíte i [[EQ_LATERAL]], myš ohýbá hlavu koně pro boční pohyby."/>
         <text name="eq_help_courseEdit_title" text="Úprava trati"/>

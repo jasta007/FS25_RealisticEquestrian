@@ -175,6 +175,7 @@
         <text name="eq_dressage_passageAt" text="Passage %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Piaffe"/>
         <text name="eq_now_pirouette" text="Pirouette"/>
+        <text name="eq_now_volte" text="Volte"/>
         <text name="eq_now_collected" text="Verzameld"/>
         <text name="eq_now_collectedCanter" text="Verzamelde galop"/>
         <text name="eq_now_passage" text="Passage"/>
@@ -202,11 +203,11 @@
         <text name="eq_fig_final" text="Middenlijn bij %s, halthouden bij %s"/>
         <text name="eq_dressage_haltAt" text="Halt bij %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) bij %s: Ctrl ingedrukt"/>
-        <text name="eq_dressage_pirouetteLeftAt" text="Linkspirouette (%s) bij %s: Ctrl + A"/>
-        <text name="eq_dressage_pirouetteRightAt" text="Rechtspirouette (%s) bij %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Linkspirouette (%s) bij %s: Ctrl + Shift + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Rechtspirouette (%s) bij %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Piaffe (%s)! Houd Ctrl ingedrukt"/>
-        <text name="eq_dressage_pirouetteLeft" text="Linkspirouette (%s)! Ctrl + A"/>
-        <text name="eq_dressage_pirouetteRight" text="Rechtspirouette (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteLeft" text="Linkspirouette (%s)! Ctrl + Shift + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Rechtspirouette (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Terug op de lijn!"/>
         <text name="eq_dressage_mark" text="Laatste cijfer: %s"/>
         <text name="eq_pop_routineError" text="Fout in de proef %d/%d"/>
@@ -1230,7 +1231,7 @@
         <text name="eq_help_lateral_title" text="Zijwaartse bewegingen"/>
         <text name="eq_help_lateral_1" text="Zijwaartse bewegingen horen bij het moeilijkste van dressuur en combineren meerdere bedieningen. Houd [[EQ_LATERAL]] ingedrukt en druk op A of D om zijwaarts te wijken in een wijken voor de kuit, en houd ook [[EQ_REIN]] ingedrukt om hals en schouders te buigen in travers, renvers of appuyement. In een proef laten de pictogrammen op de lijn zien hoe je je paard plaatst."/>
         <text name="eq_help_collect_title" text="Verzamelen"/>
-        <text name="eq_help_collect_1" text="Verzamelen gebruik je vooral bij dressuur, om een gang zonder zijn gewone snelheid te rijden. Houd [[EQ_COLLECT]] ingedrukt in draf voor een piaffe, draf op de plaats, en druk ook op W voor een passage, een langzame, verende draf. Verzamel in stap of galop en draai met A of D voor een pirouette."/>
+        <text name="eq_help_collect_1" text="Verzamelen gebruik je vooral bij dressuur, om een gang zonder zijn gewone snelheid te rijden. Houd [[EQ_COLLECT]] ingedrukt in draf voor een piaffe, draf op de plaats, en druk ook op W voor een passage, een langzame, verende draf. Verzamel en draai met A of D voor een volte, een kleine cirkel (kleiner naarmate het paard rustiger is), en houd in stap of galop ook [[EQ_LATERAL]] ingedrukt voor een pirouette om de achterbenen."/>
         <text name="eq_help_rein_title" text="Muissturing"/>
         <text name="eq_help_rein_1" text="Met [[EQ_REIN]] ingedrukt zwaait de camera achter je paard en stuur je nauwkeurig met de muis, onmisbaar bij dressuur en soms bij springen. Houd je ook [[EQ_LATERAL]] ingedrukt, dan buigt de muis het hoofd van je paard voor zijwaartse bewegingen."/>
         <text name="eq_help_courseEdit_title" text="Parcours bewerken"/>

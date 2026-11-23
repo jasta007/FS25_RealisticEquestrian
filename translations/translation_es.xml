@@ -85,6 +85,7 @@
         <text name="eq_dressage_passageAt" text="Passage %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Piaffe"/>
         <text name="eq_now_pirouette" text="Pirueta"/>
+        <text name="eq_now_volte" text="Vuelta"/>
         <text name="eq_now_collected" text="Reunido"/>
         <text name="eq_now_collectedCanter" text="Galope reunido"/>
         <text name="eq_now_passage" text="Passage"/>
@@ -112,11 +113,11 @@
         <text name="eq_fig_final" text="Línea central en %s, parada en %s"/>
         <text name="eq_dressage_haltAt" text="Parada en %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) en %s: mantén Ctrl"/>
-        <text name="eq_dressage_pirouetteLeftAt" text="Pirueta a la izquierda (%s) en %s: Ctrl + A"/>
-        <text name="eq_dressage_pirouetteRightAt" text="Pirueta a la derecha (%s) en %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Pirueta a la izquierda (%s) en %s: Ctrl + Shift + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Pirueta a la derecha (%s) en %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="¡Piaffe (%s)! Mantén Ctrl"/>
-        <text name="eq_dressage_pirouetteLeft" text="¡Pirueta a la izquierda (%s)! Ctrl + A"/>
-        <text name="eq_dressage_pirouetteRight" text="¡Pirueta a la derecha (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteLeft" text="¡Pirueta a la izquierda (%s)! Ctrl + Shift + A"/>
+        <text name="eq_dressage_pirouetteRight" text="¡Pirueta a la derecha (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="¡Vuelve a la línea!"/>
         <text name="eq_dressage_mark" text="Última nota: %s"/>
         <text name="eq_pop_routineError" text="Error de recorrido %d/%d"/>
@@ -1232,7 +1233,7 @@
         <text name="eq_help_lateral_title" text="Movimientos laterales"/>
         <text name="eq_help_lateral_1" text="Los movimientos laterales están entre lo más difícil de la doma y combinan varios controles. Mantén [[EQ_LATERAL]] y pulsa A o D para desplazarte de lado en una cesión a la pierna, y mantén también [[EQ_REIN]] para doblar el cuello y los hombros en un travers, renvers o apoyo. En una reprise, los iconos del recorrido muestran cómo colocar a tu caballo."/>
         <text name="eq_help_collect_title" text="Reunir"/>
-        <text name="eq_help_collect_1" text="Reunir se usa sobre todo en doma, para montar un aire sin su velocidad habitual. Mantén [[EQ_COLLECT]] al trote para un piaffe, un trote en el sitio, y pulsa también W para un passage, un trote lento y cadencioso. Reúne al paso o al galope y gira con A o D para una pirueta."/>
+        <text name="eq_help_collect_1" text="Reunir se usa sobre todo en doma, para montar un aire sin su velocidad habitual. Mantén [[EQ_COLLECT]] al trote para un piaffe, un trote en el sitio, y pulsa también W para un passage, un trote lento y cadencioso. Reúne y gira con A o D para una vuelta, un círculo pequeño (más pequeño cuanto más tranquilo el caballo), y mantén también [[EQ_LATERAL]] al paso o al galope para una pirueta sobre los posteriores."/>
         <text name="eq_help_rein_title" text="Dirección con ratón"/>
         <text name="eq_help_rein_1" text="Mantener [[EQ_REIN]] coloca la cámara detrás de tu caballo y te deja dirigir con precisión con el ratón, algo vital en doma y a veces en salto. Si mantienes también [[EQ_LATERAL]], el ratón dobla la cabeza de tu caballo para los movimientos laterales."/>
         <text name="eq_help_courseEdit_title" text="Edición de recorridos"/>

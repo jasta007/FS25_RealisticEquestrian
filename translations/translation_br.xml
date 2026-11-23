@@ -175,6 +175,7 @@
         <text name="eq_dressage_passageAt" text="Passage %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Piaffe"/>
         <text name="eq_now_pirouette" text="Pirueta"/>
+        <text name="eq_now_volte" text="Volta"/>
         <text name="eq_now_collected" text="Reunido"/>
         <text name="eq_now_collectedCanter" text="Galope reunido"/>
         <text name="eq_now_passage" text="Passage"/>
@@ -202,11 +203,11 @@
         <text name="eq_fig_final" text="Linha central em %s, parada em %s"/>
         <text name="eq_dressage_haltAt" text="Parada em %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) em %s: segure Ctrl"/>
-        <text name="eq_dressage_pirouetteLeftAt" text="Pirueta à esquerda (%s) em %s: Ctrl + A"/>
-        <text name="eq_dressage_pirouetteRightAt" text="Pirueta à direita (%s) em %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Pirueta à esquerda (%s) em %s: Ctrl + Shift + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Pirueta à direita (%s) em %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Piaffe (%s)! Segure Ctrl"/>
-        <text name="eq_dressage_pirouetteLeft" text="Pirueta à esquerda (%s)! Ctrl + A"/>
-        <text name="eq_dressage_pirouetteRight" text="Pirueta à direita (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteLeft" text="Pirueta à esquerda (%s)! Ctrl + Shift + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Pirueta à direita (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Volte para a linha!"/>
         <text name="eq_dressage_mark" text="Última nota: %s"/>
         <text name="eq_pop_routineError" text="Erro de percurso %d/%d"/>
@@ -1230,7 +1231,7 @@
         <text name="eq_help_lateral_title" text="Movimentos laterais"/>
         <text name="eq_help_lateral_1" text="Os movimentos laterais estão entre as partes mais difíceis do adestramento e combinam vários comandos. Segure [[EQ_LATERAL]] e pressione A ou D para deslocar de lado numa cessão à perna, e segure também [[EQ_REIN]] para curvar pescoço e ombros num travers, renvers ou appuyer. Numa reprise, os ícones no percurso mostram como posicionar o cavalo."/>
         <text name="eq_help_collect_title" text="Reunir"/>
-        <text name="eq_help_collect_1" text="Reunir é usado principalmente no adestramento, para montar um andamento sem a velocidade de costume. Segure [[EQ_COLLECT]] no trote para um piaffe, um trote no lugar, e pressione também W para uma passage, um trote lento e elevado. Reúna ao passo ou no galope e vire com A ou D para uma pirueta."/>
+        <text name="eq_help_collect_1" text="Reunir é usado principalmente no adestramento, para montar um andamento sem a velocidade de costume. Segure [[EQ_COLLECT]] no trote para um piaffe, um trote no lugar, e pressione também W para uma passage, um trote lento e elevado. Reúna e vire com A ou D para uma volta, um círculo pequeno (menor quanto mais calmo o cavalo), e segure também [[EQ_LATERAL]] ao passo ou no galope para uma pirueta em torno dos posteriores."/>
         <text name="eq_help_rein_title" text="Condução pelo mouse"/>
         <text name="eq_help_rein_1" text="Segurar [[EQ_REIN]] coloca a câmera atrás do cavalo e deixa você conduzir com precisão pelo mouse, essencial no adestramento e às vezes no salto. Se segurar também [[EQ_LATERAL]], o mouse curva a cabeça do cavalo para os movimentos laterais."/>
         <text name="eq_help_courseEdit_title" text="Edição de percurso"/>

@@ -1689,8 +1689,10 @@ function EqTrainingHooks.lateralNow(vehicle, spec)
             if out <= -EqTrainingHooks.RAIL_ANGLE then rail = "in" elseif out >= EqTrainingHooks.RAIL_ANGLE then rail = "out" end
         end
     end
+    -- The turn asked on the spot as EqLateral read it (the base game clears axisSteer before the
+    -- draw, so a turn read from it showed "Collected").
     local key = EqLateral.movementName({ gait = gait, spot = spot, passage = spot and spec.eqPassage == true,
-        turning = math.abs(spec.inputValues ~= nil and spec.inputValues.axisSteer or 0) > 0.1, side = side, bend = EqLateral.bend, rail = rail })
+        turning = (spec.eqSpotTurn or 0) ~= 0, pirouette = spec.eqSpotMode == "pirouette", side = side, bend = EqLateral.bend, rail = rail })
     return key
 end
 

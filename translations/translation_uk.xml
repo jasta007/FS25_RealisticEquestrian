@@ -175,6 +175,7 @@
         <text name="eq_dressage_passageAt" text="Пасаж %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Піаффе"/>
         <text name="eq_now_pirouette" text="Піруєт"/>
+        <text name="eq_now_volte" text="Вольт"/>
         <text name="eq_now_collected" text="Збраний"/>
         <text name="eq_now_collectedCanter" text="Збраний галоп"/>
         <text name="eq_now_passage" text="Пасаж"/>
@@ -202,11 +203,11 @@
         <text name="eq_fig_final" text="Середня лінія в %s, зупинка в %s"/>
         <text name="eq_dressage_haltAt" text="Зупинка в %s"/>
         <text name="eq_dressage_piaffeAt" text="Піаффе (%s) у %s: утримуйте Ctrl"/>
-        <text name="eq_dressage_pirouetteLeftAt" text="Піруєт ліворуч (%s) у %s: Ctrl + A"/>
-        <text name="eq_dressage_pirouetteRightAt" text="Піруєт праворуч (%s) у %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteLeftAt" text="Піруєт ліворуч (%s) у %s: Ctrl + Shift + A"/>
+        <text name="eq_dressage_pirouetteRightAt" text="Піруєт праворуч (%s) у %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Піаффе (%s)! Утримуйте Ctrl"/>
-        <text name="eq_dressage_pirouetteLeft" text="Піруєт ліворуч (%s)! Ctrl + A"/>
-        <text name="eq_dressage_pirouetteRight" text="Піруєт праворуч (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteLeft" text="Піруєт ліворуч (%s)! Ctrl + Shift + A"/>
+        <text name="eq_dressage_pirouetteRight" text="Піруєт праворуч (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Поверніться на лінію!"/>
         <text name="eq_dressage_mark" text="Остання оцінка: %s"/>
         <text name="eq_pop_routineError" text="Помилка маршруту %d/%d"/>
@@ -1232,7 +1233,7 @@
         <text name="eq_help_lateral_title" text="Бокові рухи"/>
         <text name="eq_help_lateral_1" text="Бокові рухи - одні з найскладніших частин виїздки, і вони поєднують кілька елементів керування. Утримуйте [[EQ_LATERAL]] і натискайте A або D, щоб зміщуватися вбік в уступці шенкелю, і також утримуйте [[EQ_REIN]], щоб зігнути шию та плечі коня в траверс, ренверс або траверс-аппуае. У тесті виїздки значки на шляху показують, як поставити коня."/>
         <text name="eq_help_collect_title" text="Збирання"/>
-        <text name="eq_help_collect_1" text="Збирання здебільшого використовують у виїздці, щоб іти алюром без звичайної швидкості. Утримуйте [[EQ_COLLECT]] на рисі для піаффе, рисі на місці, і також натисніть W для пасажу, повільної пружної рисі. Зберіть коня на кроці чи галопі й поверніть A або D для піруету."/>
+        <text name="eq_help_collect_1" text="Збирання здебільшого використовують у виїздці, щоб іти алюром без звичайної швидкості. Утримуйте [[EQ_COLLECT]] на рисі для піаффе, рисі на місці, і також натисніть W для пасажу, повільної пружної рисі. Зберіть коня й поверніть A або D для вольту, маленького кола (що спокійніший кінь, то менше), а на кроці чи галопі утримуйте ще [[EQ_LATERAL]] для піруету навколо задніх ніг."/>
         <text name="eq_help_rein_title" text="Кермування мишею"/>
         <text name="eq_help_rein_1" text="Утримання [[EQ_REIN]] переводить камеру за коня й дає змогу точно кермувати мишею, що життєво важливо у виїздці, а іноді й у конкурі. Якщо також утримувати [[EQ_LATERAL]], миша згинає голову коня для бокових рухів."/>
         <text name="eq_help_courseEdit_title" text="Редагування маршруту"/>
