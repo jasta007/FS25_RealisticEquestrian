@@ -390,10 +390,11 @@ Elementary. Not in your own event's month: its test is fixed.
 | Intermediate | no | no | yes | 11 | passage on the rail; piaffe |
 | Grand Prix | no | no | yes | 12 | passage on the diagonal; piaffe more often |
 
-Voltes in a level's test are sized by the level (James, 2026-11-23): canter 10 m at Novice and
-Elementary, 9 m at Medium, 8 m at Advanced and Prix St Georges, 7 m at Intermediate and 6 m at
-Grand Prix (ridden with Ctrl + A/D, whose circle is 6 to 10 m by temperament: "if you can't ride
-that... that's tough"); trot 10 m up to Medium and 8 m from Advanced; walk 8 m. A player's own
+Voltes come in a level's test from Medium, sized by the level (James, 2026-11-23): canter 10 m at
+Medium, 9 m at Advanced, 8 m at Prix St Georges, 7 m at Intermediate and 6 m at Grand Prix (ridden
+with Ctrl + A/D, whose circle is 6 to 10 m by temperament: "if you can't ride that... that's
+tough"); trot 10 m at Medium and 8 m from Advanced; walk 8 m. Novice and Elementary have none (their
+set tests ride 15 m and 20 m circles at E and B instead). A player's own
 tests keep the usual 8, 10 and 15 m voltes.
 
 - A random test picks only from its level's figures and every level's below it.

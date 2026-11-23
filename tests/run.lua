@@ -4187,7 +4187,10 @@ end
         and not EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 6, levelVolte = true }, nil)
         and EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 15 }, nil)
         and EqDressagePath.volteFits({ name = "circle", gait = "canter", size = 20 }, { voltes = { canter = 6 } })
-        and EqDressageLevels.LEVELS.grandPrix.voltes.canter == 6 and EqDressageLevels.LEVELS.novice.voltes.canter == 10)
+        and EqDressageLevels.LEVELS.grandPrix.voltes.canter == 6 and EqDressageLevels.LEVELS.medium.voltes.canter == 10
+        and EqDressageLevels.LEVELS.advanced.voltes.canter == 9 and EqDressageLevels.LEVELS.novice.voltes == nil
+        and not EqDressageLevels.forBuild("elementary", { halfW = 10, halfL = 20 }).pool["volte/canter"]
+        and EqDressageLevels.forBuild("medium", { halfW = 10, halfL = 20 }).pool["volte/trot"])
     check("a volte is 6 m across from temperament 70, widening evenly to 10 m at 0", EqLateral.volteDiameter(70) == 6
         and EqLateral.volteDiameter(100) == 6 and EqLateral.volteDiameter(0) == 10 and EqLateral.volteDiameter(nil) == 10
         and math.abs(EqLateral.volteDiameter(35) - 8) < 1e-9)
