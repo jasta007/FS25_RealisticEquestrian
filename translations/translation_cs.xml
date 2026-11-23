@@ -1162,7 +1162,7 @@
         <text name="eq_sponsor_haveOf" text="你拥有%s／需要%d"/>
         <text name="eq_sponsor_mustOwn" text="申请前你必须拥有其%d台设备。"/>
         <text name="eq_sponsor_mustKeep" text="你必须保留其%d台设备才能获得付款。"/>
-        <text name="eq_sponsor_attachHalf" text="农具和拖车按半台计算。"/>
+        <text name="eq_sponsor_cheapHalf" text="非常便宜的设备按半台计算。"/>
         <text name="eq_sponsor_noRivals" text="你不能拥有价格在其产品%s以内的机械。"/>
         <text name="eq_sponsor_sellFirst" text="申请前请出售或归还以下机械："/>
         <text name="eq_sponsor_sellMore" text="……还有%d台"/>

@@ -5093,19 +5093,46 @@ end)()
     -- Strictness: hard bargains ask more and give more.
     local relaxedFee, strictFee = EqSponsorship.term(sp, "fee", 0), EqSponsorship.term(sp, "fee", 1)
     check("sponsors: strict deals pay more (80% to 130%)", math.abs(relaxedFee - 0.8) < 1e-9 and math.abs(strictFee - 1.3) < 1e-9)
-    check("sponsors: strict deals ask for more machines", EqSponsorship.term(sp, "categoriesPerMachine", 1) < EqSponsorship.term(sp, "categoriesPerMachine", 0))
+    check("sponsors: strict deals ask for more machines", EqSponsorship.term(sp, "budget", 1) > EqSponsorship.term(sp, "budget", 0))
     check("sponsors: deal words", EqSponsorship.word(sp, 0.1) == "relaxed" and EqSponsorship.word(sp, 0.3) == "fair"
         and EqSponsorship.word(sp, 0.6) == "demanding" and EqSponsorship.word(sp, 0.9) == "hardBargain")
-    check("sponsors: machines to own", EqSponsorship.machinesNeeded(5, 2) == 3 and EqSponsorship.machinesNeeded(1, 4) == 1)
-    check("sponsors: machines to own capped by size: small 1, moderate 3, big 5",
-        EqSponsorship.machinesMaxFor(sp, sp.sizeByName.small) == 1 and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.moderate) == 3
-        and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.big) == 5)
-    check("sponsors: never more than 5 machines to own (22 categories)", sp.machinesMax == 5
-        and EqSponsorship.machinesNeeded(22, 2, sp.machinesMax) == 5)
+    -- Machines to own by price (James, 2026-11-19): about what the budget buys at the brand's
+    -- median price, never none, never 4 or more.
+    check("sponsors: machines to own by price", EqSponsorship.machinesNeeded(300000, 150000) == 2
+        and EqSponsorship.machinesNeeded(300000, 120000) == 3 and EqSponsorship.machinesNeeded(60000, 500000) == 1
+        and EqSponsorship.machinesNeeded(60000, 0) == 1)
+    check("sponsors: machines to own capped by size: small 1, moderate 2, big 3",
+        EqSponsorship.machinesMaxFor(sp, sp.sizeByName.small) == 1 and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.moderate) == 2
+        and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.big) == 3)
+    check("sponsors: never more than 3 machines to own", sp.machinesMax == 3
+        and EqSponsorship.machinesNeeded(1000000, 2000, sp.machinesMax) == 3)
+    check("sponsors: median price", EqSponsorship.median({ 5, 1, 3 }) == 3 and EqSponsorship.median({ 4, 1, 2, 3 }) == 2.5
+        and EqSponsorship.median({}) == 0)
+    check("sponsors: dear tractors ask for fewer than cheap implements", (function()
+        local dear, cheap = { median = 152000 }, { median = 65000 }
+        for i = 0, 10 do
+            local strictness = i / 10
+            local big = EqSponsorship.machinesFor(sp, sp.sizeByName.big, dear, strictness)
+            local moderate = EqSponsorship.machinesFor(sp, sp.sizeByName.moderate, cheap, strictness)
+            if big < 1 or big > 2 or moderate ~= 2 then return false end
+        end
+        return EqSponsorship.machinesFor(sp, sp.sizeByName.small, dear, 1) == 1
+            and EqSponsorship.machinesFor(sp, sp.sizeByName.small, { median = 500 }, 1) == 1
+    end)())
+    check("sponsors: old offers asked for machines by price, never more", (function()
+        local old = { brand = "F", size = "big", machines = 4, strictness = 0 }
+        local kept = { brand = "F", size = "big", machines = 1, strictness = 1 }
+        local new = { brand = "F", size = "big", machines = 3, strictness = 1, machineRule = EqSponsorship.MACHINE_RULE }
+        local profile = { median = 152000 }
+        return EqSponsorship.rescaleMachines(sp, old, profile) and old.machines == 1 and old.machineRule == EqSponsorship.MACHINE_RULE
+            and EqSponsorship.rescaleMachines(sp, kept, profile) and kept.machines == 1
+            and not EqSponsorship.rescaleMachines(sp, new, profile) and new.machines == 3
+            and not EqSponsorship.rescaleMachines(sp, { size = "big", machines = 4 }, nil)
+    end)())
     check("sponsors: shares on 5% steps", EqSponsorship.round5(0.37) == 0.35 and EqSponsorship.round5(0.38) == 0.4
         and EqSponsorship.round5(0.6) == 0.6)
     local old = EqSponsorship.tidy(sp, { size = "big", machines = 11, window = 0.43, repair = 0.21, repaint = 0.52, purchase = 0.07, strictness = 1 })
-    check("sponsors: old saved offers tidied", old.machines == 5 and old.brandingNeed == 3 and old.window == 0.45 and old.repair == 0.2
+    check("sponsors: old saved offers tidied", old.machines == 3 and old.brandingNeed == 3 and old.window == 0.45 and old.repair == 0.2
         and old.repaint == 0.5 and old.purchase == 0.05)
 
     -- Competitor clause: B's 260k tractor sits within 30% of A's 260k tractor.
@@ -5188,10 +5215,12 @@ end)()
         and #EqSponsorship.clashes({ brand = "KRONE", window = 1 }, { byCategory = { tractorsS = { 30000 } } }, mine) == 1)
     check("sponsors: the biggest sponsor names the event", EqSponsorship.lead({ zetor, { brand = "M", size = "moderate", fee = 30000 }, krone }).brand == "M"
         and EqSponsorship.lead({ zetor, EqSponsorship.contractFrom(small("KRONE"), 1) }).brand == "ZETOR" and EqSponsorship.lead({}) == nil)
-    -- Attachments (James, 2026-11-01): a header or trailer counts half toward the machines to own.
-    check("sponsors: attachments count half", sp.attachmentWeight == 0.5
-        and EqSponsorship.ownedOf("F", { { brand = "F" }, { brand = "F", attachment = true }, { brand = "F", attachment = true } }, sp.attachmentWeight) == 2
-        and EqSponsorship.ownedOf("F", { { brand = "F", attachment = true } }) == 1)
+    -- Very cheap kit (James, 2026-11-19): under a quarter of the brand's median price counts half.
+    check("sponsors: very cheap machines count half", sp.cheapWeight == 0.5
+        and EqSponsorship.ownedOf("F", { { brand = "F" }, { brand = "F", cheap = true }, { brand = "F", cheap = true } }, sp.cheapWeight) == 2
+        and EqSponsorship.ownedOf("F", { { brand = "F", cheap = true } }) == 1
+        and EqSponsorship.isCheap(sp, { median = 65000 }, 14000) and not EqSponsorship.isCheap(sp, { median = 65000 }, 20000)
+        and not EqSponsorship.isCheap(sp, nil, 1))
     check("sponsors: discounts start 3 months after signing, on the sponsor's brand only", (function()
         local c = { { brand = "M", signedMonth = 10, repair = 0.15, repaint = 0.35, purchase = 0.05 } }
         return EqSponsorship.discount(c, "M", "purchase", 12, sp.discountMonths) == 0
@@ -5202,9 +5231,9 @@ end)()
             and EqSponsorship.discount({}, "M", "repair", 20, 3) == 0
             and EqSponsorship.discount({ c[1], { brand = "M", signedMonth = 0, repair = 0.3 } }, "M", "repair", 20, 3) == 0.3
     end)())
-    check("sponsors: light tractor, harvester and header is not 3", not EqSponsorship.signChecks(sp,
+    check("sponsors: two tractors and a cheap weight is not 3", not EqSponsorship.signChecks(sp,
         { brand = "F", size = "big", machines = 3, window = 0.1, brandingNeed = 1, exclusive = true },
-        { owned = { { brand = "F" }, { brand = "F" }, { brand = "F", attachment = true } }, profile = { byCategory = {} }, boards = 1 }).ok)
+        { owned = { { brand = "F" }, { brand = "F" }, { brand = "F", cheap = true } }, profile = { byCategory = {} }, boards = 1 }).ok)
     local oldBig = EqSponsorship.tidy(sp, { size = "big", strictness = 0.5 })
     local oldSmall = EqSponsorship.tidy(sp, { size = "small", strictness = 0.5, exclusive = true })
     check("sponsors: old saves: big exclusive, small not", oldBig.exclusive == true and oldSmall.exclusive == false)
