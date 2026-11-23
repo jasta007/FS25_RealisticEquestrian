@@ -136,10 +136,11 @@ EqDressagePath.LATERAL_IN = { [true] = 4, [false] = 3 }
 -- (James, 2026-10-31: the horse's form weighed more than being wildly off the line, a lateral
 -- half way off scored 8 and a nice one 6.5: form halved, and FAR_* below.)
 EqDressagePath.ANGLE_FREE = math.rad(15)
-EqDressagePath.ANGLE_PER_S = 0.3
+EqDressagePath.ANGLE_PER_S = 0.5
 EqDressagePath.ANGLE_MAX = 2
 EqDressagePath.BEND_MIN = 0.3
-EqDressagePath.BEND_PER_S = 0.25
+EqDressagePath.BEND_PER_S = 0.4
+-- (James, 2026-11-23: laterals a little generous: ANGLE_PER_S 0.3 -> 0.5, BEND_PER_S 0.25 -> 0.4.)
 EqDressagePath.BEND_MAX = 1
 -- Ridden further than FAR_DEV metres off the line: FAR_PER_M off for each metre of line ridden
 -- like that, at most FAR_MAX, on top of the average.
@@ -201,6 +202,8 @@ EqDressagePath.DEV_PER_M = 12
 -- At the wrong gait: this much a second, at most WRONG_MAX a movement.
 EqDressagePath.WRONG_PER_S = 0.5
 EqDressagePath.WRONG_MAX = 5
+-- A wrong gait in lateral work counts this many times over.
+EqDressagePath.LATERAL_WRONG = 3
 -- At the wrong gait this long in a row, the asked gait shows in red (James, 2026-11-01: a half
 -- volte walked when it wanted a trot scored 0 and "looked fine to me": nothing on screen said so).
 EqDressagePath.WRONG_TELL_MS = 800
@@ -221,6 +224,9 @@ EqDressagePath.HALT_PASS = 5
 -- piaffe held SPOT_MS, a pirouette turned a full circle the way asked (SPOT_TURN radians short
 -- of it will do); let go early costs up to SPOT_SHORT, riding past SPOT_MISSED.
 EqDressagePath.SPOT_MS = 4000
+-- A pirouette is placed by its hind feet, this many metres behind the horse's middle (as
+-- EqLateral.PIVOT_BACK; James, 2026-11-23: rear legs on the mark still lost half a mark).
+EqDressagePath.PIROUETTE_BACK = 0.9
 EqDressagePath.SPOT_TURN = math.rad(20)
 -- (James, 2026-10-30: a piaffe he stopped for first, then fumbled into, still scored a 7.)
 -- Stopping when one is coming costs SPOT_STOP, and every second off the asked gait on the way in
@@ -2167,7 +2173,9 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
                             break
                         end
                     end
-                    local err = math.sqrt((hx - x) ^ 2 + (hy - y) ^ 2)
+                    -- A pirouette turns round the hind feet, so they are what goes on the mark.
+                    local px, py = EqDressagePath.spotPos(run.frame, next.style, wx, wz, look)
+                    local err = math.sqrt((hx - px) ^ 2 + (hy - py) ^ 2)
                     addPen(run, next.m, math.min(EqDressagePath.HALT_MAX, math.max(0, err - EqDressagePath.HALT_FREE) * EqDressagePath.HALT_PER_M))
                     run.spot = { event = next, ms = 0, turned = 0, lastA = math.atan2(look.dirX, look.dirZ) }
                     return event
@@ -2220,9 +2228,12 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
     -- At the wrong gait, once settled after the last change or halt.
     local settling = run.proceedMs ~= nil and run.clock - run.proceedMs < 3000
     -- run.wrongNowMs: how long it has been at the wrong gait in a row, for the HUD's red prompt.
-    if not free and not settling and not EqDressagePath.matches(move, run.gait) then
+    -- In lateral work there is no settling, and a wrong gait costs LATERAL_WRONG times as much
+    -- (James, 2026-11-23: a half pass broken into canter for a moment still scored 8.5).
+    local judged = sec ~= nil and look ~= nil and run.s >= sec.s0 + EqDressagePath.SECTION_GRACE
+    if not free and (not settling or judged) and not EqDressagePath.matches(move, run.gait) then
         local acc = run.acc[math.min(m, #test.moves)]
-        acc.wrongMs = acc.wrongMs + dt
+        acc.wrongMs = acc.wrongMs + dt * (judged and EqDressagePath.LATERAL_WRONG or 1)
         run.wrongNowMs = (run.wrongNowMs or 0) + dt
     else
         run.wrongNowMs = 0
@@ -2364,6 +2375,19 @@ function EqDressagePath.section(run)
     local sec = sections[run.sec]
     if sec == nil or sec.s0 - run.s > run.warn then return nil, false end
     return sec, run.s >= sec.s0
+end
+
+
+--- Where a movement on the spot is placed (pure, local metres): a pirouette by its hind feet,
+--- PIROUETTE_BACK behind the horse's middle; anything else by the middle.
+--- @param style string "pirouette", "piaffe"
+--- @param look table { dirX, dirZ } the horse's facing in the world
+function EqDressagePath.spotPos(frame, style, wx, wz, look)
+    if style == "pirouette" and look ~= nil and look.dirX ~= nil then
+        local back = EqDressagePath.PIROUETTE_BACK
+        return EqDressagePath.toLocal(frame, wx - look.dirX * back, wz - look.dirZ * back)
+    end
+    return EqDressagePath.toLocal(frame, wx, wz)
 end
 
 

@@ -4506,6 +4506,18 @@ end)()
         local rolls = EqRandom.new(seed)
         return function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end
     end
+    -- A pirouette is placed by its hind feet, a piaffe by the horse's middle.
+    do
+        local look = { dirX = 0.6, dirZ = 0.8 }
+        local mx, my = EqDressagePath.spotPos(frame, "piaffe", 3, 4, look)
+        local rx, ry = EqDressagePath.toLocal(frame, 3, 4)
+        local hx, hy = EqDressagePath.spotPos(frame, "pirouette", 3, 4, look)
+        local bx, by = EqDressagePath.toLocal(frame, 3 - 0.6 * EqDressagePath.PIROUETTE_BACK, 4 - 0.8 * EqDressagePath.PIROUETTE_BACK)
+        check("a pirouette is placed by its hind feet", mx == rx and my == ry and math.abs(hx - bx) < 1e-9 and math.abs(hy - by) < 1e-9
+            and math.abs(math.sqrt((hx - rx) ^ 2 + (hy - ry) ^ 2) - EqDressagePath.PIROUETTE_BACK) < 1e-6)
+    end
+    -- A wrong gait in lateral work costs more than elsewhere.
+    check("a moment at the wrong gait in lateral work costs at least a mark", EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 700 * EqDressagePath.LATERAL_WRONG, pen = 0 }) <= 9)
     local one, two = EqDressagePath.build(frame, 8, seeded("dressage 4 novice")), EqDressagePath.build(frame, 8, seeded("dressage 4 novice"))
     local same = #one.pts == #two.pts and #one.events == #two.events
     for i, m in ipairs(one.moves) do same = same and m.key == two.moves[i].key end

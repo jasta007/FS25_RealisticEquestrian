@@ -124,8 +124,7 @@ EqDressageLevels.SET = {
     },
     prixStGeorges = {
         [3] = { turn = -1, steps = { "shoulderIn trot R-B", "volte trot P 10", "halfPassCentre trot V-C L", "diagonals trot F-H",
-            "shoulderIn trot M-R", "volte trot B 10", "halfPassCentre trot V-C R", "spot pirouetteLeft R walk",
-            "spot pirouetteRight P walk", "diagonals walk K-M", "halfPassCentre canter S-A R",
+            "shoulderIn trot M-R", "volte trot B 10", "halfPassCentre trot V-C R", "diagonals walk K-M", "halfPassCentre canter S-A R",
             "halfPassCentre canter V-C L", "spot pirouetteLeft S canter", "spot pirouetteRight K canter",
             "shallowLoop canter F-B-M", "diagonals canter H-F", "diagonals canter K-M", "diagonals canter H-F" } },
     },
