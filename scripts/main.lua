@@ -112,6 +112,7 @@ source(modDirectory .. "scripts/gui/EqSettingsPage.lua")
 source(modDirectory .. "scripts/gui/EqWelcome.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 source(modDirectory .. "scripts/console/EqProbe.lua")
+source(modDirectory .. "scripts/console/EqFlyProbe.lua")
 
 local Log = EqLog
 
@@ -308,6 +309,8 @@ end
 -- patched now, at source time. The hook bodies do nothing until EqMain is active.
 EqTrainingHooks.installRideable(guarded)
 EqLateral.install()
+-- Dev only (flying change test, 2026-11-23): keep out of release builds.
+guarded("fly probe hook", EqFlyProbe.install)
 -- Loading triggers are created as the map loads, so the probe starts listening now.
 guarded("probe hook", EqProbe.install)
 

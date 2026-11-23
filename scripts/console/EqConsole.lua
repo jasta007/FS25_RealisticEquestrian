@@ -366,6 +366,12 @@ function EqConsole:consoleSpectators(command, a, b)
 end
 
 
+--- eqFlyProbe: testing, a flying change from the canter clips (EqFlyProbe).
+function EqConsole:consoleFlyProbe(...)
+    return EqFlyProbe.console({ ... })
+end
+
+
 --- eqXcFences: the cross country fences the flags on the map make.
 function EqConsole:consoleXcFences()
     return EqXcFlags.describe()
@@ -968,7 +974,7 @@ EqConsole.COMMANDS = {
     "eqRetire", "eqDealer", "eqTraining", "eqFocus", "eqStaff", "eqStaffHire", "eqStaffFire", "eqStaffWork",
     "eqStaffRoll", "eqFacilities", "eqForceInjury", "eqDirt", "eqRiding", "eqChanges", "eqStats",
     "eqCourses", "eqHostCheck", "eqHostWait", "eqSponsors", "eqSponsorNew", "eqLizard", "eqSponsorLoan",
-    "eqHostWeather", "eqXcFences", "eqMeatQuality",
+    "eqHostWeather", "eqXcFences", "eqMeatQuality", "eqFlyProbe",
 }
 
 
@@ -1007,6 +1013,7 @@ function EqConsole.register()
         "[stone|woodchips|straw] [accept]", "consoleLizard", EqConsole)
     addConsoleCommand("eqSponsorLoan", "Testing: a sponsor lends you a machine now: eqSponsorLoan [brand] | end", "consoleSponsorLoan", EqConsole)
     addConsoleCommand("eqHostWeather", "Testing: counts hours of weather at your running event: eqHostWeather <RAIN|SNOW|HAIL|TWISTER> [hours]", "consoleHostWeather", EqConsole)
+    addConsoleCommand("eqFlyProbe", "Testing: flying change, eqFlyProbe demo [blip|mirror] | on | off | mode blip|mirror | mirror | blip <ms> | speed <0-1.5> | delay <ms> | auto [s|off] | slow <0.1-1> | watch [s] | clips (R = change)", "consoleFlyProbe", EqConsole)
     addConsoleCommand("eqXcFences", "Lists the cross country fences your red and white flags make", "consoleXcFences", EqConsole)
     addConsoleCommand("eqMeatQuality", "Shows or hides RLRM's Meat Quality for horses: eqMeatQuality [show|hide]", "consoleMeatQuality", EqConsole)
     Log:debug("EqConsole: commands registered")
