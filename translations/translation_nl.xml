@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Nodig: 1.000 l houtsnippers, 10.000 l hout en 1.000 l planken."/>
         <text name="eq_shop_lizardPlinth_straw" text="Nodig: 10.000 l stro, 10.000 l hout en 1.000 l planken."/>
         <text name="eq_lizard_title" text="Sponsoraanbod van %s"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian kan Realistic Livestock (Ritter-versie) niet vinden en staat daarom uit. Installeer de nieuwste versie van Realistic Livestock."/>
         <text name="eq_rlrm_incompatible" text="Je Realistic Livestock-versie %s is te oud voor Realistic Equestrian, daarom staat Realistic Equestrian uit. Download de nieuwste versie van Realistic Livestock (Ritter-versie)."/>
         <text name="eq_rlrm_old" text="Je Realistic Livestock-versie %s is ouder dan Realistic Equestrian nodig heeft (%s of nieuwer), daarom werken sommige functies misschien niet. Download de nieuwste versie van Realistic Livestock (Ritter-versie)."/>
         <text name="eq_lizard_offer" text="%s wil je %s (%s) sponsoren en leent je een van zijn voertuigen voor de evenementmaand. Het vraagt %s branding tegen het einde van het evenement en zijn Lizard-sokkel gebouwd op je locatie: %s. Staat alles klaar als de uitslagen binnenkomen, dan betaalt het %s. Zo niet, dan betaalt het niets en is er geen straf. De sokkel stort na het evenement in."/>
@@ -118,6 +117,9 @@
         <text name="eq_lizard_decline" text="Weigeren"/>
         <text name="eq_lizard_offerNote" text="%s wil je %s sponsoren."/>
         <text name="eq_lizard_accepted" text="Deal met %s geaccepteerd! Koop de Lizard-sokkel in de winkel (Bouwbaar) en bouw hem met %s, stammen en planken."/>
+        <text name="eq_lizard_or" text="%s of %s"/>
+        <text name="eq_lizard_and" text="%s en %s"/>
+        <text name="eq_lizard_needs" text="%s (naar keuze), plus %s"/>
         <text name="eq_lizard_stepAside" text="%s doet een stap opzij: %s sponsort nu je evenement."/>
         <text name="eq_lizard_paid" text="%s heeft %s betaald voor het sponsoren van je evenement."/>
         <text name="eq_lizard_unpaid_plinth" text="%s betaalt niets: de Lizard-sokkel was niet af. Geen kwaad bloed."/>
@@ -175,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="Passage %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Piaffe"/>
         <text name="eq_now_pirouette" text="Pirouette"/>
+        <text name="eq_now_volte" text="Volte"/>
         <text name="eq_now_collected" text="Verzameld"/>
         <text name="eq_now_collectedCanter" text="Verzamelde galop"/>
         <text name="eq_now_passage" text="Passage"/>
@@ -203,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="Halt bij %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) bij %s: Ctrl ingedrukt"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Linkspirouette (%s) bij %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Linkspirouette (%s) bij %s: Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Rechtspirouette (%s) bij %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Rechtspirouette (%s) bij %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Piaffe (%s)! Houd Ctrl ingedrukt"/>
         <text name="eq_dressage_pirouetteLeft" text="Linkspirouette (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Linkspirouette (%s)! Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="Rechtspirouette (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Rechtspirouette (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Terug op de lijn!"/>
         <text name="eq_dressage_mark" text="Laatste cijfer: %s"/>
         <text name="eq_pop_routineError" text="Fout in de proef %d/%d"/>
@@ -594,7 +601,6 @@
         <text name="eq_ui_col_success" text="Kans"/>
         <text name="eq_ui_col_training" text="Training"/>
         <text name="eq_ui_trainingBenefit" text="Trainingsvoordeel"/>
-        <text name="eq_ui_ageLong" text="%d maanden"/>
         <text name="eq_success_favourite" text="Favoriet"/>
         <text name="eq_success_contender" text="Kanshebber"/>
         <text name="eq_success_outsider" text="Outsider"/>
@@ -610,6 +616,13 @@
         <text name="eq_ui_canEnter" text="%d kunnen meedoen"/>
         <text name="eq_ui_noneEligible" text="Niemand toegelaten"/>
         <text name="eq_ui_ageMonths" text="%d mnd"/>
+        <text name="eq_age_year" text="%d jaar"/>
+        <text name="eq_age_years" text="%d jaar"/>
+        <text name="eq_age_yearsFew" text="%d jaar"/>
+        <text name="eq_age_join" text="%s, %s"/>
+        <text name="eq_age_short" text="%d jr %d mnd"/>
+        <text name="eq_age_shortYears" text="%d jr"/>
+        <text name="eq_ui_ages_rangeYears" text="leeftijd %d tot %d jaar"/>
         <text name="eq_ui_day" text="Dag %d"/>
         <text name="eq_ui_status_ok" text="Kan meedoen"/>
         <text name="eq_ui_status_lowHealth" text="Lage gezondheid: %d%% afmelding"/>
@@ -659,8 +672,8 @@
         <text name="eq_ui_noHorses" text="Je hebt geen paarden."/>
         <text name="eq_ui_clientNote" text="Wedstrijden worden door de host gerund. Inschrijven vanaf een multiplayer-client komt in een latere versie."/>
         <text name="eq_ui_noConfig" text="De wedstrijdlijst kon niet worden geladen; zie de log."/>
-        <text name="eq_ui_ages_range" text="leeftijd %d-%d maanden"/>
-        <text name="eq_ui_ages_from" text="vanaf %d maanden"/>
+        <text name="eq_ui_ages_range" text="leeftijd %s tot %s"/>
+        <text name="eq_ui_ages_from" text="vanaf %s"/>
         <text name="eq_ui_summary_event" text="%s: %s, rating %.0f-%.0f, veld van %d. Kies een paard en druk op Enter."/>
         <text name="eq_enter_noEvent" text="Die wedstrijd staat niet open voor inschrijvingen."/>
         <text name="eq_enter_retired" text="Dat paard is gestopt met wedstrijden."/>
@@ -668,8 +681,8 @@
         <text name="eq_enter_foaled" text="Die merrie herstelt nog van het veulenen. Ze mag drie maanden na de geboorte weer meedoen."/>
         <text name="eq_enter_already" text="Dat paard is al ingeschreven voor %s."/>
         <text name="eq_enter_eventFull" text="Je kunt maximaal %d paarden inschrijven voor één wedstrijd."/>
-        <text name="eq_enter_tooYoung" text="Te jong: deze wedstrijd is voor paarden van %d maanden en ouder, en het jouwe is %d maanden."/>
-        <text name="eq_enter_tooOld" text="Te oud: deze wedstrijd is voor paarden tot %d maanden, en het jouwe is %d maanden."/>
+        <text name="eq_enter_tooYoung" text="Te jong: deze wedstrijd is voor paarden van %s en ouder, en het jouwe is %s."/>
+        <text name="eq_enter_tooOld" text="Te oud: deze wedstrijd is voor paarden tot %s, en het jouwe is %s."/>
         <text name="eq_enter_ratingLow" text="Rating %.0f ligt onder het bereik %.0f-%.0f van deze wedstrijd."/>
         <text name="eq_enter_ratingHigh" text="Rating %.0f ligt boven het bereik %.0f-%.0f van deze wedstrijd: schrijf in op een hoger niveau."/>
         <text name="eq_enter_noMoney" text="Niet genoeg geld: inschrijven kost %s (inschrijfgeld %s, transport %s)."/>
@@ -1162,7 +1175,7 @@
         <text name="eq_sponsor_haveOf" text="Je hebt er %s van %d"/>
         <text name="eq_sponsor_mustOwn" text="Je moet %d stuks van hun materieel bezitten voordat je je aanmeldt."/>
         <text name="eq_sponsor_mustKeep" text="Je moet %d stuks van hun materieel houden om betaald te worden."/>
-        <text name="eq_sponsor_attachHalf" text="Werktuigen en aanhangers tellen voor de helft."/>
+        <text name="eq_sponsor_cheapHalf" text="Heel goedkoop materieel telt voor de helft."/>
         <text name="eq_sponsor_noRivals" text="Je mag geen machines bezitten binnen %s van de prijs van hun product."/>
         <text name="eq_sponsor_sellFirst" text="Verkoop of lever het volgende in voordat je je aanmeldt:"/>
         <text name="eq_sponsor_sellMore" text="...en nog %d"/>
@@ -1222,7 +1235,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s is in quarantaine en kan pas worden bereden als het thuis is."/>
         <text name="eq_ride_blocked_away" text="%s is weg naar een wedstrijd en kan niet worden bereden."/>
         <text name="eq_ride_blocked_injured" text="%s is geblesseerd en kan pas worden bereden als het genezen is."/>
-        <text name="eq_ride_blocked_tooYoung" text="%s is te jong om te worden bereden. Paarden kunnen vanaf %d maanden worden bereden."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s is te jong om te worden bereden. Paarden kunnen vanaf %s worden bereden."/>
         <text name="eq_loose_sentHome_quarantine" text="%s is in quarantaine en is teruggebracht naar %s."/>
         <text name="eq_loose_sentHome_away" text="%s is weg naar een wedstrijd en is teruggebracht naar %s."/>
         <text name="eq_loose_sentHome_injured" text="%s is geblesseerd en is teruggebracht naar %s om te rusten."/>
@@ -1230,12 +1243,68 @@
         <text name="eq_help_lateral_title" text="Zijwaartse bewegingen"/>
         <text name="eq_help_lateral_1" text="Zijwaartse bewegingen horen bij het moeilijkste van dressuur en combineren meerdere bedieningen. Houd [[EQ_LATERAL]] ingedrukt en druk op A of D om zijwaarts te wijken in een wijken voor de kuit, en houd ook [[EQ_REIN]] ingedrukt om hals en schouders te buigen in travers, renvers of appuyement. In een proef laten de pictogrammen op de lijn zien hoe je je paard plaatst."/>
         <text name="eq_help_collect_title" text="Verzamelen"/>
-        <text name="eq_help_collect_1" text="Verzamelen gebruik je vooral bij dressuur, om een gang zonder zijn gewone snelheid te rijden. Houd [[EQ_COLLECT]] ingedrukt in draf voor een piaffe, draf op de plaats, en druk ook op W voor een passage, een langzame, verende draf. Verzamel in stap of galop en draai met A of D voor een pirouette."/>
+        <text name="eq_help_collect_1" text="Verzamelen gebruik je vooral bij dressuur, om een gang zonder zijn gewone snelheid te rijden. Houd [[EQ_COLLECT]] ingedrukt in draf voor een piaffe, draf op de plaats, en druk ook op W voor een passage, een langzame, verende draf. Verzamel en draai met A of D voor een pirouette in stap of draf, om de achterbenen, of een volte in galop, een kleine cirkel (kleiner naarmate het paard rustiger is). Houd ook [[EQ_LATERAL]] ingedrukt voor een galoppirouette."/>
         <text name="eq_help_rein_title" text="Muissturing"/>
         <text name="eq_help_rein_1" text="Met [[EQ_REIN]] ingedrukt zwaait de camera achter je paard en stuur je nauwkeurig met de muis, onmisbaar bij dressuur en soms bij springen. Houd je ook [[EQ_LATERAL]] ingedrukt, dan buigt de muis het hoofd van je paard voor zijwaartse bewegingen."/>
         <text name="eq_help_courseEdit_title" text="Parcours bewerken"/>
         <text name="eq_help_courseEdit_1" text="Leg het parcours vast door in volgorde door de hindernissen te rijden, in elk tempo. Hindernissen uit deze mod hebben dan geen botsing. Maak je een fout, rijd dan terug naar het laatste goede punt tot er een lijn aan vastklikt en druk op [[EQ_COURSE_REWIND]] om vanaf daar verder te gaan. Druk opnieuw op [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] voor cross) om op te slaan."/>
         <text name="eq_help_dressageEdit_title" text="Dressuurproef bewerken"/>
         <text name="eq_help_dressageEdit_1" text="Bouw je eigen dressuurproef uit figuren, bewegingen en gangen. [[EQ_DT_PREV]] en [[EQ_DT_NEXT]] wisselen de figuur, [[EQ_DT_GAIT]] de gang en [[EQ_DT_MODE]] schakelt naar zijwaartse bewegingen of bewegingen op de plaats. [[EQ_DT_ACCEPT]] houdt een stap en gaat verder, [[EQ_DT_UNDO]] gaat terug en [[EQ_DT_RANDOM]] kiest een willekeurige stap. Druk op [[EQ_DRESSAGE_TEST]] om de proef op te slaan."/>
+        <text name="eq_band_extremelyLow" text="Extreem laag"/>
+        <text name="eq_band_veryLow" text="Erg laag"/>
+        <text name="eq_band_low" text="Laag"/>
+        <text name="eq_band_average" text="Gemiddeld"/>
+        <text name="eq_band_high" text="Hoog"/>
+        <text name="eq_band_veryHigh" text="Erg hoog"/>
+        <text name="eq_band_extremelyHigh" text="Extreem hoog"/>
+        <text name="input_EQ_MENU" text="Paardensportmenu"/>
+        <text name="eq_menu_button" text="Paardensport"/>
+        <text name="eq_menu_pickHint" text="Kies een regel om hem aan of uit te vinken. Open de lijst opnieuw om een andere te wijzigen."/>
+        <text name="eq_horses_title" text="Paarden"/>
+        <text name="eq_horses_col_name" text="Naam"/>
+        <text name="eq_horses_col_age" text="Leeftijd"/>
+        <text name="eq_horses_col_status" text="Status"/>
+        <text name="eq_horses_inTrailer" text="In een trailer"/>
+        <text name="eq_horses_foal" text="Te jong om te rijden"/>
+        <text name="eq_horses_ready" text="Klaar"/>
+        <text name="eq_horses_none" text="Nog geen paarden op deze boerderij. Koop er een bij de dierenhandelaar."/>
+        <text name="eq_horses_stable" text="Stal"/>
+        <text name="eq_horses_fitness" text="Conditie"/>
+        <text name="eq_horses_health" text="Gezondheid"/>
+        <text name="eq_horses_career" text="Carrière"/>
+        <text name="eq_horses_careerValue" text="%d starts, %d overwinningen, %s"/>
+        <text name="eq_horses_summary" text="%d paarden. Met de knoppen hieronder rijd je, geef je een rol of laat je het gekozen paard met pensioen gaan."/>
+        <text name="eq_horses_summaryOne" text="%d paard. Met de knoppen hieronder rijd je, geef je een rol of laat je het met pensioen gaan."/>
+        <text name="eq_messages_title" text="Berichten"/>
+        <text name="eq_messages_col_date" text="Datum"/>
+        <text name="eq_messages_col_type" text="Soort"/>
+        <text name="eq_messages_col_message" text="Bericht"/>
+        <text name="eq_messages_button_clear" text="Wissen"/>
+        <text name="eq_messages_clearConfirm" text="Alle berichten van deze boerderij verwijderen?"/>
+        <text name="eq_messages_none" text="Nog geen berichten."/>
+        <text name="eq_messages_summary" text="Uitslagen, blessures, vervoer, eigen wedstrijden en sponsors. Elk bericht verschijnt ook als melding."/>
+        <text name="eq_messages_date" text="Dag %d, %s, jaar %d"/>
+        <text name="eq_messages_day" text="Dag %d"/>
+        <text name="input_EQ_DT_TYPE" text="Soort dressuurproef"/>
+        <text name="input_EQ_DT_LEVEL" text="Niveau dressuurproef"/>
+        <text name="eq_dt_typeAction" text="Proef: %s"/>
+        <text name="eq_dt_levelAction" text="Niveau: %s"/>
+        <text name="eq_dt_type_own" text="Eigen"/>
+        <text name="eq_dt_type_random" text="Willekeurig"/>
+        <text name="eq_dt_type_set" text="Standaardproef"/>
+        <text name="eq_dlevel_novice" text="Beginner"/>
+        <text name="eq_dlevel_elementary" text="Basis"/>
+        <text name="eq_dlevel_medium" text="Midden"/>
+        <text name="eq_dlevel_advanced" text="Gevorderd"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermediair"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Je eigen proef (Ctrl+N: soort)"/>
+        <text name="eq_dt_choiceRandom" text="Willekeurige proef, %s (Ctrl+N: soort, Ctrl+M: niveau)"/>
+        <text name="eq_dt_choiceSet" text="Standaardproef, %s (Ctrl+N: soort, Ctrl+M: niveau)"/>
+        <text name="eq_dt_choiceFallback" text="Geen standaardproef past in deze bak: willekeurige proef, %s"/>
+        <text name="eq_dt_choiceEvent" text="Wedstrijdproef: willekeurig, %s"/>
+        <text name="eq_fig_canterSide" text="Galop %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Galop %s-X-%s"/>
     </texts>
 </l10n>

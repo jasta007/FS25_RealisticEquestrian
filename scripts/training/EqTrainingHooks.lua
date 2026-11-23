@@ -458,6 +458,21 @@ end
 
 
 --- @return boolean true when the routine runs: it only asks for moves where the rider sees them
+--- Log a dressage test or routine that just ended early, and why (James, 2026-11-19: a test
+--- ended with nothing in the log). breakRoutine has already cleared the routine, so the test's
+--- run is passed in from before.
+--- @param routine table sheet.routine
+--- @param run table|nil the test's run, if it was a test of figures
+--- @param why string
+local function logLost(routine, run, why)
+    if run ~= nil then
+        Log:info("Dressage test: lost (%s), movement %d/%d, errors %d", why, (run.cur or 1) - 1, #run.test.moves, run.errors or 0)
+    else
+        Log:info("Dressage routine: lost (%s)", why)
+    end
+end
+
+
 local function routineShown()
     local view = EqTrainingHooks.getView()
     return view == "freestyle" or view == "temperament" or view == "condensed"
@@ -847,7 +862,15 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
 
     local now = g_time or 0
     local stamina = record ~= nil and record.trained.stamina or nil
-    if sheet.clock ~= nil and now - sheet.clock > 1000 then EqTraining.rest(sheet, now - sheet.clock, stamina) end
+    if sheet.clock ~= nil and now - sheet.clock > 1000 then
+        -- A pause or a menu while in the saddle: the horse rests, a dressage test waits.
+        local routine = sheet.routine
+        if routine ~= nil and routine.active then
+            Log:info("Dressage %s: %.1f s without a riding update (paused?), it carries on",
+                routine.kind == "path" and "test" or "routine", (now - sheet.clock) / 1000)
+        end
+        EqTraining.rest(sheet, now - sheet.clock, stamina, true)
+    end
     sheet.clock = now
 
     local worn = isTired(spec.cluster)
@@ -905,7 +928,17 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         -- Running into the next fence of a show jumping round is a refusal (EqCourseHooks).
         if refusal or not (ok and fell) then EqCourseHooks.onCrash() end
         local knock = EqTraining.knockCombo(sheet)
-        if EqTraining.breakRoutine(sheet) and knock == nil then EqTrainingHud.pop("routineLost") end
+        local routine = sheet.routine
+        local run = routine.active and routine.kind == "path" and routine.path or nil
+        if run ~= nil and run.started then
+            -- A dressage test carries on: marks off the movement under way (James, 2026-11-19).
+            local crashes = EqDressagePath.crash(run)
+            Log:info("Dressage test: crash in movement %d/%d, -%s marks (%d on it)", run.cur, #run.test.moves,
+                tostring(EqDressagePath.CRASH_PEN), crashes)
+        elseif EqTraining.breakRoutine(sheet) then
+            logLost(routine, run, "crash")
+            if knock == nil then EqTrainingHud.pop("routineLost") end
+        end
         popKnock(knock)
     end
     spec.eqHalted = halted
@@ -922,6 +955,14 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
         if course ~= nil and not sheet.routine.active then
             local startDistance = EqCourseHooks.beginDistance()
             if startDistance ~= nil and startDistance < EqDressage.startDistance(course) then course = nil end
+        end
+        -- Ctrl+N / Ctrl+M changed the test waiting at its start: build it again (EqDressageEditor).
+        if EqDressageHooks.restartTest then
+            EqDressageHooks.restartTest = nil
+            local r = sheet.routine
+            if course ~= nil and r.active and r.kind == "path" and r.path ~= nil and not r.path.started then
+                EqLog.try("EqTrainingHooks restart dressage test", EqDressage.start, r, course, math.random)
+            end
         end
         -- A competition test (in your own event) counts when it ends, with its score.
         local before = sheet.routine
@@ -943,7 +984,9 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             elseif event == "fault" then EqTrainingHud.pop("routineError", path.errors)
             elseif event == "test" then EqTrainingHud.pop("routineScore", path.percent)
             elseif event == "lost" then EqTrainingHud.pop("routineLost") end
-            if event ~= nil and event ~= "request" then
+            if event == "lost" then
+                logLost(before, path, path.lostWhy or "away from the arena's markers")
+            elseif event ~= nil and event ~= "request" then
                 Log:info("Dressage test: %s, movement %d/%d, mark %s, errors %d, %s%%", event, path.cur - 1, #path.test.moves,
                     tostring(path.lastMark), path.errors, tostring(path.percent or EqDressagePath.percent(path)))
             end
@@ -957,8 +1000,13 @@ function EqTrainingHooks.onUpdateRiding(vehicle, dt)
             Log:info("Dressage routine: %s x%d, now %s%s", event, sheet.routine.mult, tostring(sheet.routine.request),
                 task ~= nil and task.marker ~= nil and string.format(" %s to %s", task.gait, task.marker.letter) or "")
         end
-    elseif EqTraining.breakRoutine(sheet) and not coursing then
-        EqTrainingHud.pop("routineLost")
+    elseif not coursing then
+        local before = sheet.routine
+        local path = before.active and before.kind == "path" and before.path or nil
+        if EqTraining.breakRoutine(sheet) then
+            logLost(before, path, "training panel switched to a view without the routine")
+            EqTrainingHud.pop("routineLost")
+        end
     end
     -- A dressage test under way keeps the courses quiet: no start line, hint or countdown.
     EqCourseHooks.dressageActive = sheet.routine.active or EqDressageEditor.isEditing()
@@ -1365,7 +1413,12 @@ function EqTrainingHooks.onJump(vehicle)
         judgeJump(spec, sheet, isTired(spec.cluster), last, math.abs(spec.currentSpeed or 0), g_time or 0, vehicle)
     end
     EqTraining.addJump(sheet)
-    if EqTraining.breakRoutine(sheet) then EqTrainingHud.pop("routineLost") end
+    local routine = sheet.routine
+    local run = routine.active and routine.kind == "path" and routine.path or nil
+    if EqTraining.breakRoutine(sheet) then
+        logLost(routine, run, "jumped")
+        EqTrainingHud.pop("routineLost")
+    end
     spec.eqJump = { startedAt = g_time or 0, best = 0, airborne = false, speed = math.abs(spec.currentSpeed or 0), gait = spec.eqLastGait }
     spec.eqJumpGait, spec.eqJumpHoldUntil = spec.eqLastGait, nil
     EqTrainingHooks.startLaunch(spec)
@@ -1591,6 +1644,8 @@ local function pathEventText(event)
         local gaitName = g_i18n:getText("eq_dressage_gait_" .. event.gait)
         if event.style == "piaffe" then return string.format(g_i18n:getText("eq_dressage_piaffeAt"), gaitName, event.letter or "X") end
         local key = (event.turn or 1) > 0 and "eq_dressage_pirouetteLeftAt" or "eq_dressage_pirouetteRightAt"
+        -- A canter pirouette is Ctrl + Shift + A/D.
+        if event.gait == "canter" then key = key:gsub("At$", "ShiftAt") end
         return string.format(g_i18n:getText(key), gaitName, event.letter or "X")
     end
     local gait = g_i18n:getText("eq_dressage_gait_" .. event.gait)
@@ -1681,18 +1736,22 @@ function EqTrainingHooks.lateralNow(vehicle, spec)
             if out <= -EqTrainingHooks.RAIL_ANGLE then rail = "in" elseif out >= EqTrainingHooks.RAIL_ANGLE then rail = "out" end
         end
     end
+    -- The turn asked on the spot as EqLateral read it (the base game clears axisSteer before the
+    -- draw, so a turn read from it showed "Collected").
     local key = EqLateral.movementName({ gait = gait, spot = spot, passage = spot and spec.eqPassage == true,
-        turning = math.abs(spec.inputValues ~= nil and spec.inputValues.axisSteer or 0) > 0.1, side = side, bend = EqLateral.bend, rail = rail })
+        turning = (spec.eqSpotTurn or 0) ~= 0, pirouette = spec.eqSpotMode == "pirouette", side = side, bend = EqLateral.bend, rail = rail })
     return key
 end
 
 
 local function nowDoing(vehicle, spec)
     local key = EqTrainingHooks.lateralNow(vehicle, spec)
+    local run = EqDressageHooks.testOn ~= nil and EqDressageHooks.testOn() or nil
+    if key == nil and EqLateral ~= nil and EqLateral.vehicle == vehicle
+        and EqLateral.trotVolte(spec, (EqLateral.gaitName(spec)), run ~= nil) then key = "volte" end
     if key == nil then return nil end
     -- What a test asks for now, if anything.
     local color = COLOR.white
-    local run = EqDressageHooks.testOn ~= nil and EqDressageHooks.testOn() or nil
     if run ~= nil then
         local asked = nil
         local sec, inside = EqDressagePath.section(run)
@@ -1730,6 +1789,9 @@ local function pathRows(rows, routine)
             -- own event it says whether this test counts, gold like a course's start line.
             EqTrainingHud.drawPanelNote(note or string.format(g_i18n:getText("eq_dressage_begin"), "A"),
                 note ~= nil and EqTrainingHud.GOLD or color, true)
+            -- Which test it is (own, random or set, and its level) and the keys to change it.
+            local ok, choice = EqLog.try("EqTrainingHooks dressage choice", EqDressageEditor.choiceText, run.choice)
+            if ok and choice ~= nil then EqTrainingHud.drawPanelNote(choice, nil, false) end
         end
         return
     end
@@ -1751,7 +1813,10 @@ local function pathRows(rows, routine)
         local event = run.spot.event
         local gaitName = g_i18n:getText("eq_dressage_gait_" .. event.gait)
         local key = "eq_dressage_piaffe"
-        if event.style == "pirouette" then key = (event.turn or 1) > 0 and "eq_dressage_pirouetteLeft" or "eq_dressage_pirouetteRight" end
+        if event.style == "pirouette" then
+            key = (event.turn or 1) > 0 and "eq_dressage_pirouetteLeft" or "eq_dressage_pirouetteRight"
+            if event.gait == "canter" then key = key .. "Shift" end
+        end
         local text = string.format(g_i18n:getText(key), gaitName)
         EqTrainingHud.drawPrompt(text, 1 - EqDressagePath.spotShare(run.spot), color)
     elseif run.hold ~= nil then
@@ -2059,6 +2124,7 @@ function EqTrainingHooks.onDraw(vehicle, isActiveForInputIgnoreSelection)
     if not isActiveForInputIgnoreSelection then return end
     local spec = vehicle.spec_rideable
     if spec == nil then return end
+    EqTrainingHud.newFrame()
     pollGaitKeys(vehicle)
     pollSprintButton(vehicle)
 

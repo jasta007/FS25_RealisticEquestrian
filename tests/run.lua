@@ -10,6 +10,7 @@ assert(rlrmPath, "usage: luajit tests/run.lua <path to FS25_RealisticLivestockRM
 
 dofile(rlrmPath .. "/scripts/animal/BreedingMath.lua")
 dofile("scripts/core/EqConstants.lua")
+dofile("scripts/core/EqAge.lua")
 dofile("scripts/core/EqSettings.lua")
 dofile("scripts/core/EqRandom.lua")
 dofile("scripts/core/EqStats.lua")
@@ -20,6 +21,7 @@ dofile("scripts/training/EqTemperament.lua")
 dofile("scripts/staff/EqStaffNames.lua")
 dofile("scripts/staff/EqStaff.lua")
 dofile("scripts/training/EqDressagePath.lua")
+dofile("scripts/training/EqDressageLevels.lua")
 dofile("scripts/training/EqDressageTests.lua")
 dofile("scripts/training/EqCourseGlow.lua")
 dofile("scripts/training/EqRidingInput.lua")
@@ -29,6 +31,7 @@ dofile("scripts/training/EqCourse.lua")
 dofile("scripts/training/EqShowJumping.lua")
 dofile("scripts/training/EqMetabolism.lua")
 dofile("scripts/core/EqRLRM.lua")
+dofile("scripts/core/EqBase.lua")
 dofile("scripts/core/EqI18N.lua")
 dofile("scripts/competition/EqEventConfig.lua")
 dofile("scripts/competition/EqPerformance.lua")
@@ -59,6 +62,7 @@ dofile("scripts/core/EqRole.lua")
 dofile("scripts/core/EqStatLog.lua")
 dofile("scripts/training/EqFeed.lua")
 dofile("scripts/dealer/EqDealer.lua")
+dofile("scripts/dealer/EqDealerStock.lua")
 dofile("scripts/core/EqRegistry.lua")
 dofile("scripts/core/EqFreshStart.lua")
 dofile("scripts/gui/EqMenuPaging.lua")
@@ -327,6 +331,12 @@ local function rlrmVersionTests()
     for _, path in ipairs(EqRLRM.REQUIRED) do add(path) end
     for _, paths in pairs(EqRLRM.OPTIONAL) do for _, path in ipairs(paths) do add(path) end end
     check("missing RLRM is reported", not initWith(nil, nil) and EqRLRM.problem == "missing")
+    g_modIsLoaded = {}
+    check("RLRM left over but not active on this save counts as missing",
+        not initWith(full, "1.4.2.0-dev.4") and EqRLRM.problem == "missing" and EqRLRM.isMissing())
+    g_modIsLoaded = { [EqRLRM.MOD_NAME] = true }
+    check("RLRM active on this save is used", initWith(full, "1.4.2.0-dev.4") and EqRLRM.problem == nil)
+    g_modIsLoaded = nil
     check("current RLRM has no problem", initWith(full, "1.4.2.0-dev.4") and EqRLRM.problem == nil)
     check("old RLRM still runs with a popup", initWith(full, "1.4.1.0") and EqRLRM.problem == "old")
     local partial = {}
@@ -4132,7 +4142,9 @@ end
     -- The movement named under the panel (James, 2026-11-01).
     local function nowName(t) return EqLateral.movementName(t) end
     check("the movement under the panel is named from Ctrl, the drift, the bend and the rail",
-        nowName({ gait = "TROT", spot = true }) == "piaffe" and nowName({ gait = "CANTER", spot = true, turning = true }) == "pirouette"
+        nowName({ gait = "TROT", spot = true }) == "piaffe" and nowName({ gait = "CANTER", spot = true, turning = true }) == "volte"
+        and nowName({ gait = "CANTER", spot = true, turning = true, pirouette = true }) == "pirouette"
+        and nowName({ gait = "TROT", spot = true, turning = true, pirouette = true }) == "pirouette"
         and nowName({ gait = "WALK", spot = true }) == "collected" and nowName({ gait = "TROT", spot = true, passage = true }) == "passage"
         and nowName({ gait = "TROT", side = 1, bend = 0 }) == "legYield" and nowName({ gait = "TROT", side = 1, bend = 0.8 }) == "halfPass"
         and nowName({ gait = "TROT", side = 1, bend = -0.8, rail = "in" }) == "shoulderIn"
@@ -4166,6 +4178,49 @@ end
         and EqLateral.keep(1, "WALK") == 0)
     check("on the spot the animation slows but stays in the gait", EqLateral.shownSpeed(4, 2, 0) == 4
         and math.abs(EqLateral.shownSpeed(4, 2, 1) - 3.2) < 1e-9 and EqLateral.shownSpeed(4, 2, 1) > 2)
+    -- Ctrl + A/D a volte sized by temperament, Ctrl + Shift + A/D a pirouette round the hind feet (James, 2026-11-23).
+    check("Ctrl + A/D is a pirouette at a walk or trot and a volte at a canter, Ctrl + Shift + A/D a canter pirouette",
+        EqLateral.spotMode("CANTER", true, false, false) == "volte" and EqLateral.spotMode("TROT", true, false, false) == "pirouette"
+        and EqLateral.spotMode("WALK", true, false, false) == "pirouette" and EqLateral.spotMode("CANTER", true, true, false) == "pirouette"
+        and EqLateral.spotMode("CANTER", false, true, false) == nil
+        and EqLateral.spotMode("CANTER", true, false, true) == nil and EqLateral.spotMode(nil, true, false, false) == nil)
+    local trotSpec = { currentTurnSpeed = 0.9, maxTurnSpeed = 1 }
+    check("a hard turn at a trot, ridden free, is a trot volte", EqLateral.trotVolte(trotSpec, "TROT", false)
+        and not EqLateral.trotVolte(trotSpec, "TROT", true) and not EqLateral.trotVolte(trotSpec, "CANTER", false)
+        and not EqLateral.trotVolte({ currentTurnSpeed = -0.5, maxTurnSpeed = 1 }, "TROT", false)
+        and EqLateral.trotVolte({ currentTurnSpeed = -0.9, maxTurnSpeed = 1 }, "TROT", false)
+        and not EqLateral.trotVolte({ currentTurnSpeed = 0.9, maxTurnSpeed = 1, eqCollect = 1 }, "TROT", false))
+    check("a level asks for its own volte size, a player's own test only the usual ones",
+        EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 6, levelVolte = true }, { voltes = { canter = 6 } })
+        and not EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 15 }, { voltes = { canter = 6 } })
+        and not EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 6, levelVolte = true }, nil)
+        and EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 15 }, nil)
+        and EqDressagePath.volteFits({ name = "circle", gait = "canter", size = 20 }, { voltes = { canter = 6 } })
+        and EqDressageLevels.LEVELS.grandPrix.voltes.canter == 6 and EqDressageLevels.LEVELS.medium.voltes.canter == 10
+        and EqDressageLevels.LEVELS.advanced.voltes.canter == 9 and EqDressageLevels.LEVELS.novice.voltes == nil
+        and not EqDressageLevels.forBuild("elementary", { halfW = 10, halfL = 20 }).pool["volte/canter"]
+        and EqDressageLevels.forBuild("elementary", { halfW = 10, halfL = 20 }).pool["volte/trot"]
+        and EqDressageLevels.LEVELS.elementary.voltes.trot == 10 and EqDressageLevels.LEVELS.intermediate.voltes.trot == 6
+        and not EqDressageLevels.forBuild("grandPrix", { halfW = 10, halfL = 30 }).pool["volte/trot"])
+    check("a volte is 6 m across from temperament 70, widening evenly to 10 m at 0", EqLateral.volteDiameter(70) == 6
+        and EqLateral.volteDiameter(100) == 6 and EqLateral.volteDiameter(0) == 10 and EqLateral.volteDiameter(nil) == 10
+        and math.abs(EqLateral.volteDiameter(35) - 8) < 1e-9)
+    check("a volte goes at the collected pace and turns only as hard as its circle needs", EqLateral.volteShare("WALK", tops) == 1
+        and EqLateral.volteShare("CANTER", tops) == EqLateral.passageShare("CANTER", tops)
+        and math.abs(EqLateral.volteSteer(1, 3, 6, 2) - 0.5) < 1e-9 and math.abs(EqLateral.volteSteer(-1, 3, 6, 2) + 0.5) < 1e-9
+        and EqLateral.volteSteer(1, 9, 6, 2) == 1 and EqLateral.volteSteer(0, 3, 6, 2) == 0)
+    -- Its speed follows the turn: speed / turn = the radius, within creep..share.
+    check("a volte's speed keeps the circle's size as the turn eases in", math.abs(EqLateral.volteKeep(1, 6, 6, 0.9, 0.1) - 0.5) < 1e-9
+        and EqLateral.volteKeep(0, 6, 6, 0.9, 0.1) == 0.1 and EqLateral.volteKeep(5, 6, 6, 0.9, 0.1) == 0.9
+        and EqLateral.volteKeep(1, 0, 6, 0.9, 0.1) == 0.1)
+    -- The hind feet sit back metres behind the middle, against the heading (dir = sin, cos).
+    local back, from, to = 0.9, 0.2, 0.5
+    local px, pz = EqLateral.pivot(from, to, back)
+    local hindX, hindZ = -back * math.sin(from), -back * math.cos(from)
+    local nowHindX, nowHindZ = px - back * math.sin(to), pz - back * math.cos(to)
+    local jx, jz = EqLateral.pivot(0, EqLateral.PIVOT_JUMP + 0.1, back)
+    check("a pirouette turns round the hind feet, and a jump in heading moves nothing",
+        math.abs(nowHindX - hindX) < 1e-9 and math.abs(nowHindZ - hindZ) < 1e-9 and (px ~= 0 or pz ~= 0) and jx == 0 and jz == 0)
     check("Ctrl + A/D turns on the spot at a riding gait", EqLateral.spotSteer(true, false, "TROT") > 0
         and EqLateral.spotSteer(false, true, "CANTER") < 0 and EqLateral.spotSteer(true, false, "WALK") > 0
         and EqLateral.spotSteer(true, false, nil) == 0
@@ -4371,7 +4426,8 @@ end)()
         for _, figure in ipairs(library) do
             keys[figure.key] = true
             -- Lateral work drifts without turning, so its kinks are not turns.
-            if figure.sections == nil and EqDressagePath.tightest(figure.pts) < g.minR[figure.gait] * 0.9 then tight = tight + 1 end
+            -- A level's volte is as tight as its level asks (James, 2026-11-23).
+            if figure.sections == nil and not figure.levelVolte and EqDressagePath.tightest(figure.pts) < g.minR[figure.gait] * 0.9 then tight = tight + 1 end
             if figure.gait == "canter" then canters[figure.key] = true end
         end
         -- Each figure is ridden at one gait, its turns sized for it (James 2026-10-29); a
@@ -4505,6 +4561,18 @@ end)()
         local rolls = EqRandom.new(seed)
         return function(k) return math.min(k, 1 + math.floor(rolls:next() * k)) end
     end
+    -- A pirouette is placed by its hind feet, a piaffe by the horse's middle.
+    do
+        local look = { dirX = 0.6, dirZ = 0.8 }
+        local mx, my = EqDressagePath.spotPos(frame, "piaffe", 3, 4, look)
+        local rx, ry = EqDressagePath.toLocal(frame, 3, 4)
+        local hx, hy = EqDressagePath.spotPos(frame, "pirouette", 3, 4, look)
+        local bx, by = EqDressagePath.toLocal(frame, 3 - 0.6 * EqDressagePath.PIROUETTE_BACK, 4 - 0.8 * EqDressagePath.PIROUETTE_BACK)
+        check("a pirouette is placed by its hind feet", mx == rx and my == ry and math.abs(hx - bx) < 1e-9 and math.abs(hy - by) < 1e-9
+            and math.abs(math.sqrt((hx - rx) ^ 2 + (hy - ry) ^ 2) - EqDressagePath.PIROUETTE_BACK) < 1e-6)
+    end
+    -- A wrong gait in lateral work costs more than elsewhere.
+    check("a moment at the wrong gait in lateral work costs at least a mark", EqDressagePath.markOf({ devSum = 0, len = 10, wrongMs = 700 * EqDressagePath.LATERAL_WRONG, pen = 0 }) <= 9)
     local one, two = EqDressagePath.build(frame, 8, seeded("dressage 4 novice")), EqDressagePath.build(frame, 8, seeded("dressage 4 novice"))
     local same = #one.pts == #two.pts and #one.events == #two.events
     for i, m in ipairs(one.moves) do same = same and m.key == two.moves[i].key end
@@ -4863,9 +4931,191 @@ end)()
         local fx, fz = EqDressagePath.toWorld(frame, p.x + EqDressagePath.STICK_RANGE + 3, p.y)
         local gx, gz = EqDressagePath.assist(run, fx, fz, true, 1000)
         check("a horse ridden away from the line is not held back", math.abs(gx) + math.abs(gz) < 1e-9)
+        local rx, rz = EqDressagePath.assist(run, wx, wz, true, 1000, true)
+        check("a horse backing up gets no pull (the stuck check took it for a crash)", math.abs(rx) + math.abs(rz) < 1e-9)
+        -- Behind the start of the piece: no pull along the line, only sideways onto it.
+        local a, b = found.pts[math.max(1, run.i - 1)], found.pts[math.min(#found.pts, run.i + 1)]
+        local ux, uy = b.x - a.x, b.y - a.y
+        local ul = math.sqrt(ux * ux + uy * uy)
+        ux, uy = ux / ul, uy / ul
+        local bx, bz = EqDressagePath.toWorld(frame, a.x - ux * 1 + uy * 0.5, a.y - uy * 1 - ux * 0.5)
+        local px, pz = EqDressagePath.assist(run, bx, bz, true, 1000)
+        local lx2, ly2 = px * frame.vx + pz * frame.vz, px * frame.ux + pz * frame.uz
+        check("the pull onto the line is sideways only, never along it", math.abs(lx2 * ux + ly2 * uy) < 1e-6 and math.abs(lx2) + math.abs(ly2) > 1e-4)
+        local m = run.cur
+        local pen = run.acc[m].pen
+        local paused = EqTraining.newSheet()
+        paused.routine.active, paused.routine.kind, paused.routine.path = true, "path", run
+        EqTraining.rest(paused, 30000, 50, true)
+        local kept = paused.routine.active and paused.routine.path == run
+        EqTraining.rest(paused, 30000, 50)
+        check("a pause in the saddle keeps a test going; resting off the horse ends it", kept and not paused.routine.active)
+        check("a crash in a test costs marks on the movement and the test goes on", EqDressagePath.crash(run) == 1
+            and math.abs(run.acc[m].pen - pen - EqDressagePath.CRASH_PEN) < 1e-9 and run.errors == 0 and not run.eliminated)
     end
 
     check("a canter counts when the horse goes fast", EqDressagePath.matches("fast", "canter") and not EqDressagePath.matches("gallop", "canter"))
+    -- TEST LEVELS (EqDressageLevels, James 2026-11-22/23): own / random / set tests at seven levels.
+    do
+        local frames = {}
+        for n, arena in ipairs(SHOP) do
+            local markers = shopMarkers(arena, 500 + 200 * n, 30, 0.3 * n)
+            frames[n] = { frame = EqDressagePath.frameFor(markers, xOf(markers)), markers = markers }
+        end
+        check("levels: the shop's arenas are first, second and third", EqDressageLevels.arenaOf(frames[1].frame) == 1
+            and EqDressageLevels.arenaOf(frames[2].frame) == 2 and EqDressageLevels.arenaOf(frames[3].frame) == 3)
+        local LATERAL = { shoulderIn = true, travers = true, renvers = true, legYieldRail = true, halfPass = true, halfPassCentre = true,
+            passageRail = true, passageDiagonal = true }
+        local ABOVE = { novice = { shoulderIn = true, travers = true, renvers = true, halfPass = true, halfPassCentre = true, passageRail = true, passageDiagonal = true },
+            elementary = { renvers = true, halfPass = true, halfPassCentre = true, passageRail = true, passageDiagonal = true },
+            medium = { passageRail = true, passageDiagonal = true }, advanced = { passageRail = true, passageDiagonal = true },
+            prixStGeorges = { passageRail = true, passageDiagonal = true }, intermediate = { passageDiagonal = true }, grandPrix = {} }
+        for _, name in ipairs(EqDressageLevels.ORDER) do
+            for n = 1, 3 do
+                local frame = frames[n].frame
+                local allowed = EqDressageLevels.allowed(name, n)
+                local plan = EqDressageLevels.setPlan(name, n)
+                check(string.format("levels: %s has a set test in arena %d exactly when it is ridden there", name, n), (plan ~= nil) == allowed)
+                if allowed then
+                    local lv = EqDressageLevels.forBuild(name, frame)
+                    -- The set test builds every step, and rides the same each time (never saved).
+                    local set = EqDressagePath.build(frame, nil, nil, plan, nil, lv)
+                    local again = EqDressagePath.build(frame, nil, nil, EqDressageLevels.setPlan(name, n), nil, lv)
+                    check(string.format("levels: %s set test builds in arena %d", name, n), set.broken == nil and set.steps == #plan.steps
+                        and #set.moves == #plan.steps + 3 and set.length == again.length,
+                        string.format("broken at %s of %d", tostring(set.broken), #plan.steps))
+                    -- A canter half pass to the centre line turns onto the track no tighter than a
+                    -- canter's corners (James, 2026-11-23: about 4 m was "incredibly hard").
+                    local tight = nil
+                    for _, sec in ipairs(set.sections) do
+                        local move = set.moves[sec.m] or {}
+                        if move.key == "halfPassCentre" and move.gait == "canter" then
+                            local pts = set.pts
+                            for i = 4, #pts - 3 do
+                                local a, b, c = pts[i - 3], pts[i], pts[i + 3]
+                                if b.s > sec.s1 + 2 and b.s < sec.s1 + 40 then
+                                    local ab = math.sqrt((b.x - a.x) ^ 2 + (b.y - a.y) ^ 2)
+                                    local bc = math.sqrt((c.x - b.x) ^ 2 + (c.y - b.y) ^ 2)
+                                    local ac = math.sqrt((c.x - a.x) ^ 2 + (c.y - a.y) ^ 2)
+                                    local cross = math.abs((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x))
+                                    local r = cross > 1e-6 and ab * bc * ac / (2 * cross) or 1e9
+                                    if r < EqDressagePath.MIN_RADIUS.canter - 0.2 and (tight == nil or r < tight) then tight = r end
+                                end
+                            end
+                        end
+                    end
+                    check(string.format("levels: %s canter half passes in arena %d turn onto the track wide enough", name, n), tight == nil,
+                        string.format("%.1f m", tight or 0))
+                    local run, event = ride(set, frame, 0, 0)
+                    check(string.format("levels: a rider on the line finishes the %s set test in arena %d", name, n), event == "test" and run.percent >= 70,
+                        string.format("%s %s%%", event, tostring(run.percent)))
+                    -- Random tests: only the level's figures and movements, canter on straights in the first arena.
+                    local ok, why = true, ""
+                    for seed = 1, 25 do
+                        local test = EqDressagePath.build(frame, EqDressageLevels.figuresOf(name), seeded(name .. n .. seed), nil, nil, lv)
+                        for _, move in ipairs(test.moves) do
+                            if ABOVE[name][move.key] then ok, why = false, "figure " .. move.key end
+                        end
+                        for _, e in ipairs(test.events) do
+                            local move = test.moves[e.m] or {}
+                            if e.reinBack and name == "novice" then ok, why = false, "rein back" end
+                            if e.kind == "spot" then
+                                local kind = e.style == "piaffe" and "piaffe" or (e.gait == "canter" and "canterPirouette" or "walkPirouette")
+                                if not lv.spots[kind] then ok, why = false, "spot " .. kind end
+                            end
+                            if n == 1 and e.kind == "change" and e.gait == "canter" and move.key ~= "canterSide" and move.key ~= "canterDiagonal" then
+                                ok, why = false, "canter in " .. tostring(move.key)
+                            end
+                        end
+                        if #test.moves < 3 + math.min(3, EqDressageLevels.figuresOf(name)) then ok, why = false, "short test" end
+                    end
+                    check(string.format("levels: %s random tests in arena %d keep to the level", name, n), ok, why)
+                else
+                    check(string.format("levels: %s is never fitted to arena %d", name, n), EqDressageLevels.fit(name, n) ~= name)
+                end
+            end
+        end
+        -- The first arena's canter only ever comes on a straight, and turns before the corner.
+        local cantered = 0
+        for seed = 1, 60 do
+            local test = EqDressagePath.build(frames[1].frame, 6, seeded("straight " .. seed), nil, nil, EqDressageLevels.forBuild("novice", frames[1].frame))
+            for m, move in ipairs(test.moves) do
+                if move.key == "canterSide" or move.key == "canterDiagonal" then
+                    cantered = cantered + 1
+                    -- Canter, then trot, both inside the straight's own movement.
+                    local up, down = nil, nil
+                    for _, e in ipairs(test.events) do
+                        if e.m == m and e.kind == "change" and e.gait == "canter" then up = e.s end
+                        if e.m == m and e.kind == "change" and e.gait == "trot" and up ~= nil then down = e.s end
+                    end
+                    if up == nil or down == nil or down > move.s1 or EqDressagePath.gaitAt(test, move.s1 + 0.5) == "canter" then cantered = -1000 end
+                end
+            end
+        end
+        check("levels: the first arena canters on straights and trots again before the turn", cantered > 0, tostring(cantered))
+        -- A player's own test never gets the level-only straights, and random tests without a level keep every figure.
+        local plain = EqDressagePath.build(frames[1].frame, 7, seeded("plain"), { turn = 1, seed = 1, steps = {} }, true)
+        local straightOffered = false
+        for _, option in ipairs(plain.options.figure) do
+            if option.figure.levelOnly then straightOffered = true end
+        end
+        check("levels: the editor never offers the level-only canter straights", not straightOffered)
+
+        -- The choice per arena: own when there is one, else random at Elementary; the keys cycle it.
+        EqDressageLevels.reset()
+        local f1, f3 = frames[1].frame, frames[3].frame
+        local kind, level = EqDressageLevels.choiceFor(f1, false)
+        local kindOwn = EqDressageLevels.choiceFor(f1, true)
+        check("levels: first time it rides random at Elementary, or your own test", kind == "random" and level == "elementary" and kindOwn == "own")
+        local types = { EqDressageLevels.cycleType(f1, false), EqDressageLevels.cycleType(f1, false) }
+        check("levels: Ctrl+N skips own when there is none", types[1] == "set" and types[2] == "random")
+        local withOwn = { EqDressageLevels.cycleType(f1, true), EqDressageLevels.cycleType(f1, true), EqDressageLevels.cycleType(f1, true) }
+        check("levels: Ctrl+N goes round own, random and set", withOwn[1] == "set" and withOwn[2] == "own" and withOwn[3] == "random")
+        local seen1 = {}
+        for _ = 1, 4 do seen1[#seen1 + 1] = (EqDressageLevels.cycleLevel(f1, false)) end
+        check("levels: Ctrl+M in the first arena goes between Novice and Elementary", seen1[1] == "novice" and seen1[2] == "elementary"
+            and seen1[3] == "novice" and seen1[4] == "elementary", table.concat(seen1, ","))
+        local seen3 = {}
+        for _ = 1, 6 do seen3[#seen3 + 1] = (EqDressageLevels.cycleLevel(f3, false)) end
+        check("levels: Ctrl+M in the third arena skips Novice", table.concat(seen3, ",") == "medium,advanced,prixStGeorges,intermediate,grandPrix,elementary",
+            table.concat(seen3, ","))
+        local _, kept = EqDressageLevels.choiceFor(f1, false)
+        check("levels: each arena keeps its own choice", kept == "elementary" and select(2, EqDressageLevels.choiceFor(f3, false)) == "elementary")
+        EqDressageLevels.setChoice(f3, "set", "grandPrix")
+        local store = memoryXML()
+        EqDressageLevels.saveToXMLFile(store, "c")
+        EqDressageLevels.loadFromXMLFile(store, "c")
+        local k3, l3 = EqDressageLevels.choiceFor(f3, false)
+        check("levels: the choice survives a save", #EqDressageLevels.choices == 2 and k3 == "set" and l3 == "grandPrix")
+        -- A test waiting at A rides the choice.
+        local function startAt(n, test)
+            local routine = {}
+            EqDressage.start(routine, { x = frames[n].frame.cx, z = frames[n].frame.cz, markers = frames[n].markers, test = test }, seeded("start " .. n))
+            return routine
+        end
+        local r3 = startAt(3)
+        check("levels: a waiting test is the arena's set test at its level", r3.kind == "path" and r3.path.choice.type == "set"
+            and r3.path.choice.level == "grandPrix" and r3.path.test.steps == #EqDressageLevels.setPlan("grandPrix", 3).steps)
+
+        -- Your own events: a random test at a level from the rating, the same all month.
+        local hostedOk = true
+        for _, case in ipairs({ { "novice", 1, { novice = true, elementary = true } }, { "novice", 3, { elementary = true } },
+            { "intermediate", 2, { medium = true, advanced = true } }, { "championship", 3, { prixStGeorges = true, intermediate = true, grandPrix = true } },
+            { "championship", 2, { advanced = true } } }) do
+            for seed = 1, 10 do
+                local lvl = EqDressageLevels.hostedLevel(case[1], frames[case[2]].frame, seeded("host " .. seed))
+                if not case[3][lvl] then hostedOk = false end
+            end
+        end
+        check("levels: your own event draws its level from its rating and the arena", hostedOk)
+        check("levels: an unknown rating has no level", EqDressageLevels.hostedLevel(nil, f1, seeded("x")) == nil)
+        local fixed = { seed = "dressage 7 championship", moves = 25, counts = true, status = "counts", event = {}, steps = 13, rating = "championship" }
+        local a, b = startAt(3, fixed), startAt(3, fixed)
+        check("levels: your own event's random test is fixed for the month", a.path.choice.hosted and a.path.choice.type == "random"
+            and a.path.choice.level == b.path.choice.level and a.path.test.length == b.path.test.length and a.competing == true
+            and #a.path.test.moves == EqDressageLevels.figuresOf(a.path.choice.level) + 3)
+        EqDressageLevels.reset()
+    end
 end)()
 
 -- Show jump poles that fall when hit (EqPoles): a scripted fall, then back up. A function, not a
@@ -5072,19 +5322,46 @@ end)()
     -- Strictness: hard bargains ask more and give more.
     local relaxedFee, strictFee = EqSponsorship.term(sp, "fee", 0), EqSponsorship.term(sp, "fee", 1)
     check("sponsors: strict deals pay more (80% to 130%)", math.abs(relaxedFee - 0.8) < 1e-9 and math.abs(strictFee - 1.3) < 1e-9)
-    check("sponsors: strict deals ask for more machines", EqSponsorship.term(sp, "categoriesPerMachine", 1) < EqSponsorship.term(sp, "categoriesPerMachine", 0))
+    check("sponsors: strict deals ask for more machines", EqSponsorship.term(sp, "budget", 1) > EqSponsorship.term(sp, "budget", 0))
     check("sponsors: deal words", EqSponsorship.word(sp, 0.1) == "relaxed" and EqSponsorship.word(sp, 0.3) == "fair"
         and EqSponsorship.word(sp, 0.6) == "demanding" and EqSponsorship.word(sp, 0.9) == "hardBargain")
-    check("sponsors: machines to own", EqSponsorship.machinesNeeded(5, 2) == 3 and EqSponsorship.machinesNeeded(1, 4) == 1)
-    check("sponsors: machines to own capped by size: small 1, moderate 3, big 5",
-        EqSponsorship.machinesMaxFor(sp, sp.sizeByName.small) == 1 and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.moderate) == 3
-        and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.big) == 5)
-    check("sponsors: never more than 5 machines to own (22 categories)", sp.machinesMax == 5
-        and EqSponsorship.machinesNeeded(22, 2, sp.machinesMax) == 5)
+    -- Machines to own by price (James, 2026-11-19): about what the budget buys at the brand's
+    -- median price, never none, never 4 or more.
+    check("sponsors: machines to own by price", EqSponsorship.machinesNeeded(300000, 150000) == 2
+        and EqSponsorship.machinesNeeded(300000, 120000) == 3 and EqSponsorship.machinesNeeded(60000, 500000) == 1
+        and EqSponsorship.machinesNeeded(60000, 0) == 1)
+    check("sponsors: machines to own capped by size: small 1, moderate 2, big 3",
+        EqSponsorship.machinesMaxFor(sp, sp.sizeByName.small) == 1 and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.moderate) == 2
+        and EqSponsorship.machinesMaxFor(sp, sp.sizeByName.big) == 3)
+    check("sponsors: never more than 3 machines to own", sp.machinesMax == 3
+        and EqSponsorship.machinesNeeded(1000000, 2000, sp.machinesMax) == 3)
+    check("sponsors: median price", EqSponsorship.median({ 5, 1, 3 }) == 3 and EqSponsorship.median({ 4, 1, 2, 3 }) == 2.5
+        and EqSponsorship.median({}) == 0)
+    check("sponsors: dear tractors ask for fewer than cheap implements", (function()
+        local dear, cheap = { median = 152000 }, { median = 65000 }
+        for i = 0, 10 do
+            local strictness = i / 10
+            local big = EqSponsorship.machinesFor(sp, sp.sizeByName.big, dear, strictness)
+            local moderate = EqSponsorship.machinesFor(sp, sp.sizeByName.moderate, cheap, strictness)
+            if big < 1 or big > 2 or moderate ~= 2 then return false end
+        end
+        return EqSponsorship.machinesFor(sp, sp.sizeByName.small, dear, 1) == 1
+            and EqSponsorship.machinesFor(sp, sp.sizeByName.small, { median = 500 }, 1) == 1
+    end)())
+    check("sponsors: old offers asked for machines by price, never more", (function()
+        local old = { brand = "F", size = "big", machines = 4, strictness = 0 }
+        local kept = { brand = "F", size = "big", machines = 1, strictness = 1 }
+        local new = { brand = "F", size = "big", machines = 3, strictness = 1, machineRule = EqSponsorship.MACHINE_RULE }
+        local profile = { median = 152000 }
+        return EqSponsorship.rescaleMachines(sp, old, profile) and old.machines == 1 and old.machineRule == EqSponsorship.MACHINE_RULE
+            and EqSponsorship.rescaleMachines(sp, kept, profile) and kept.machines == 1
+            and not EqSponsorship.rescaleMachines(sp, new, profile) and new.machines == 3
+            and not EqSponsorship.rescaleMachines(sp, { size = "big", machines = 4 }, nil)
+    end)())
     check("sponsors: shares on 5% steps", EqSponsorship.round5(0.37) == 0.35 and EqSponsorship.round5(0.38) == 0.4
         and EqSponsorship.round5(0.6) == 0.6)
     local old = EqSponsorship.tidy(sp, { size = "big", machines = 11, window = 0.43, repair = 0.21, repaint = 0.52, purchase = 0.07, strictness = 1 })
-    check("sponsors: old saved offers tidied", old.machines == 5 and old.brandingNeed == 3 and old.window == 0.45 and old.repair == 0.2
+    check("sponsors: old saved offers tidied", old.machines == 3 and old.brandingNeed == 3 and old.window == 0.45 and old.repair == 0.2
         and old.repaint == 0.5 and old.purchase == 0.05)
 
     -- Competitor clause: B's 260k tractor sits within 30% of A's 260k tractor.
@@ -5167,10 +5444,12 @@ end)()
         and #EqSponsorship.clashes({ brand = "KRONE", window = 1 }, { byCategory = { tractorsS = { 30000 } } }, mine) == 1)
     check("sponsors: the biggest sponsor names the event", EqSponsorship.lead({ zetor, { brand = "M", size = "moderate", fee = 30000 }, krone }).brand == "M"
         and EqSponsorship.lead({ zetor, EqSponsorship.contractFrom(small("KRONE"), 1) }).brand == "ZETOR" and EqSponsorship.lead({}) == nil)
-    -- Attachments (James, 2026-11-01): a header or trailer counts half toward the machines to own.
-    check("sponsors: attachments count half", sp.attachmentWeight == 0.5
-        and EqSponsorship.ownedOf("F", { { brand = "F" }, { brand = "F", attachment = true }, { brand = "F", attachment = true } }, sp.attachmentWeight) == 2
-        and EqSponsorship.ownedOf("F", { { brand = "F", attachment = true } }) == 1)
+    -- Very cheap kit (James, 2026-11-19): under a quarter of the brand's median price counts half.
+    check("sponsors: very cheap machines count half", sp.cheapWeight == 0.5
+        and EqSponsorship.ownedOf("F", { { brand = "F" }, { brand = "F", cheap = true }, { brand = "F", cheap = true } }, sp.cheapWeight) == 2
+        and EqSponsorship.ownedOf("F", { { brand = "F", cheap = true } }) == 1
+        and EqSponsorship.isCheap(sp, { median = 65000 }, 14000) and not EqSponsorship.isCheap(sp, { median = 65000 }, 20000)
+        and not EqSponsorship.isCheap(sp, nil, 1))
     check("sponsors: discounts start 3 months after signing, on the sponsor's brand only", (function()
         local c = { { brand = "M", signedMonth = 10, repair = 0.15, repaint = 0.35, purchase = 0.05 } }
         return EqSponsorship.discount(c, "M", "purchase", 12, sp.discountMonths) == 0
@@ -5181,9 +5460,9 @@ end)()
             and EqSponsorship.discount({}, "M", "repair", 20, 3) == 0
             and EqSponsorship.discount({ c[1], { brand = "M", signedMonth = 0, repair = 0.3 } }, "M", "repair", 20, 3) == 0.3
     end)())
-    check("sponsors: light tractor, harvester and header is not 3", not EqSponsorship.signChecks(sp,
+    check("sponsors: two tractors and a cheap weight is not 3", not EqSponsorship.signChecks(sp,
         { brand = "F", size = "big", machines = 3, window = 0.1, brandingNeed = 1, exclusive = true },
-        { owned = { { brand = "F" }, { brand = "F" }, { brand = "F", attachment = true } }, profile = { byCategory = {} }, boards = 1 }).ok)
+        { owned = { { brand = "F" }, { brand = "F" }, { brand = "F", cheap = true } }, profile = { byCategory = {} }, boards = 1 }).ok)
     local oldBig = EqSponsorship.tidy(sp, { size = "big", strictness = 0.5 })
     local oldSmall = EqSponsorship.tidy(sp, { size = "small", strictness = 0.5, exclusive = true })
     check("sponsors: old saves: big exclusive, small not", oldBig.exclusive == true and oldSmall.exclusive == false)
@@ -5847,10 +6126,19 @@ end)()
         check("lizard: a 25% chance, three bulk materials, wood and planks for every plinth", lz.chance == 0.25
             and #lz.materials == 3 and #lz.parts == 2 and EqLizard.material(lz, "STRAW").amount == 10000
             and EqLizard.material(lz, "STONE").amount == 1200 and EqLizard.material(lz, "WOODCHIPS").amount == 1000)
-        check("lizard: an offer below the chance, none at or above it", EqLizard.roll(lz, 0.2, 0.5) ~= nil
-            and EqLizard.roll(lz, 0.25, 0.5) == nil and EqLizard.roll(lz, 0.9, 0.1) == nil and EqLizard.roll(nil, 0, 0) == nil)
-        check("lizard: the material picked by weight", EqLizard.roll(lz, 0, 0).fillType == lz.materials[1].fillType
-            and EqLizard.roll(lz, 0, 0.5).fillType == lz.materials[2].fillType and EqLizard.roll(lz, 0, 0.999).fillType == lz.materials[3].fillType)
+        check("lizard: the offer lists all three bulk materials to choose from", (function()
+            local saved = g_i18n
+            local texts = { eq_lizard_or = "%s or %s", eq_lizard_and = "%s and %s", eq_lizard_needs = "%s (your choice), plus %s" }
+            g_i18n = { getText = function(_, key) return texts[key] or key end,
+                formatVolume = function(_, amount) return string.format("%d l", amount) end }
+            local needs = EqLizard.needsText(lz)
+            local choices = EqLizard.choicesText(lz, false)
+            g_i18n = saved
+            return needs == "1200 l STONE, 1000 l WOODCHIPS or 10000 l STRAW (your choice), plus 10000 l WOOD and 1000 l BOARDS"
+                and choices == "STONE, WOODCHIPS or STRAW", needs
+        end)())
+        check("lizard: an offer below the chance, none at or above it", EqLizard.roll(lz, 0.2) == true
+            and EqLizard.roll(lz, 0.25) == false and EqLizard.roll(lz, 0.9) == false and EqLizard.roll(nil, 0) == false)
         local fee = lz.ratings.intermediate.fee
         check("lizard: pays when the plinth is built and the branding is there, else nothing (no penalty)",
             EqLizard.payFor(lz, "intermediate", true, 2) == fee and EqLizard.payFor(lz, "intermediate", true, 3) == fee
@@ -5944,18 +6232,17 @@ end)()
             EqLizard.config = lz
             EqHostManager.bookings = {}
             EqCompetitionManager.events = {}
-            local none = EqLizard.force(6, nil, false)
-            local bad = EqLizard.force(6, "gold", false)
+            local none = EqLizard.force(6, false)
             local event = { id = 41, discipline = "dressage", hosted = { farmId = 6, rating = "novice", sponsor = "Someone" } }
             EqCompetitionManager.events = { event }
             EqCompetitionManager.month = 5
-            local ok = pcall(EqLizard.force, 6, "straw", false)
-            local result = ok and EqLizard.isLizardEvent(event) and event.hosted.lizard == true and EqLizard.deals[6].material == "STRAW"
+            local ok = pcall(EqLizard.force, 6, false)
+            local result = ok and EqLizard.isLizardEvent(event) and event.hosted.lizard == true and EqLizard.deals[6].material == nil
             EqLizard.deals[6] = nil
             EqLizard.config, EqCompetitionManager.events, EqCompetitionManager.month = savedConfig, savedEvents, savedMonth
             EqHostManager.bookings = savedBookings
             EqCompetitionManager = savedManager
-            return result and string.find(none, "Book", 1, true) ~= nil and string.find(bad, "stone", 1, true) ~= nil
+            return result and string.find(none, "Book", 1, true) ~= nil
         end)())
     end
 
@@ -6798,6 +7085,222 @@ end)()
     coroutine = saved
     EqLog = savedLog
     check("eqlog: guard runs without coroutine", ok == true and value == 7 and bad == false)
+end)()
+
+
+-- DEALER HORSE STOCK (EqDealerStock, James 2026-11-23): 0 to 3 of each colour and gender a
+-- month, at least 12 in all, and a full kind is hidden from RLRM's pick.
+;(function()
+    local kinds = {}
+    for _, colour in ipairs({ "GRAY", "PINTO", "PALOMINO", "CHESTNUT", "BAY", "BLACK", "SEAL_BROWN", "DUN" }) do
+        table.insert(kinds, "HORSE_" .. colour)
+        table.insert(kinds, "STALLION_" .. colour)
+    end
+
+    local inRange, minOk, sumAll, empties, months = true, true, 0, 0, 400
+    for m = 1, months do
+        local shelves = EqDealerStock.rollShelves(kinds, "2026:" .. m)
+        local total = 0
+        for _, name in ipairs(kinds) do
+            local n = shelves[name]
+            if n == nil or n < 0 or n > 3 or n ~= math.floor(n) then inRange = false end
+            total = total + (n or 0)
+            if n == 0 then empties = empties + 1 end
+        end
+        if total < 12 then minOk = false end
+        sumAll = sumAll + total
+    end
+    check("dealer shelves are 0 to 3 each", inRange)
+    check("dealer shelves add up to at least 12", minOk)
+    local mean = sumAll / months
+    check("dealer stock averages about 24 horses", mean > 21 and mean < 27, tostring(mean))
+    check("some kinds are sold out", empties > months, tostring(empties))
+
+    local a, b = EqDealerStock.rollShelves(kinds, "5:3"), EqDealerStock.rollShelves(kinds, "5:3")
+    local reversed = {}
+    for i = #kinds, 1, -1 do table.insert(reversed, kinds[i]) end
+    local c = EqDealerStock.rollShelves(reversed, "5:3")
+    local same = true
+    for _, name in ipairs(kinds) do
+        if a[name] ~= b[name] or a[name] ~= c[name] then same = false end
+    end
+    check("dealer shelves are the same for the same month, whatever the order", same)
+
+    local zeroes = EqDealerStock.rollShelves({ "A", "B", "C", "D", "E" }, "x", 3, 12)
+    local zTotal = 0
+    for _, n in pairs(zeroes) do zTotal = zTotal + n end
+    check("dealer minimum tops up when the rolls fall short", zTotal == 12, tostring(zTotal))
+    local tiny = EqDealerStock.rollShelves({ "A", "B" }, "x", 3, 12)
+    check("dealer minimum stops at every shelf full", tiny.A == 3 and tiny.B == 3)
+
+    local kindOf = function(animal) return animal.kind end
+    local listing = function(kind) return { kind = kind, sale = { day = 1 } } end
+    local shelf = { listing("A"), listing("B"), listing("A"), { kind = "A" }, listing("A"), listing("C") }
+    local excess = EqDealerStock.excess(shelf, { A = 1, B = 0 }, kindOf)
+    check("dealer trim drops the newest over the shelf and leaves unknown kinds",
+        #excess == 3 and excess[1] == 2 and excess[2] == 3 and excess[3] == 5, table.concat(excess, ","))
+    local counts = EqDealerStock.countKinds(shelf, kindOf)
+    check("dealer counts only listings", counts.A == 3 and counts.B == 1 and counts.C == 1)
+
+    -- createHorse with a stand-in animal system: full kinds are hidden for the call only.
+    local savedType, savedMission = AnimalType, g_currentMission
+    AnimalType = { HORSE = 7 }
+    g_currentMission = { environment = { currentYear = 3, currentPeriod = 2 } }
+    local subTypes = {}
+    local function addSub(index, name)
+        subTypes[index] = { name = name, visuals = { { store = { canBeBought = true } }, { store = { canBeBought = false } } } }
+    end
+    addSub(1, "A"); addSub(2, "B"); addSub(3, "C")
+    local system = {
+        animals = { [7] = {} },
+        getTypeByIndex = function(_, i) return i == 7 and { subTypes = { 1, 2, 3 } } or nil end,
+        getSubTypeByIndex = function(_, i) return subTypes[i] end,
+    }
+    EqDealerStock.cache = { key = "3:2", shelves = { A = 1, B = 0, C = 2 } }
+    local seen = {}
+    local original = function(self, typeIndex)
+        local open = {}
+        for i = 1, 3 do
+            if subTypes[i].visuals[1].store.canBeBought then table.insert(open, i) end
+        end
+        seen = open
+        return { subTypeIndex = open[1], sale = { day = 1 } }
+    end
+    local horse = EqDealerStock.createHorse(original, system, 7)
+    check("dealer hides a sold-out kind", #seen == 2 and seen[1] == 1 and seen[2] == 3 and horse.subTypeIndex == 1)
+    table.insert(system.animals[7], horse)
+    horse = EqDealerStock.createHorse(original, system, 7)
+    check("dealer hides a kind once its shelf is full", #seen == 1 and seen[1] == 3 and horse.subTypeIndex == 3)
+    check("dealer puts the hidden kinds back", subTypes[1].visuals[1].store.canBeBought and subTypes[2].visuals[1].store.canBeBought
+        and not subTypes[1].visuals[2].store.canBeBought)
+    table.insert(system.animals[7], horse)
+    table.insert(system.animals[7], { subTypeIndex = 3, sale = { day = 1 } })
+    local called = false
+    local none = EqDealerStock.createHorse(function() called = true end, system, 7)
+    check("dealer adds nothing when every shelf is full", none == nil and not called
+        and subTypes[1].visuals[1].store.canBeBought and subTypes[2].visuals[1].store.canBeBought)
+    local failed = pcall(EqDealerStock.createHorse, function() error("boom") end,
+        { animals = { [7] = {} }, getTypeByIndex = system.getTypeByIndex, getSubTypeByIndex = system.getSubTypeByIndex }, 7)
+    check("dealer puts the hidden kinds back after an error", not failed and subTypes[2].visuals[1].store.canBeBought)
+
+    AnimalType, g_currentMission = savedType, savedMission
+    EqDealerStock.cache = nil
+end)()
+
+-- Without Realistic Livestock: our own horse ids, our own message log and plain breeding.
+;(function()
+    EqBase.known, EqBase.highest = {}, 0
+    check("base: id numbers parse", EqBase.idNumber("EQ-12") == 12 and EqBase.idNumber("GB 1 42") == nil
+        and EqBase.idNumber(nil) == nil)
+    local records = { ["EQ-3"] = { name = "Star" }, ["EQ-7"] = { name = "Bramble" }, ["GB 1 4"] = { name = "Old" } }
+    local id = EqBase.newId(records)
+    check("base: a new id follows the highest saved one", id == "EQ-8")
+    check("base: new ids never repeat", EqBase.newId(records) == "EQ-9")
+    EqBase.remember("EQ-40")
+    check("base: a remembered id raises the counter", EqBase.newId(records) == "EQ-41")
+    check("base: a lost id is matched by name", EqBase.matchByName("Star", records, {}) == "EQ-3")
+    check("base: a name carried by another horse is not matched", EqBase.matchByName("Star", records, { ["EQ-3"] = true }) == nil)
+    records["EQ-20"] = { name = "Star" }
+    check("base: two horses with one name are not guessed", EqBase.matchByName("Star", records, {}) == nil)
+    check("base: no name, no match", EqBase.matchByName(nil, records, {}) == nil)
+    EqBase.known, EqBase.highest = {}, 0
+
+    local savedMission, savedFSBase = g_currentMission, FSBaseMission
+    local shown = {}
+    FSBaseMission = { INGAME_NOTIFICATION_OK = "ok", INGAME_NOTIFICATION_INFO = "info", INGAME_NOTIFICATION_CRITICAL = "critical" }
+    g_currentMission = { getIsServer = function() return true end, getFarmId = function() return 1 end,
+        environment = { currentMonotonicDay = 5, currentPeriod = 2, currentDayInPeriod = 1, currentYear = 1 },
+        addIngameNotification = function(_, kind, text) table.insert(shown, { kind = kind, text = text }) end }
+    local wasOwn, wasInstalled, wasLines = EqMessages.ownLog, EqMessages.isInstalled, EqMessages.lines
+    EqMessages.installOwn()
+    EqMessages.post(1, "EQ_PLACED", "Star won.", nil, "EQ-3")
+    EqMessages.post(2, "EQ_INJURED", "Other farm's horse.", nil)
+    EqMessages.post(1, "NOT_OURS", "x", nil)
+    local mine = EqMessages.linesFor(1)
+    check("base: our own log keeps a farm's lines", #mine == 1 and mine[1].text == "Star won." and mine[1].horseId == "EQ-3"
+        and mine[1].day == 5 and mine[1].year == 1)
+    check("base: only the local farm gets a notification", #shown == 1 and shown[1].kind == "ok")
+    EqMessages.post(1, "EQ_INJURED", "Star was hurt.", nil)
+    check("base: newest line first", EqMessages.linesFor(1)[1].text == "Star was hurt." and shown[2].kind == "critical")
+
+    local store = {}
+    local xml = {
+        setInt = function(_, k, v) store[k] = v end, setString = function(_, k, v) store[k] = v end,
+        hasProperty = function(_, k) for key in pairs(store) do if key:sub(1, #k) == k then return true end end return false end,
+        getString = function(_, k, d) local v = store[k]; if v == nil then return d end return v end,
+        getInt = function(_, k, d) local v = store[k]; if v == nil then return d end return v end,
+    }
+    EqMessages.saveToXMLFile(xml, "m")
+    EqMessages.loadFromXMLFile(xml, "m")
+    local loaded = EqMessages.linesFor(1)
+    check("base: the log saves and loads", #EqMessages.lines == 3 and #loaded == 2 and loaded[2].horseId == "EQ-3"
+        and loaded[1].period == 2)
+    for i = 1, EqMessages.MAX_LINES + 5 do EqMessages.addOwn(1, "EQ_FINISHED", "line " .. i) end
+    check("base: the log keeps its newest lines", #EqMessages.lines == EqMessages.MAX_LINES
+        and EqMessages.lines[#EqMessages.lines].text == "line " .. (EqMessages.MAX_LINES + 5))
+    EqMessages.ownLog, EqMessages.isInstalled, EqMessages.lines = wasOwn, wasInstalled, wasLines
+    g_currentMission, FSBaseMission = savedMission, savedFSBase
+
+    local breed = EqRegistry.plainBreeder(EqRandom.new("foal"))
+    local inRange, total, n = true, 0, 400
+    for _ = 1, n do
+        local child = breed(1.2, 1.4, { min_val = 0.25, max_val = 1.75 })
+        if child < 0.25 or child > 1.75 then inRange = false end
+        total = total + child
+    end
+    check("base: plain breeding stays in range", inRange)
+    check("base: plain breeding centres on the parents", math.abs(total / n - 1.3) < 0.05)
+    check("base: plain breeding is the same on every machine",
+        EqRegistry.plainBreeder(EqRandom.new("x"))(1, 1, {}) == EqRegistry.plainBreeder(EqRandom.new("x"))(1, 1, {}))
+end)()
+
+-- Horse ages read as years and months (James, 2026-11-22), in each language's own words.
+;(function()
+    local savedI18n = g_i18n
+    local function load(lang)
+        local texts = {}
+        local xml = io.open("translations/translation_" .. lang .. ".xml"):read("*a")
+        for name, text in xml:gmatch('<text name="([^"]+)" text="([^"]*)"/>') do
+            texts[name] = text:gsub("&quot;", '"'):gsub("&apos;", "'"):gsub("&amp;", "&")
+        end
+        g_i18n = { getText = function(_, key) return texts[key] or ("Missing " .. key) end }
+    end
+    load("en")
+    check("age: months under a year", EqAge.long(8) == "8 months" and EqAge.long(1) == "1 month" and EqAge.long(0) == "0 months")
+    check("age: years and months", EqAge.long(40) == "3 years, 4 months", EqAge.long(40))
+    check("age: one year, one month", EqAge.long(13) == "1 year, 1 month", EqAge.long(13))
+    check("age: a birthday is years only", EqAge.long(36) == "3 years" and EqAge.long(12) == "1 year")
+    check("age: short forms", EqAge.short(40) == "3y 4m" and EqAge.short(36) == "3y" and EqAge.short(8) == "8m",
+        EqAge.short(40) .. " / " .. EqAge.short(36) .. " / " .. EqAge.short(8))
+    check("age: fractions and nil round down to whole months", EqAge.long(40.9) == "3 years, 4 months" and EqAge.long(nil) == "0 months")
+    check("age: whole-year event range", EqAge.range(24, 35) == "ages 2 to 3 years", EqAge.range(24, 35))
+    check("age: open-ended event range", EqAge.range(36, 0) == "from 3 years", EqAge.range(36, 0))
+    check("age: uneven event range", EqAge.range(18, 30) == "ages 1 year, 6 months to 2 years, 6 months", EqAge.range(18, 30))
+    check("age: few form for 2-4 years", EqAge.yearsKey(2) == "eq_age_yearsFew" and EqAge.yearsKey(4) == "eq_age_yearsFew"
+        and EqAge.yearsKey(5) == "eq_age_years" and EqAge.yearsKey(12) == "eq_age_years" and EqAge.yearsKey(22) == "eq_age_yearsFew"
+        and EqAge.yearsKey(1) == "eq_age_year")
+    load("pl")
+    check("age: Polish years", EqAge.long(24) == "2 lata" and EqAge.long(60) == "5 lat", EqAge.long(24) .. " / " .. EqAge.long(60))
+    load("de")
+    check("age: German", EqAge.long(40) == "3 Jahre, 4 Monate" and EqAge.short(40) == "3 J. 4 M.", EqAge.long(40))
+    for _, lang in ipairs({ "en", "de", "fr", "es", "br", "pt", "ru", "pl", "it", "nl", "cz", "jp", "cs", "ct", "uk" }) do
+        load(lang)
+        local all = EqAge.long(40) .. EqAge.long(26) .. EqAge.long(1) .. EqAge.short(40) .. EqAge.short(5) .. EqAge.short(24)
+            .. EqAge.range(24, 35) .. EqAge.range(36, 0) .. EqAge.range(18, 30)
+        check("age: " .. lang .. " texts all resolve", not all:find("Missing") and not all:find("%%"), all)
+    end
+
+    local horseAnimal = { age = 40, isHorse = function() return true end }
+    local cow = { age = 40, isHorse = function() return false end }
+    load("en")
+    g_i18n.getText = (function(get) return function(self, key) if key == "ui_age" then return "Age" end return get(self, key) end end)(g_i18n.getText)
+    local rows = { { title = "Age", valueText = "40 months" }, { title = "Health", valueText = "90%" } }
+    EqAge.relabelRows(rows, horseAnimal, "valueText")
+    check("age: a horse's Age row is rewritten", rows[1].valueText == "3 years, 4 months" and rows[2].valueText == "90%")
+    local cowRows = { { title = "Age", value = "40 months" } }
+    EqAge.relabelRows(cowRows, cow, "value")
+    check("age: other animals keep months", cowRows[1].value == "40 months")
+    g_i18n = savedI18n
 end)()
 
 print(string.format("%d passed, %d failed", passed, failed))

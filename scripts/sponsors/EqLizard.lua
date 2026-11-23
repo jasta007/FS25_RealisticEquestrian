@@ -8,7 +8,8 @@
     - A popup offers the deal: the branding level Lizard wants by the end of the event, and its
       special Lizard plinth built at the venue. The plinth is a constructible bought in the shop
       for next to nothing and built from what the farm delivers: planks, logs and one bulk
-      material Lizard picks (stone, wood chips or straw, data/sponsors.xml). Accept or decline.
+      material of the player's choice (stone, wood chips or straw, data/sponsors.xml): all three
+      plinths are in the construction menu while the deal lasts (James, 2026-11-19). Accept or decline.
     - Accepted: the event carries Lizard's name and popularity, Lizard shows on the farm's boards
       and its machines on plinths count, and Lizard lends a vehicle for the event month (the
       sponsor vehicle loans, another thread: they read EqLizard.isLizardEvent).
@@ -66,8 +67,7 @@ function EqLizard.read(xmlFile)
         local fillType = xmlFile:getString(materialKey .. "#fillType")
         local xml = xmlFile:getString(materialKey .. "#xml")
         if fillType ~= nil and xml ~= nil then
-            table.insert(config.materials, { fillType = fillType, xml = xml, amount = xmlFile:getFloat(materialKey .. "#amount", 0),
-                weight = xmlFile:getFloat(materialKey .. "#weight", 1) })
+            table.insert(config.materials, { fillType = fillType, xml = xml, amount = xmlFile:getFloat(materialKey .. "#amount", 0) })
         end
         i = i + 1
     end
@@ -96,19 +96,11 @@ end
 
 --- Does Lizard make an offer? Pure.
 --- @param config table
+--- The player picks the plinth's bulk material by which plinth they build (James, 2026-11-19).
 --- @param roll number 0..1, the chance roll
---- @param pick number 0..1, which material
---- @return table|nil material the bulk material it asks for, nil for no offer
-function EqLizard.roll(config, roll, pick)
-    if config == nil or #config.materials == 0 or roll >= config.chance then return nil end
-    local total = 0
-    for _, material in ipairs(config.materials) do total = total + material.weight end
-    local at = pick * total
-    for _, material in ipairs(config.materials) do
-        at = at - material.weight
-        if at < 0 then return material end
-    end
-    return config.materials[#config.materials]
+--- @return boolean true for an offer
+function EqLizard.roll(config, roll)
+    return config ~= nil and #config.materials > 0 and roll < config.chance
 end
 
 
@@ -218,15 +210,13 @@ function EqLizard.consider(farmId, booking)
         EqLizard.deals[farmId] = { month = booking.month, type = booking.type, rating = booking.rating, state = "none" }
         return
     end
-    local material = EqLizard.roll(config, EqLizard.testAlways and 0 or math.random(), math.random())
-    if material == nil then
+    if not EqLizard.roll(config, EqLizard.testAlways and 0 or math.random()) then
         EqLizard.deals[farmId] = { month = booking.month, type = booking.type, rating = booking.rating, state = "none" }
         Log:info("EqLizard: no Lizard offer for farm %d's %s %s", farmId, booking.rating, booking.type)
         return
     end
-    EqLizard.deals[farmId] = { month = booking.month, type = booking.type, rating = booking.rating, material = material.fillType,
-        state = "offered" }
-    Log:info("EqLizard: Lizard offers to sponsor farm %d's %s %s (%s)", farmId, booking.rating, booking.type, material.fillType)
+    EqLizard.deals[farmId] = { month = booking.month, type = booking.type, rating = booking.rating, state = "offered" }
+    Log:info("EqLizard: Lizard offers to sponsor farm %d's %s %s", farmId, booking.rating, booking.type)
     EqMessages.post(farmId, "EQ_SPONSOR_OFFERS", string.format(g_i18n:getText("eq_lizard_offerNote"), EqLizard.title(),
         EqHostManager.title(booking.type, booking.rating)))
 end
@@ -253,20 +243,41 @@ local function fillTypeTitle(fillType)
 end
 
 
+--- @param list table strings
+--- @return string "A, B or C"
+local function orList(list)
+    if #list <= 1 then return list[1] or "" end
+    local head = table.concat(list, ", ", 1, #list - 1)
+    return string.format(g_i18n:getText("eq_lizard_or"), head, list[#list])
+end
+
+
 --- @param config table
---- @param deal table
---- @return string what the plinth is built from, such as "1,000 l Stones, 10,000 l Wood, 1,000 l Planks"
-function EqLizard.needsText(config, deal)
+--- @param withAmounts boolean
+--- @return string the bulk materials to choose from, such as "Stones, Wood Chips or Straw"
+function EqLizard.choicesText(config, withAmounts)
+    local list = {}
+    for _, material in ipairs(config.materials or {}) do
+        local title = fillTypeTitle(material.fillType)
+        table.insert(list, withAmounts and string.format("%s %s", g_i18n:formatVolume(material.amount, 0), title) or title)
+    end
+    return orList(list)
+end
+
+
+--- @param config table
+--- @return string what the plinth is built from, such as
+---     "1,200 l Stones, 1,000 l Wood Chips or 10,000 l Straw (your choice), plus 10,000 l Wood and 1,000 l Planks"
+function EqLizard.needsText(config)
     local parts = {}
-    local function add(fillType, amount)
-        table.insert(parts, string.format("%s %s", g_i18n:formatVolume(amount, 0), fillTypeTitle(fillType)))
-    end
-    local material = EqLizard.material(config, deal.material)
-    if material ~= nil then add(material.fillType, material.amount) end
     for _, part in ipairs(config.parts or {}) do
-        if part.fillType ~= nil then add(part.fillType, part.amount) end
+        if part.fillType ~= nil then
+            table.insert(parts, string.format("%s %s", g_i18n:formatVolume(part.amount, 0), fillTypeTitle(part.fillType)))
+        end
     end
-    return table.concat(parts, ", ")
+    local and_ = #parts > 1 and string.format(g_i18n:getText("eq_lizard_and"), table.concat(parts, ", ", 1, #parts - 1), parts[#parts])
+        or (parts[1] or "")
+    return string.format(g_i18n:getText("eq_lizard_needs"), EqLizard.choicesText(config, true), and_)
 end
 
 
@@ -278,7 +289,7 @@ function EqLizard.offerText(farmId, deal)
     local config = EqLizard.config
     local terms = config.ratings[deal.rating] or { fee = 0, branding = 1 }
     return string.format(g_i18n:getText("eq_lizard_offer"), EqLizard.title(), EqHostManager.title(deal.type, deal.rating),
-        EqHostManager.monthText(deal.month), EqSponsorView.brandingWord(terms.branding), EqLizard.needsText(config, deal),
+        EqHostManager.monthText(deal.month), EqSponsorView.brandingWord(terms.branding), EqLizard.needsText(config),
         money(EqLizard.feeFor(config, deal.rating, deal.type)))
 end
 
@@ -292,7 +303,8 @@ function EqLizard.answer(farmId, yes)
     deal.state = yes and "accepted" or "declined"
     Log:info("EqLizard: farm %d %s Lizard's offer", farmId, deal.state)
     if yes then
-        tell(farmId, "EQ_SPONSOR_SIGNED", string.format(g_i18n:getText("eq_lizard_accepted"), EqLizard.title(), fillTypeTitle(deal.material)))
+        tell(farmId, "EQ_SPONSOR_SIGNED", string.format(g_i18n:getText("eq_lizard_accepted"), EqLizard.title(),
+            EqLizard.choicesText(EqLizard.config, false)))
         if EqSponsors ~= nil and EqSponsors.refresh ~= nil then EqSponsors.refresh() end
     end
     EqLizard.updateShop()
@@ -310,19 +322,13 @@ function EqLizard.isPlinthXml(filename)
 end
 
 
---- Only the Lizard plinth a farm's accepted deal asks for is in the shop, and only while the deal lasts.
+--- The Lizard plinths, one per bulk material, are in the shop while the farm has an accepted deal,
+--- so the player builds whichever suits their farm (James, 2026-11-19: "have three options available").
 function EqLizard.updateShop()
     if g_storeManager == nil or g_currentMission == nil or EqLizard.config == nil then return end
-    local deal = EqLizard.deals[g_currentMission:getFarmId()]
-    local want = nil
-    if deal ~= nil and deal.state == "accepted" then
-        local material = EqLizard.material(EqLizard.config, deal.material)
-        want = material ~= nil and string.lower(material.xml) or nil
-    end
+    local show = EqLizard.active(g_currentMission:getFarmId())
     for _, storeItem in ipairs(g_storeManager:getItems() or {}) do
         if EqLizard.isPlinthXml(storeItem.xmlFilename) then
-            local path = string.lower(string.gsub(storeItem.xmlFilename, "\\", "/"))
-            local show = want ~= nil and string.sub(path, -#want) == want
             storeItem.showInStore = show
             -- The game gives a placeable its construction brush only when it loads shown in the
             -- shop (StoreManager.loadItem), so ours, hidden at load, have none and never show in the
@@ -541,45 +547,37 @@ end
 --- A booked event gets the offer popup now (or is accepted straight away with accept);
 --- an event already open on the calendar becomes Lizard's at once.
 --- @param farmId number
---- @param materialName string|nil stone, woodchips or straw, random when nil
 --- @param accept boolean skip the popup
 --- @return string what happened
-function EqLizard.force(farmId, materialName, accept)
+function EqLizard.force(farmId, accept)
     local config = EqLizard.config
     if config == nil then return "Lizard is not loaded" end
-    local material
-    if materialName ~= nil and materialName ~= "" then
-        material = EqLizard.material(config, string.upper(materialName))
-        if material == nil then return "Material must be stone, woodchips or straw" end
-    else
-        material = EqLizard.roll(config, 0, math.random())
-    end
     local event = EqHostManager.openEvent(farmId)
     if event ~= nil then
         local hosted = event.hosted
         if EqLizard.isLizardEvent(event) then return "Lizard already sponsors your event" end
         local month = EqCompetitionManager.month
         EqLizard.deals[farmId] = { month = month, type = event.discipline, rating = hosted.rating,
-            material = material.fillType, state = "accepted", forced = true }
+            state = "accepted", forced = true }
         hosted.sponsor = nil
         EqLizard.onEventOpened(event)
         EqLizard.updateShop()
         if EqSponsors ~= nil and EqSponsors.refresh ~= nil then EqSponsors.refresh() end
-        return string.format("Lizard now sponsors %s: build the %s Lizard plinth (shop, Sponsor plinths) before the results",
-            EqCompetitionManager.eventTitle(event), material.fillType)
+        return string.format("Lizard now sponsors %s: build a Lizard plinth (construction, Constructibles) before the results",
+            EqCompetitionManager.eventTitle(event))
     end
     local booking = EqHostManager.bookings[farmId]
     if booking == nil then return "Book a hosted event first (Events, Host), then run eqLizard again" end
-    EqLizard.deals[farmId] = { month = booking.month, type = booking.type, rating = booking.rating, material = material.fillType,
+    EqLizard.deals[farmId] = { month = booking.month, type = booking.type, rating = booking.rating,
         state = "offered", forced = true }
     EqLizard.asked[farmId] = nil
     if accept then
         EqLizard.answer(farmId, true)
-        return string.format("Lizard will sponsor your %s (%s plinth)", EqHostManager.title(booking.type, booking.rating), material.fillType)
+        return string.format("Lizard will sponsor your %s", EqHostManager.title(booking.type, booking.rating))
     end
     EqLizard.updateShop()
-    return string.format("Lizard offers to sponsor your %s (%s plinth): close the console for the popup",
-        EqHostManager.title(booking.type, booking.rating), material.fillType)
+    return string.format("Lizard offers to sponsor your %s: close the console for the popup",
+        EqHostManager.title(booking.type, booking.rating))
 end
 
 
@@ -750,7 +748,6 @@ function EqLizard.saveToXMLFile(xmlFile, key)
         xmlFile:setString(dealKey .. "#type", deal.type or "")
         xmlFile:setString(dealKey .. "#rating", deal.rating or "")
         xmlFile:setString(dealKey .. "#state", deal.state)
-        if deal.material ~= nil then xmlFile:setString(dealKey .. "#material", deal.material) end
         if deal.eventId ~= nil then xmlFile:setInt(dealKey .. "#eventId", deal.eventId) end
         if deal.forced then xmlFile:setBool(dealKey .. "#forced", true) end
     end
@@ -770,7 +767,7 @@ function EqLizard.loadFromXMLFile(xmlFile, key)
         local state = xmlFile:getString(dealKey .. "#state")
         if farmId ~= nil and state ~= nil then
             EqLizard.deals[farmId] = { month = xmlFile:getInt(dealKey .. "#month", 0), type = xmlFile:getString(dealKey .. "#type"),
-                rating = xmlFile:getString(dealKey .. "#rating"), state = state, material = xmlFile:getString(dealKey .. "#material"),
+                rating = xmlFile:getString(dealKey .. "#rating"), state = state,
                 eventId = xmlFile:getInt(dealKey .. "#eventId"), forced = xmlFile:getBool(dealKey .. "#forced", false) or nil }
         end
         i = i + 1

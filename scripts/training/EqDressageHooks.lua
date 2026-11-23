@@ -284,7 +284,7 @@ function EqDressageHooks.courseFor(vehicle, spec)
     -- Collected going forward (Ctrl + W) for a passage.
     local passage = spot and spec.eqPassage == true
     return { x = x, z = z, markers = spec.eqCourse, test = spec.eqTest, temperament = spec.eqTemperament, dirX = dirX, dirZ = dirZ,
-        bend = bend, spot = spot, passage = passage }
+        bend = bend, spot = spot, passage = passage, pirouette = spot and spec.eqSpotMode == "pirouette" }
 end
 
 
@@ -348,6 +348,8 @@ end
 EqDressageHooks.POLE_HEIGHT = 1.2
 -- The run drawn, kept by EqTrainingHooks each frame while a test is on (pathAt: when).
 EqDressageHooks.pathRun = nil
+-- Set by the test type and level keys (EqDressageEditor.onType/onLevel): build the waiting test again.
+EqDressageHooks.restartTest = nil
 EqDressageHooks.pathAt = nil
 
 
@@ -377,11 +379,11 @@ end
 --- Temperament's stickiness for EqLateral: the pull back onto the test's line and the body angle
 --- a lateral section asks for, while a test is on (EqDressagePath.assist).
 --- @return number dx, number dz, number|nil wantX, number|nil wantZ, number turnRate
-function EqDressageHooks.assist(vehicle, lateral, dt)
+function EqDressageHooks.assist(vehicle, lateral, dt, reversing)
     local run = EqDressageHooks.testOn()
     if run == nil then return 0, 0, nil, nil, 0 end
     local x, _, z = getWorldTranslation(vehicle.rootNode)
-    return EqDressagePath.assist(run, x, z, lateral, dt)
+    return EqDressagePath.assist(run, x, z, lateral, dt, reversing)
 end
 
 

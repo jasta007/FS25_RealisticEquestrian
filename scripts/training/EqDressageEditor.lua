@@ -217,6 +217,10 @@ function EqDressageEditor.finish(save, left)
     if not ok then return end
     if plan ~= nil then
         EqDressageTests.set(active.frame, plan)
+        -- A test just made is the one the arena rides next (EqDressageLevels: Ctrl+N changes it).
+        local _, level = EqDressageLevels.choiceFor(active.frame, true)
+        EqDressageLevels.setChoice(active.frame, "own", level)
+        EqDressageHooks.restartTest = true
         notify(string.format(text("eq_dt_saved"), #test.moves))
         -- Saved all the same, but too short to count in your hosted event (James, 2026-11-01).
         if EqHostManager ~= nil then
@@ -336,6 +340,54 @@ function EqDressageEditor.onUndo(vehicle)
 end
 
 
+-- TEST TYPE AND LEVEL -------------------------------------------------------------------------
+-- While a test waits at its start (James 2026-11-22): Ctrl+N cycles own / random / set test,
+-- Ctrl+M the level (EqDressageLevels). Not in your own event: its test is fixed for the month.
+
+--- @return table|nil run the test waiting at its start that can be changed
+function EqDressageEditor.waitingRun()
+    if EqDressageEditor.active ~= nil then return nil end
+    local run = EqDressageHooks.pathRun
+    if run == nil or run.started or run.choice == nil or run.choice.hosted then return nil end
+    return run
+end
+
+
+--- Ctrl+N: the next test type for this arena, and the waiting test is built again.
+function EqDressageEditor.onType(vehicle)
+    local run = EqDressageEditor.waitingRun()
+    if run == nil then return end
+    local kind = EqDressageLevels.cycleType(run.frame, EqDressageTests.planFor(run.frame) ~= nil)
+    Log:info("Dressage test type: %s", kind)
+    EqDressageHooks.restartTest = true
+end
+
+
+--- Ctrl+M: the next level this arena allows, and the waiting test is built again.
+function EqDressageEditor.onLevel(vehicle)
+    local run = EqDressageEditor.waitingRun()
+    if run == nil then return end
+    local level, kind = EqDressageLevels.cycleLevel(run.frame, EqDressageTests.planFor(run.frame) ~= nil)
+    Log:info("Dressage test level: %s (%s)", level, kind)
+    EqDressageHooks.restartTest = true
+end
+
+
+--- The note under "Move to A" (pure but for texts): what the waiting test is and the keys.
+--- @param choice table run.choice { type, level, hosted, fallback }
+--- @return string|nil
+function EqDressageEditor.choiceText(choice)
+    if choice == nil then return nil end
+    local level = choice.level ~= nil and text("eq_dlevel_" .. choice.level) or nil
+    if choice.hosted then
+        return level ~= nil and string.format(text("eq_dt_choiceEvent"), level) or nil
+    end
+    if choice.type == "own" then return text("eq_dt_choiceOwn") end
+    if choice.fallback then return string.format(text("eq_dt_choiceFallback"), level) end
+    return string.format(text(choice.type == "set" and "eq_dt_choiceSet" or "eq_dt_choiceRandom"), level)
+end
+
+
 -- THE KEYS -----------------------------------------------------------------------------------
 
 -- By spec field, action, handler, and whether it is an editor key (live only while editing).
@@ -350,6 +402,8 @@ local ACTIONS = {
     { field = "eqDtModeEventId", action = "EQ_DT_MODE", handler = "onMode", editor = true },
     { field = "eqDtAcceptEventId", action = "EQ_DT_ACCEPT", handler = "onAccept", editor = true },
     { field = "eqDtUndoEventId", action = "EQ_DT_UNDO", handler = "onUndo", editor = true },
+    { field = "eqDtTypeEventId", action = "EQ_DT_TYPE", handler = "onType", waiting = true },
+    { field = "eqDtLevelEventId", action = "EQ_DT_LEVEL", handler = "onLevel", waiting = true },
 }
 
 
@@ -404,7 +458,15 @@ function EqDressageEditor.updateActions(vehicle)
         gaitText = string.format(text("eq_dt_gaitAction"), text("eq_dressage_gait_" .. EqDressageTests.gaitOf(active.ed)))
         spotMode = active.ed.mode == "spot"
     end
-    local state = string.format("%s|%s|%s|%s|%s|%s", testText, modeText, gaitText, tostring(spotMode), tostring(mine), tostring(spec.eqDtCanStart))
+    -- A test waiting at its start: its type and level keys.
+    local waiting = not mine and EqDressageEditor.waitingRun() or nil
+    local typeText, levelText = "", ""
+    if waiting ~= nil then
+        typeText = string.format(text("eq_dt_typeAction"), text("eq_dt_type_" .. (waiting.choice.type or "random")))
+        levelText = string.format(text("eq_dt_levelAction"), text("eq_dlevel_" .. (waiting.choice.level or EqDressageLevels.DEFAULT)))
+    end
+    local state = string.format("%s|%s|%s|%s|%s|%s|%s|%s", testText, modeText, gaitText, tostring(spotMode), tostring(mine), tostring(spec.eqDtCanStart),
+        typeText, levelText)
     if spec.eqDtShown == state then return end
     spec.eqDtShown = state
     local binding = g_inputBinding
@@ -413,11 +475,14 @@ function EqDressageEditor.updateActions(vehicle)
         if id ~= nil then
             local live = entry.editor and mine or (not entry.editor and (mine or spec.eqDtCanStart == true))
             if entry.spot then live = live and spotMode end
+            if entry.waiting then live = waiting ~= nil end
             binding:setActionEventActive(id, live)
             binding:setActionEventTextVisibility(id, live)
             if entry.action == "EQ_DRESSAGE_TEST" then binding:setActionEventText(id, testText) end
             if entry.action == "EQ_DT_MODE" and mine then binding:setActionEventText(id, modeText) end
             if entry.action == "EQ_DT_GAIT" and mine then binding:setActionEventText(id, gaitText) end
+            if entry.action == "EQ_DT_TYPE" and waiting ~= nil then binding:setActionEventText(id, typeText) end
+            if entry.action == "EQ_DT_LEVEL" and waiting ~= nil then binding:setActionEventText(id, levelText) end
         end
     end
 end

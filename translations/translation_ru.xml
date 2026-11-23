@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Нужно: 1000 л щепы, 10000 л древесины и 1000 л досок."/>
         <text name="eq_shop_lizardPlinth_straw" text="Нужно: 10 000 л соломы, 10000 л древесины и 1000 л досок."/>
         <text name="eq_lizard_title" text="Спонсорское предложение от %s"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian не находит Realistic Livestock (версия Ritter), поэтому отключён. Установите последнюю версию Realistic Livestock."/>
         <text name="eq_rlrm_incompatible" text="Ваша версия Realistic Livestock %s слишком старая для Realistic Equestrian, поэтому Realistic Equestrian отключён. Скачайте последнюю версию Realistic Livestock (версия Ritter)."/>
         <text name="eq_rlrm_old" text="Ваша версия Realistic Livestock %s старше, чем нужно Realistic Equestrian (%s или новее), поэтому некоторые функции могут не работать. Скачайте последнюю версию Realistic Livestock (версия Ritter)."/>
         <text name="eq_lizard_offer" text="%s хочет спонсировать ваше мероприятие %s (%s) и одолжит вам одну из своих машин на месяц мероприятия. Требуется брендинг уровня %s к концу мероприятия и постамент Lizard, построенный на вашей площадке: %s. Если всё будет готово к подведению итогов, она заплатит %s. Если нет, она ничего не заплатит, и штрафа не будет. После мероприятия постамент рушится."/>
@@ -118,6 +117,9 @@
         <text name="eq_lizard_decline" text="Отказаться"/>
         <text name="eq_lizard_offerNote" text="%s хочет спонсировать ваше мероприятие %s."/>
         <text name="eq_lizard_accepted" text="Сделка с %s принята! Купите постамент Lizard в магазине (Постройки) и постройте его из %s, брёвен и досок."/>
+        <text name="eq_lizard_or" text="%s или %s"/>
+        <text name="eq_lizard_and" text="%s и %s"/>
+        <text name="eq_lizard_needs" text="%s (на выбор), а также %s"/>
         <text name="eq_lizard_stepAside" text="%s уступает: теперь ваше мероприятие спонсирует %s."/>
         <text name="eq_lizard_paid" text="%s заплатила %s за спонсорство вашего мероприятия."/>
         <text name="eq_lizard_unpaid_plinth" text="%s ничего не платит: постамент Lizard не был достроен. Без обид."/>
@@ -175,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="Пассаж %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Пиаффе"/>
         <text name="eq_now_pirouette" text="Пируэт"/>
+        <text name="eq_now_volte" text="Вольт"/>
         <text name="eq_now_collected" text="Собранность"/>
         <text name="eq_now_collectedCanter" text="Собранный галоп"/>
         <text name="eq_now_passage" text="Пассаж"/>
@@ -203,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="Остановка у %s"/>
         <text name="eq_dressage_piaffeAt" text="Пиаффе (%s) у %s: удерживайте Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Пируэт влево (%s) у %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Пируэт влево (%s) у %s: Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Пируэт вправо (%s) у %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Пируэт вправо (%s) у %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Пиаффе (%s)! Удерживайте Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="Пируэт влево (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Пируэт влево (%s)! Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="Пируэт вправо (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Пируэт вправо (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Вернитесь на линию!"/>
         <text name="eq_dressage_mark" text="Последняя оценка: %s"/>
         <text name="eq_pop_routineError" text="Ошибка схемы %d/%d"/>
@@ -594,7 +601,6 @@
         <text name="eq_ui_col_success" text="Шансы"/>
         <text name="eq_ui_col_training" text="Тренировка"/>
         <text name="eq_ui_trainingBenefit" text="Польза для тренировки"/>
-        <text name="eq_ui_ageLong" text="%d мес."/>
         <text name="eq_success_favourite" text="Фаворит"/>
         <text name="eq_success_contender" text="Претендент"/>
         <text name="eq_success_outsider" text="Аутсайдер"/>
@@ -610,6 +616,13 @@
         <text name="eq_ui_canEnter" text="Могут участвовать: %d"/>
         <text name="eq_ui_noneEligible" text="Нет подходящих"/>
         <text name="eq_ui_ageMonths" text="%d мес."/>
+        <text name="eq_age_year" text="%d год"/>
+        <text name="eq_age_years" text="%d лет"/>
+        <text name="eq_age_yearsFew" text="%d года"/>
+        <text name="eq_age_join" text="%s, %s"/>
+        <text name="eq_age_short" text="%d г. %d мес."/>
+        <text name="eq_age_shortYears" text="%d г."/>
+        <text name="eq_ui_ages_rangeYears" text="возраст %d-%d лет"/>
         <text name="eq_ui_day" text="День %d"/>
         <text name="eq_ui_status_ok" text="Можно записать"/>
         <text name="eq_ui_status_lowHealth" text="Слабое здоровье: %d%% снятия"/>
@@ -659,8 +672,8 @@
         <text name="eq_ui_noHorses" text="У вас нет лошадей."/>
         <text name="eq_ui_clientNote" text="Соревнования проводит хост. Запись с клиента в сетевой игре появится в следующей версии."/>
         <text name="eq_ui_noConfig" text="Не удалось загрузить список соревнований; см. журнал."/>
-        <text name="eq_ui_ages_range" text="возраст %d-%d мес."/>
-        <text name="eq_ui_ages_from" text="от %d мес."/>
+        <text name="eq_ui_ages_range" text="возраст от %s до %s"/>
+        <text name="eq_ui_ages_from" text="от %s"/>
         <text name="eq_ui_summary_event" text="%s: %s, рейтинг %.0f-%.0f, участников: %d. Выберите лошадь и нажмите Enter."/>
         <text name="eq_enter_noEvent" text="Запись на это соревнование закрыта."/>
         <text name="eq_enter_retired" text="Эта лошадь завершила спортивную карьеру."/>
@@ -668,8 +681,8 @@
         <text name="eq_enter_foaled" text="Эта кобыла ещё восстанавливается после выжеребки. Она сможет выступать через три месяца после родов."/>
         <text name="eq_enter_already" text="Эта лошадь уже записана: %s."/>
         <text name="eq_enter_eventFull" text="На одно соревнование можно записать не более %d лошадей."/>
-        <text name="eq_enter_tooYoung" text="Слишком молода: соревнование для лошадей от %d мес., а вашей %d мес."/>
-        <text name="eq_enter_tooOld" text="Слишком стара: соревнование для лошадей до %d мес., а вашей %d мес."/>
+        <text name="eq_enter_tooYoung" text="Слишком молода: соревнование для лошадей от %s, а вашей %s."/>
+        <text name="eq_enter_tooOld" text="Слишком стара: соревнование для лошадей до %s, а вашей %s."/>
         <text name="eq_enter_ratingLow" text="Рейтинг %.0f ниже диапазона %.0f-%.0f этого соревнования."/>
         <text name="eq_enter_ratingHigh" text="Рейтинг %.0f выше диапазона %.0f-%.0f этого соревнования: выберите уровень выше."/>
         <text name="eq_enter_noMoney" text="Недостаточно денег: запись стоит %s (взнос %s, перевозка %s)."/>
@@ -1162,7 +1175,7 @@
         <text name="eq_sponsor_haveOf" text="У вас %s из %d"/>
         <text name="eq_sponsor_mustOwn" text="Перед подачей заявки нужно владеть их техникой: %d шт."/>
         <text name="eq_sponsor_mustKeep" text="Чтобы получать выплаты, сохраните их технику: %d шт."/>
-        <text name="eq_sponsor_attachHalf" text="Навесное оборудование и прицепы считаются за половину."/>
+        <text name="eq_sponsor_cheapHalf" text="Очень дешёвая техника считается за половину."/>
         <text name="eq_sponsor_noRivals" text="Нельзя владеть техникой, цена которой в пределах %s от их продукта."/>
         <text name="eq_sponsor_sellFirst" text="Продайте или верните перед подачей заявки:"/>
         <text name="eq_sponsor_sellMore" text="...и ещё %d"/>
@@ -1222,7 +1235,7 @@
         <text name="eq_ride_blocked_quarantine" text="Лошадь %s на карантине, на ней нельзя ездить, пока она не вернётся домой."/>
         <text name="eq_ride_blocked_away" text="Лошадь %s на соревнованиях, на ней нельзя ездить."/>
         <text name="eq_ride_blocked_injured" text="Лошадь %s травмирована, на ней нельзя ездить до выздоровления."/>
-        <text name="eq_ride_blocked_tooYoung" text="Лошадь %s слишком молода для езды. Ездить верхом можно на лошадях с %d месяцев."/>
+        <text name="eq_ride_blocked_tooYoung" text="Лошадь %s слишком молода для езды. Ездить верхом можно на лошадях с возраста %s."/>
         <text name="eq_loose_sentHome_quarantine" text="Лошадь %s на карантине, её вернули: %s."/>
         <text name="eq_loose_sentHome_away" text="Лошадь %s на соревнованиях, её вернули: %s."/>
         <text name="eq_loose_sentHome_injured" text="Лошадь %s травмирована, её вернули на отдых: %s."/>
@@ -1230,12 +1243,68 @@
         <text name="eq_help_lateral_title" text="Боковые движения"/>
         <text name="eq_help_lateral_1" text="Боковые движения — одна из самых сложных частей выездки, они сочетают несколько управлений. Удерживайте [[EQ_LATERAL]] и нажимайте A или D, чтобы смещаться вбок в уступке шенкелю, а удерживая также [[EQ_REIN]], сгибайте шею и плечи лошади в траверс, ренверс или принимание. В езде значки на линии показывают, как поставить лошадь."/>
         <text name="eq_help_collect_title" text="Сбор"/>
-        <text name="eq_help_collect_1" text="Сбор нужен в основном в выездке, чтобы ехать аллюром без его обычной скорости. Удерживайте [[EQ_COLLECT]] на рыси для пиаффе, рыси на месте, и нажмите ещё W для пассажа, медленной упругой рыси. Соберите лошадь на шагу или галопе и поворачивайте A или D для пируэта."/>
+        <text name="eq_help_collect_1" text="Сбор нужен в основном в выездке, чтобы ехать аллюром без его обычной скорости. Удерживайте [[EQ_COLLECT]] на рыси для пиаффе, рыси на месте, и нажмите ещё W для пассажа, медленной упругой рыси. Соберите лошадь и поворачивайте A или D для пируэта на шагу или рыси, вокруг задних ног, или вольта на галопе, маленького круга (тем меньше, чем спокойнее лошадь). Для пируэта на галопе удерживайте ещё [[EQ_LATERAL]]."/>
         <text name="eq_help_rein_title" text="Управление мышью"/>
         <text name="eq_help_rein_1" text="Удерживая [[EQ_REIN]], вы переводите камеру за спину лошади и точно управляете мышью — это важно в выездке и иногда в конкуре. Если удерживать ещё и [[EQ_LATERAL]], мышь сгибает голову лошади для боковых движений."/>
         <text name="eq_help_courseEdit_title" text="Редактирование маршрута"/>
         <text name="eq_help_courseEdit_1" text="Проложите маршрут, проехав через препятствия по порядку на любой скорости. Препятствия этого мода не имеют столкновений, пока вы прокладываете путь. Если ошиблись, вернитесь к последней хорошей точке, пока к ней не притянется линия, и нажмите [[EQ_COURSE_REWIND]], чтобы продолжить оттуда. Снова нажмите [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] для кросса), чтобы сохранить."/>
         <text name="eq_help_dressageEdit_title" text="Редактирование езды"/>
         <text name="eq_help_dressageEdit_1" text="Составьте свою езду по выездке из фигур, элементов и аллюров. [[EQ_DT_PREV]] и [[EQ_DT_NEXT]] меняют фигуру, [[EQ_DT_GAIT]] — аллюр, [[EQ_DT_MODE]] переключает на боковые движения или элементы на месте. [[EQ_DT_ACCEPT]] сохраняет шаг и идёт дальше, [[EQ_DT_UNDO]] возвращает назад, [[EQ_DT_RANDOM]] выбирает случайный шаг. Нажмите [[EQ_DRESSAGE_TEST]], чтобы сохранить езду."/>
+        <text name="eq_band_extremelyLow" text="Крайне низкий"/>
+        <text name="eq_band_veryLow" text="Очень низкий"/>
+        <text name="eq_band_low" text="Низкий"/>
+        <text name="eq_band_average" text="Средний"/>
+        <text name="eq_band_high" text="Высокий"/>
+        <text name="eq_band_veryHigh" text="Очень высокий"/>
+        <text name="eq_band_extremelyHigh" text="Крайне высокий"/>
+        <text name="input_EQ_MENU" text="Меню конного спорта"/>
+        <text name="eq_menu_button" text="Конный спорт"/>
+        <text name="eq_menu_pickHint" text="Выберите строку, чтобы отметить её или снять отметку. Откройте список снова, чтобы изменить другую."/>
+        <text name="eq_horses_title" text="Лошади"/>
+        <text name="eq_horses_col_name" text="Кличка"/>
+        <text name="eq_horses_col_age" text="Возраст"/>
+        <text name="eq_horses_col_status" text="Статус"/>
+        <text name="eq_horses_inTrailer" text="В прицепе"/>
+        <text name="eq_horses_foal" text="Слишком молод для езды"/>
+        <text name="eq_horses_ready" text="Готова"/>
+        <text name="eq_horses_none" text="На этой ферме пока нет лошадей. Купите лошадь у торговца животными."/>
+        <text name="eq_horses_stable" text="Конюшня"/>
+        <text name="eq_horses_fitness" text="Форма"/>
+        <text name="eq_horses_health" text="Здоровье"/>
+        <text name="eq_horses_career" text="Карьера"/>
+        <text name="eq_horses_careerValue" text="Стартов: %d, побед: %d, %s"/>
+        <text name="eq_horses_summary" text="Лошадей: %d. Кнопки ниже: поехать верхом, назначить роль или отправить на покой."/>
+        <text name="eq_horses_summaryOne" text="Лошадей: %d. Кнопки ниже: поехать верхом, назначить роль или отправить на покой."/>
+        <text name="eq_messages_title" text="Сообщения"/>
+        <text name="eq_messages_col_date" text="Дата"/>
+        <text name="eq_messages_col_type" text="Тип"/>
+        <text name="eq_messages_col_message" text="Сообщение"/>
+        <text name="eq_messages_button_clear" text="Очистить"/>
+        <text name="eq_messages_clearConfirm" text="Удалить все сообщения этой фермы?"/>
+        <text name="eq_messages_none" text="Сообщений пока нет."/>
+        <text name="eq_messages_summary" text="Результаты, травмы, перевозка, свои турниры и спонсоры. Каждое также появляется как уведомление."/>
+        <text name="eq_messages_date" text="День %d, %s, год %d"/>
+        <text name="eq_messages_day" text="День %d"/>
+        <text name="input_EQ_DT_TYPE" text="Тип езды по выездке"/>
+        <text name="input_EQ_DT_LEVEL" text="Уровень езды по выездке"/>
+        <text name="eq_dt_typeAction" text="Езда: %s"/>
+        <text name="eq_dt_levelAction" text="Уровень: %s"/>
+        <text name="eq_dt_type_own" text="Своя"/>
+        <text name="eq_dt_type_random" text="Случайная"/>
+        <text name="eq_dt_type_set" text="Стандартная езда"/>
+        <text name="eq_dlevel_novice" text="Новичок"/>
+        <text name="eq_dlevel_elementary" text="Начальный"/>
+        <text name="eq_dlevel_medium" text="Средний"/>
+        <text name="eq_dlevel_advanced" text="Продвинутый"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Интермедиат"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Ваша собственная езда (Ctrl+N: тип)"/>
+        <text name="eq_dt_choiceRandom" text="Случайная езда, %s (Ctrl+N: тип, Ctrl+M: уровень)"/>
+        <text name="eq_dt_choiceSet" text="Стандартная езда, %s (Ctrl+N: тип, Ctrl+M: уровень)"/>
+        <text name="eq_dt_choiceFallback" text="Ни одна стандартная езда не помещается на этот плац: случайная езда, %s"/>
+        <text name="eq_dt_choiceEvent" text="Езда турнира: случайная, %s"/>
+        <text name="eq_fig_canterSide" text="Галоп %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Галоп %s-X-%s"/>
     </texts>
 </l10n>

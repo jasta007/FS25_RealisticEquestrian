@@ -266,13 +266,19 @@ local function addFlagFences(list)
 end
 
 
---- Cross country fences: the flagged ones and the "xcFence" facility placeables such as log
---- piles. Drop walls are ridden over freely unless flagged: boxes set side by side for a long
---- deck each made a fence of their own (James, 2026-10-28).
+local addShowJumps
+
+
+--- Cross country fences: the flagged ones, every show jump and the "xcFence" facility placeables
+--- such as log piles and the start/finish arches. Drop walls are ridden over freely unless
+--- flagged: boxes set side by side for a long deck each made a fence of their own (James, 2026-10-28).
 --- @return table { node|nil, x, z, ry, ax, az, bx, bz }
 local function listXcFences()
     local list = {}
     addFlagFences(list)
+    -- Show jumps count in cross country too (James, 2026-11-23: "show jumps should totally count").
+    -- An XC round has no rails, so their poles falling costs nothing there.
+    addShowJumps(list, true)
     for _, entry in ipairs(EqFacilityHooks.listPlaceables()) do
         local placeable = entry.placeable
         if entry.kind == "xcFence" and placeable.rootNode ~= nil
@@ -289,14 +295,25 @@ local function listXcFences()
 end
 
 
---- @param kind string|nil EqCourse.CROSS_COUNTRY for cross country fences, else show jumps
---- @return table every show jump (or cross country fence) on the map: { node, x, z, ry, ax, az, bx, bz }
+--- @param kind string|nil EqCourse kind; both kinds use the same fences
+--- @return table every show jump and cross country fence on the map: { node, x, z, ry, ax, az, bx, bz }
 function EqCourseHooks.listJumps(kind)
-    if kind == EqCourse.CROSS_COUNTRY then return listXcFences() end
-    local list = {}
+    -- Every fence counts in both kinds of course (James, 2026-11-23: show jump fences "should
+    -- totally be allowed as xcountry fences (and vice versa)"). Flagged fences joined show
+    -- jumping on 2026-10-27 ("it's a cool system"). The kinds differ in the rules and in cross
+    -- country pieces disappearing by default, not in which fences they use.
+    return listXcFences()
+end
+
+
+--- Add every show jump on the map to a list: "jumps" facility placeables (ours, the Riding
+--- Hall's), jumps inside arenas and the map's own jumps.
+--- @param list table
+--- @param skipXc boolean|nil leave cross country pieces out (their flags would make a second fence)
+addShowJumps = function(list, skipXc)
     for _, entry in ipairs(EqFacilityHooks.listPlaceables()) do
         local placeable = entry.placeable
-        if placeable.rootNode ~= nil then
+        if placeable.rootNode ~= nil and not (skipXc and entry.kind == "xcFence") then
             if entry.kind == "jumps" then
                 addJump(list, placeable.rootNode, placeable)
             else
@@ -309,9 +326,6 @@ function EqCourseHooks.listJumps(kind)
             addJump(list, point.node, nil)
         end
     end
-    -- Flagged fences count in show jumping too (James, 2026-10-27: "it's a cool system").
-    addFlagFences(list)
-    return list
 end
 
 

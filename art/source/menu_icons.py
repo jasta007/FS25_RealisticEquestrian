@@ -5,6 +5,9 @@
 - zzz (0, 512): three Z's rising to the right, for a horse whose riding bar is full today
   (EqListBadge puts it in RLRM's status icon row on the animal cards). Drawn bold and filled,
   since the card shows it at about 18 px.
+- horses (512, 512, 256 px): a horseshoe, for the Horses tab of our own menu (EqMenu, used
+  without Realistic Livestock).
+- messages (768, 512, 256 px): an envelope, for that menu's Messages tab.
 
 Run from the repo root: python3 art/source/menu_icons.py. Needs Pillow, numpy and etcpak.
 The atlas is DXT5 without mipmaps, like the file it replaces.
@@ -67,6 +70,51 @@ def zzz_icon():
     return img
 
 
+def small(mask):
+    """A 512 px mask drawn at SCALE, as a 256 px icon."""
+    mask = mask.resize((SIZE // 2, SIZE // 2), Image.LANCZOS)
+    img = Image.new("RGBA", (SIZE // 2, SIZE // 2), (255, 255, 255, 0))
+    img.putalpha(mask)
+    return img
+
+
+def horseshoe_icon():
+    s = SCALE
+    mask = Image.new("L", (SIZE * s, SIZE * s), 0)
+    draw = ImageDraw.Draw(mask)
+    cx, cy, outer, band = 256, 250, 200, 74
+    # The shoe: a thick arc over the top, open at the bottom, with straight heels.
+    draw.ellipse([(cx - outer) * s, (cy - outer) * s, (cx + outer) * s, (cy + outer) * s], fill=255)
+    inner = outer - band
+    draw.ellipse([(cx - inner) * s, (cy - inner) * s, (cx + inner) * s, (cy + inner) * s], fill=0)
+    draw.rectangle([(cx - outer) * s, cy * s, (cx + outer) * s, (cy + outer + 10) * s], fill=0)
+    draw.rectangle([(cx - outer) * s, cy * s, (cx - inner) * s, (cy + 170) * s], fill=255)
+    draw.rectangle([(cx + inner) * s, cy * s, (cx + outer) * s, (cy + 170) * s], fill=255)
+    # Nail holes along the middle of the band.
+    middle, hole = outer - band / 2, 13
+    import math
+    for angle in (200, 235, 270, 305, 340):
+        a = math.radians(angle)
+        hx, hy = cx + middle * math.cos(a), cy + middle * math.sin(a)
+        draw.ellipse([(hx - hole) * s, (hy - hole) * s, (hx + hole) * s, (hy + hole) * s], fill=0)
+    for hy in (cy + 50, cy + 120):
+        for hx in (cx - middle, cx + middle):
+            draw.ellipse([(hx - hole) * s, (hy - hole) * s, (hx + hole) * s, (hy + hole) * s], fill=0)
+    return small(mask)
+
+
+def envelope_icon():
+    s = SCALE
+    mask = Image.new("L", (SIZE * s, SIZE * s), 0)
+    draw = ImageDraw.Draw(mask)
+    w = 34 * s
+    left, top, right, bottom = 56, 116, 456, 396
+    draw.rectangle([left * s, top * s, right * s, bottom * s], outline=255, width=w)
+    draw.line([(left * s + w // 2, top * s + w // 2), (256 * s, 272 * s), (right * s - w // 2, top * s + w // 2)],
+              fill=255, width=w, joint="curve")
+    return small(mask)
+
+
 def save_dxt5(img, path):
     w, h = img.size
     data = etcpak.compress_bc3(np.ascontiguousarray(np.asarray(img.convert("RGBA"))).tobytes(), w, h)
@@ -84,6 +132,8 @@ def main():
     atlas.paste(events, (0, 0))
     atlas.paste(staff_icon(), (SIZE, 0))
     atlas.paste(zzz_icon(), (0, SIZE))
+    atlas.paste(horseshoe_icon(), (SIZE, SIZE))
+    atlas.paste(envelope_icon(), (SIZE + SIZE // 2, SIZE))
     save_dxt5(atlas, "gui/eqMenuIcons.dds")
 
 

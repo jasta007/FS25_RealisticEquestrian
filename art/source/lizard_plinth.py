@@ -1,8 +1,8 @@
 """
 Builds the Lizard plinth in placeables/sponsorPlinths/ (James, 2026-11-01): the special plinth
 Lizard, the game's own brand, asks for when it offers a free one-off sponsorship of a hosted event
-(EqLizard). It looks cheap and slapped together: a mound of whatever bulk material Lizard asked
-for, logs laid across the top as a deck to park a machine on, a lizard cut out of planks standing
+(EqLizard). It looks cheap and slapped together: a mound of whichever bulk material the player chose
+(one plinth each), logs laid across the top as a deck to park a machine on, a lizard cut out of planks standing
 at the back (traced by James, LIZARD_OUTLINE; smooth-sided, painted Lizard green) and the Lizard
 logotype on a green board at the front.
 

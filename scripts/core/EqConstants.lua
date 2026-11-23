@@ -131,6 +131,11 @@ EqConstants.PROSPECT_BOOST = 0.4
 -- A dealer horse arrives a little green: its starting stats' curve sits this many points lower.
 EqConstants.DEALER_START_SHIFT = -5
 
+-- How many horses of each colour and gender the dealer has: rolled 0 to DEALER_SHELF_MAX each
+-- month, then topped up at random until the whole stock is at least DEALER_SHELF_MIN_TOTAL.
+EqConstants.DEALER_SHELF_MAX = 3
+EqConstants.DEALER_SHELF_MIN_TOTAL = 12
+
 -- The dealer's view of a stat's potential: usually right, sometimes generous, now and then
 -- modest. Chances and ranges in ceiling points. A potential word spans 15 points, so errors
 -- this size change the word often enough to matter.

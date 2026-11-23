@@ -752,7 +752,7 @@ end
 --- phase is on.
 --- @param horseId string|nil the ridden horse
 --- @param markers table the dressage course's markers
---- @return table|nil test { seed, moves, counts, event, status }: status for the notice at A,
+--- @return table|nil test { seed, moves, counts, event, status, steps, rating }: status for the notice at A,
 --- as competitionFor's ("counts", "ridden" or "small") or "notEntered"
 function EqHostManager.dressageTestFor(horseId, markers)
     local mine = EqHostManager.liveEventFor(horseId)
@@ -778,8 +778,10 @@ function EqHostManager.dressageTestFor(horseId, markers)
             end
         end
     end
+    -- Without your own test the event rides a random test at a level drawn from its rating
+    -- (EqDressageLevels.HOSTED, EqDressage.testFor), fixed for the month by the seed.
     return { seed = string.format("dressage %s %s", tostring(event.id), tostring(event.hosted.rating)), moves = rating.dressageMoves, counts = counts,
-        event = event, status = status, steps = EqHosting.testSteps(rating) }
+        event = event, status = status, steps = EqHosting.testSteps(rating), rating = rating.name }
 end
 
 

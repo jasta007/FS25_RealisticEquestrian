@@ -613,8 +613,7 @@ function EqEventsFrame:updateSummary()
         local tier = event ~= nil and EqCompetitionManager.config.tierByName[event.tier] or nil
         if tier ~= nil then
             local minAge, maxAge = EqFoals.tierAges(tier)
-            local ages = maxAge > 0 and string.format(g_i18n:getText("eq_ui_ages_range"), minAge, maxAge)
-                or string.format(g_i18n:getText("eq_ui_ages_from"), minAge)
+            local ages = EqAge.range(minAge, maxAge)
             text = string.format(g_i18n:getText("eq_ui_summary_event"), EqCompetitionManager.eventTitle(event), ages,
                 tier.minRating, tier.maxRating, tier.field)
             local left = EqCompetitionManager.entriesLeft(farmId())
@@ -898,7 +897,7 @@ function EqEventsFrame:updateHorsePanel()
     if not show then return end
 
     setText(self.panelName, row.name)
-    setText(self.panelAge, string.format(g_i18n:getText("eq_ui_ageLong"), row.animal.age or 0))
+    setText(self.panelAge, EqAge.long(row.animal.age or 0))
     -- A horse that can go abroad hears what follows: its quarantine before it is home again.
     local selected = EqCompetitionManager.events[self.selectedEventId]
     local rounds = row.canEnter and EqCompetitionManager.quarantineRounds(selected) or 0
@@ -938,7 +937,7 @@ function EqEventsFrame:updateCareerPanel()
 
     local record, career = row.record, row.record.career
     setText(self.careerName, row.name)
-    setText(self.careerAge, string.format(g_i18n:getText("eq_ui_ageLong"), row.animal.age or 0))
+    setText(self.careerAge, EqAge.long(row.animal.age or 0))
     for i, stat in ipairs(EqConstants.STAT_KEYS) do
         local label, value = self.careerStatLabel ~= nil and self.careerStatLabel[i] or nil,
             self.careerStatValue ~= nil and self.careerStatValue[i] or nil
@@ -1262,7 +1261,8 @@ end
 --- Load our frame and register it as the last page of RLRM's menu.
 --- @param menu table the RLMenu instance, inside its setupMenuPages
 function EqEventsFrame.addToMenu(menu)
-    EqEventsFrame.registerIcons()
+    -- Our own menu (EqMenu) registers them before its first tab loads.
+    if not menu.eqIconsRegistered then EqEventsFrame.registerIcons() end
     local frame = EqEventsFrame.new()
     g_gui:loadGui(modDirectory .. "gui/eqEventsFrame.xml", EqEventsFrame.NAME, frame, true)
 

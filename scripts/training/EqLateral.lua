@@ -18,8 +18,9 @@
     with the head bent the way it goes), and so on (EqDressagePath scores them in a test).
 
     Holding Ctrl collects the horse to a stop while it keeps the gait's animation (James,
-    2026-10-30): trotting on the spot is a piaffe, cantering on the spot turned with Ctrl + A/D a
-    pirouette. The base game still works out the gait's speed; the move made is cut to nothing
+    2026-10-30): trotting on the spot is a piaffe. Ctrl + A/D at a walk or trot is a pirouette
+    round the hind feet, at a canter a volte, a small circle sized by temperament, and Ctrl +
+    Shift + A/D a canter pirouette (James, 2026-11-23). The base game still works out the gait's speed; the move made is cut to nothing
     (and the stuck check's record of it with it, or it would halt the horse), and the animation is
     shown the gait's speed instead of the horse's real one.
 
@@ -92,6 +93,20 @@ EqLateral.SPOT_CREEP = { WALK = 0, TROT = 0.08, CANTER = 0.15 }
 EqLateral.PASSAGE = { TROT = 0, CANTER = 0.5 }
 -- Gaits it works at (Rideable.GAITTYPES names).
 EqLateral.GAITS = { WALK = true, TROT = true, CANTER = true }
+-- Ctrl + A/D is a volte (James, 2026-11-23): the horse goes on at a collected pace on a small
+-- circle, VOLTE_MIN metres across for a temperament of VOLTE_CALM or more, widening evenly to
+-- VOLTE_MAX at 0. Its speed follows the turn it actually makes (never above the collected pace),
+-- so the circle holds its size while the turn eases in.
+EqLateral.VOLTE_MIN = 6
+EqLateral.VOLTE_MAX = 10
+EqLateral.VOLTE_CALM = 70
+-- A pirouette is on the spot, turned round the hind feet (PIVOT_BACK metres behind the horse's
+-- middle), so the forehand swings round them. Ctrl + A/D at a walk or trot; at a canter Ctrl + A/D
+-- is a volte and only Ctrl + Shift + A/D a pirouette (James, 2026-11-23: canter pirouettes are for
+-- the top levels). A frame's turn bigger than PIVOT_JUMP radians (a reset or teleport) moves nothing.
+EqLateral.PIROUETTE_GAITS = { WALK = true, TROT = true }
+EqLateral.PIVOT_BACK = 0.9
+EqLateral.PIVOT_JUMP = 0.5
 
 
 --- The side the rider asks for (pure).
@@ -211,6 +226,93 @@ function EqLateral.keep(collect, gait, creep)
 end
 
 
+--- What Ctrl is doing (pure): "pirouette" (Ctrl + A/D at a walk or trot, Ctrl + Shift + A/D at a
+--- canter), "volte" (Ctrl + A/D at a canter), or nil (on the spot, or Ctrl + W forward).
+--- @param gait string|nil gait name
+--- @param turning boolean A or D held
+--- @param shift boolean lateral (Shift) held
+--- @param passage boolean Ctrl + W
+--- @return string|nil
+function EqLateral.spotMode(gait, turning, shift, passage)
+    if not turning or passage or gait == nil or not EqLateral.GAITS[gait] then return nil end
+    if EqLateral.PIROUETTE_GAITS[gait] or shift then return "pirouette" end
+    return "volte"
+end
+
+
+-- A hard turn at a trot, ridden free, is named a volte (James, 2026-11-23): at least this share
+-- of full lock.
+EqLateral.TROT_VOLTE_TURN = 0.8
+
+
+--- (pure) @return boolean true when riding free (no test) at a trot, turning hard, not collected or drifting
+function EqLateral.trotVolte(spec, gait, testing)
+    if testing or gait ~= "TROT" or spec.isOnGround == false or (spec.eqCollect or 0) > 0 or (spec.eqLateralSide or 0) ~= 0 then return false end
+    if type(spec.currentTurnSpeed) ~= "number" or type(spec.maxTurnSpeed) ~= "number" or spec.maxTurnSpeed <= 0 then return false end
+    return math.abs(spec.currentTurnSpeed) / spec.maxTurnSpeed >= EqLateral.TROT_VOLTE_TURN
+end
+
+
+--- The volte's size across, in metres, for a temperament (pure): VOLTE_MIN from VOLTE_CALM up,
+--- widening evenly to VOLTE_MAX at 0 (an unknown temperament counts as 0).
+--- @param temperament number|nil 0..100
+--- @return number
+function EqLateral.volteDiameter(temperament)
+    local t = math.max(0, math.min(EqLateral.VOLTE_CALM, tonumber(temperament) or 0))
+    return EqLateral.VOLTE_MAX - (EqLateral.VOLTE_MAX - EqLateral.VOLTE_MIN) * t / EqLateral.VOLTE_CALM
+end
+
+
+--- The share of the gait's speed for a volte (pure): a walk as it is, a trot at a passage's
+--- speed, a canter at a collected canter's.
+--- @param gait string|nil gait name
+--- @param tops table|nil topSpeeds by gait name
+--- @return number|nil
+function EqLateral.volteShare(gait, tops)
+    if gait == "WALK" then return 1 end
+    return EqLateral.passageShare(gait, tops)
+end
+
+
+--- The share of the gait's speed kept on a volte this frame (pure): the speed that, at the turn
+--- the horse is making, rides a circle diameter across; at least the spot's creep, at most share.
+--- @param turnSpeed number the turn now, rad/s (either way)
+--- @param speed number the gait's speed the base game worked out, m/s
+--- @param diameter number metres
+--- @param share number the volte's most
+--- @param creep number the least
+--- @return number
+function EqLateral.volteKeep(turnSpeed, speed, diameter, share, creep)
+    if speed <= 0 then return creep end
+    local keep = math.abs(turnSpeed) * diameter / 2 / speed
+    return math.max(creep, math.min(share, keep))
+end
+
+
+--- The steer for a volte (pure): the turn that, at the volte's speed, rides its circle, as a
+--- share of full lock, the way asked.
+--- @param turn number -1..1 the turn asked (spotSteer)
+--- @param speed number the volte's speed, m/s
+--- @param diameter number metres
+--- @param maxTurnSpeed number full lock, rad/s
+--- @return number
+function EqLateral.volteSteer(turn, speed, diameter, maxTurnSpeed)
+    if turn == 0 or maxTurnSpeed <= 0 or diameter <= 0 then return turn end
+    local want = speed / (diameter / 2)
+    return turn * math.min(1, want / maxTurnSpeed)
+end
+
+
+--- A pirouette's move for a frame (pure): the middle carried round the hind feet as the heading
+--- turns from one angle to the next (dir = sin, cos), so the hind feet stay put.
+--- @return number dx, number dz
+function EqLateral.pivot(fromAngle, toAngle, back)
+    local diff = (toAngle - fromAngle + math.pi) % (2 * math.pi) - math.pi
+    if math.abs(diff) > EqLateral.PIVOT_JUMP then return 0, 0 end
+    return back * (math.sin(toAngle) - math.sin(fromAngle)), back * (math.cos(toAngle) - math.cos(fromAngle))
+end
+
+
 --- The share of the gait's speed kept in a passage or collected canter (pure): the walk's top
 --- speed, or PASSAGE of the way from it to the trot's.
 --- @param gait string|nil gait name
@@ -267,7 +369,9 @@ EqLateral.NOW_BEND = 0.3
 --- makes the rail movements (James, 2026-10-31): forehand in and bent the way it goes a renvers,
 --- bent away a shoulder-in; head to the rail and bent the way it goes a travers; else a leg
 --- yield along the rail. Off the rail: bent the way it goes a half pass, else a leg yield.
---- @param s table { gait = "WALK"|"TROT"|"CANTER"|nil, spot, passage, turning, side = -1|0|1 drift (right positive),
+--- On the spot (Ctrl): a pirouette, a volte (EqLateral.spotMode), else a piaffe at a
+--- trot and collected at a walk or canter (James, 2026-11-23).
+--- @param s table { gait = "WALK"|"TROT"|"CANTER"|nil, spot, passage, turning, pirouette, side = -1|0|1 drift (right positive),
 --- bend = -1..1 (right positive), rail = nil|"in"|"out" }
 --- @return string|nil key
 function EqLateral.movementName(s)
@@ -276,8 +380,9 @@ function EqLateral.movementName(s)
         return s.gait == "CANTER" and "collectedCanter" or nil
     end
     if s.spot then
-        if s.gait == "TROT" then return "piaffe" end
-        return s.turning and "pirouette" or "collected"
+        if s.pirouette then return "pirouette" end
+        if s.turning then return "volte" end
+        return s.gait == "TROT" and "piaffe" or "collected"
     end
     local side = s.side or 0
     if side == 0 then return nil end
@@ -419,6 +524,7 @@ local function before(vehicle, dt)
     if spec == nil or spec.inputValues == nil then return end
     local entered = vehicle.getIsEntered ~= nil and vehicle:getIsEntered()
     local side, spot = 0, false
+    local mouseTurn = 0
     if entered then
         EqLateral.vehicle = vehicle
         local held, shift = rightHeld(), shiftHeld()
@@ -433,7 +539,11 @@ local function before(vehicle, dt)
         if not spot then
             side = EqLateral.side(shift or held, left, right, gaitOk(spec))
         end
-        EqLateral.steering = held and not shift and not spot
+        -- Mouse steering works collected too (James, 2026-11-23): a lighter turn, a wider volte.
+        EqLateral.steering = held and not shift
+        if held and not shift and spot then
+            mouseTurn = EqLateral.curve(EqLateral.deadZone(EqLateral.steer))
+        end
         if held and not spot then
             spec.inputValues.axisSteer = shift and 0 or EqLateral.curve(EqLateral.deadZone(EqLateral.steer))
         elseif side ~= 0 or (shift and gaitOk(spec)) then
@@ -447,16 +557,55 @@ local function before(vehicle, dt)
     local gait = EqLateral.gaitName(spec)
     local creep = EqLateral.SPOT_CREEP[gait or ""] or 0
     local passage = nil
+    local tops = EqLateral.tops(spec)
     -- Ctrl + W held on the keyboard; gait up while collected latches it on a gamepad.
-    if spot and (key("KEY_w") or EqLateral.passageLatch) then passage = EqLateral.passageShare(gait, EqLateral.tops(spec)) end
-    spec.eqCreep = EqLateral.towards(spec.eqCreep or creep, passage or creep, dt, EqLateral.COLLECT_MS)
+    if spot and (key("KEY_w") or EqLateral.passageLatch) then passage = EqLateral.passageShare(gait, tops) end
+    -- Ctrl + A/D a volte, Ctrl + Shift + A/D a pirouette (James, 2026-11-23).
+    local turn, mode = 0, nil
+    if spot then
+        local left, right = EqRidingInput.steerSides()
+        turn = EqLateral.spotSteer(left, right, gait)
+        if turn == 0 and mouseTurn ~= 0 then turn = mouseTurn * (EqLateral.SPOT_TURN[gait or ""] or 0) end
+        mode = EqLateral.spotMode(gait, turn ~= 0, entered and shiftHeld(), passage ~= nil)
+        if spec.eqTemperFor ~= spec.cluster then
+            local record = spec.cluster ~= nil and EqRegistry ~= nil and EqRegistry.getOrCreate(spec.cluster) or nil
+            spec.eqTemperFor, spec.eqTemper = spec.cluster, record ~= nil and record.trained ~= nil and record.trained.temperament or nil
+        end
+    else
+        spec.eqTemperFor = nil
+    end
+    local target = passage or creep
+    local diameter = EqLateral.volteDiameter(spec.eqTemper)
+    local share = mode == "volte" and EqLateral.volteShare(gait, tops) or nil
+    if share ~= nil and type(spec.currentTurnSpeed) == "number" then
+        -- Part lock (the mouse) rides a wider circle at the same pace.
+        local wide = diameter / math.max(0.05, math.abs(turn))
+        target = EqLateral.volteKeep(spec.currentTurnSpeed, math.abs(spec.currentSpeed or 0), wide, share, creep)
+    elseif mode == "pirouette" then
+        -- Round the hind feet (EqLateral.pivot), not creeping forward.
+        target = 0
+    end
+    spec.eqCreep = EqLateral.towards(spec.eqCreep or creep, target, dt, EqLateral.COLLECT_MS)
+    if mode ~= spec.eqSpotMode then
+        spec.eqSpotMode = mode
+        spec.eqPivotAngle, spec.eqVolteLog = nil, nil
+        if mode == "volte" then
+            Log:info("Lateral work: volte, %.1f m across (temperament %s)", diameter, tostring(spec.eqTemper))
+        elseif mode == "pirouette" then
+            Log:info("Lateral work: pirouette round the hind feet")
+        end
+    end
+    spec.eqSpotTurn = turn
     if (passage ~= nil) ~= (spec.eqPassage == true) then
         spec.eqPassage = passage ~= nil
         Log:info("Lateral work: %s", passage ~= nil and (gait == "TROT" and "passage" or "collected canter") or "collected")
     end
     if spot then
-        local left, right = EqRidingInput.steerSides()
-        spec.inputValues.axisSteer = EqLateral.spotSteer(left, right, (EqLateral.gaitName(spec)))
+        -- A volte turns only as hard as its circle needs at its speed.
+        if share ~= nil and tops ~= nil and type(tops[gait]) == "number" and type(spec.maxTurnSpeed) == "number" then
+            turn = EqLateral.volteSteer(turn, tops[gait] * share, diameter, spec.maxTurnSpeed)
+        end
+        spec.inputValues.axisSteer = turn
     end
     -- Quicker to swing from one lock to the other (James: "spongey", a canter serpentine was
     -- impossible): the turn speed is eased towards what is asked TURN_ACCEL rad/s² faster, only
@@ -476,7 +625,10 @@ local function before(vehicle, dt)
     spec.eqPullX, spec.eqPullZ = 0, 0
     local assist = EqDressageHooks ~= nil and EqDressageHooks.assist or nil
     if entered and inTest and not spot and assist ~= nil and math.abs(spec.currentSpeed or 0) > 0.2 then
-        local pullX, pullZ, wantX, wantZ, rate = assist(vehicle, side ~= 0, dt)
+        local types = Rideable ~= nil and Rideable.GAITTYPES or nil
+        local reversing = (spec.currentSpeed or 0) < 0
+            or types ~= nil and types.BACKWARDS ~= nil and spec.inputValues.currentGait == types.BACKWARDS
+        local pullX, pullZ, wantX, wantZ, rate = assist(vehicle, side ~= 0, dt, reversing)
         spec.eqPullX, spec.eqPullZ = pullX, pullZ
         if wantX ~= nil and rate > 0 and type(spec.currentTurnAngle) == "number" then
             spec.currentTurnAngle = EqLateral.turnToward(spec.currentTurnAngle, math.atan2(wantX, wantZ), rate, dt)
@@ -496,7 +648,9 @@ local function sidewaysMove(vehicle, dt)
     local amount = spec ~= nil and spec.eqLateral or 0
     local pullX, pullZ = spec ~= nil and spec.eqPullX or 0, spec ~= nil and spec.eqPullZ or 0
     local keep = spec ~= nil and EqLateral.keep(spec.eqCollect or 0, (EqLateral.gaitName(spec)), spec.eqCreep) or 1
-    if amount == 0 and pullX == 0 and pullZ == 0 and keep == 1 or type(spec.currentTurnAngle) ~= "number" then return nil end
+    local pirouette = spec ~= nil and spec.eqSpotMode == "pirouette" and type(spec.currentTurnAngle) == "number"
+    if not pirouette and spec ~= nil then spec.eqPivotAngle = nil end
+    if amount == 0 and pullX == 0 and pullZ == 0 and keep == 1 and not pirouette or type(spec.currentTurnAngle) ~= "number" then return nil end
     local base = vehicle.moveCCT
     if base == nil then
         if not EqLateral.warned then
@@ -508,6 +662,27 @@ local function sidewaysMove(vehicle, dt)
     return function(self, moveX, moveY, moveZ, ...)
         -- The heading and speed the base game just worked out for this frame.
         local dx, dz = EqLateral.move(amount, spec.currentSpeed or 0, spec.currentTurnAngle, dt)
+        if pirouette then
+            -- Turned round the hind feet: the middle swings with the heading.
+            local angle = spec.currentTurnAngle
+            if spec.eqPivotAngle ~= nil then
+                local px, pz = EqLateral.pivot(spec.eqPivotAngle, angle, EqLateral.PIVOT_BACK)
+                dx, dz = dx + px, dz + pz
+            end
+            spec.eqPivotAngle = angle
+        end
+        if spec.eqSpotMode == "volte" and type(spec.currentTurnAngle) == "number" then
+            -- The circle actually ridden, once a second, to check its size in the log.
+            local v = spec.eqVolteLog or { angle = spec.currentTurnAngle, dist = 0, ms = 0 }
+            spec.eqVolteLog = v
+            v.dist = v.dist + math.sqrt(moveX * moveX + moveZ * moveZ) * keep
+            v.ms = v.ms + dt
+            if v.ms >= 1000 then
+                local turned = math.abs((spec.currentTurnAngle - v.angle + math.pi) % (2 * math.pi) - math.pi)
+                if turned > 0.05 then Log:info("Lateral work: volte ridden %.1f m across", 2 * v.dist / turned) end
+                spec.eqVolteLog = nil
+            end
+        end
         spec.eqMoveKeep = keep
         return base(self, moveX * keep + dx + pullX, moveY, moveZ * keep + dz + pullZ, ...)
     end
@@ -567,11 +742,15 @@ function EqLateral.install()
         spec.eqMoveKeep = nil
         local queued = spec.cctMoveQueue ~= nil and #spec.cctMoveQueue or nil
         local result = { EqLog.finally(function() self.moveCCT = own end, superFunc, self, dt) }
-        -- On the spot, the stuck check expects only the forward move actually made.
+        -- On the spot, the stuck check expects only the forward move actually made, and in a
+        -- dressage test the pull onto the line too: a move it didn't expect reads as a crash.
         local keep = spec.eqMoveKeep
         local entry = queued ~= nil and spec.cctMoveQueue[queued + 1] or nil
-        if keep ~= nil and keep < 1 and entry ~= nil then
-            entry.moveX, entry.moveZ = (entry.moveX or 0) * keep, (entry.moveZ or 0) * keep
+        if keep ~= nil and entry ~= nil then
+            local pullX, pullZ = spec.eqPullX or 0, spec.eqPullZ or 0
+            if keep < 1 or pullX ~= 0 or pullZ ~= 0 then
+                entry.moveX, entry.moveZ = (entry.moveX or 0) * keep + pullX, (entry.moveZ or 0) * keep + pullZ
+            end
         end
         return unpack(result, 1, table.maxn(result))
     end)

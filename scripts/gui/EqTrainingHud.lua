@@ -728,11 +728,22 @@ function EqTrainingHud.drawPanelNote(value, color, above)
         -- Under the movement's name when it shows (drawNowDoing).
         local now = EqTrainingHud.NOW_DOING
         if EqTrainingHud.nowDoingAt ~= nil and (g_time or 0) - EqTrainingHud.nowDoingAt < 200 then y = y - now.size - n.gap end
+        -- A second note under the panel in the same frame goes below the first (James 2026-11-23:
+        -- the Ctrl+L hint and the test type note were drawn over each other).
+        -- (EqTrainingHud.newFrame clears it each frame.)
+        if EqTrainingHud.belowNext ~= nil then y = math.min(y, EqTrainingHud.belowNext) end
+        EqTrainingHud.belowNext = y - #lines * n.lineHeight
     end
     for i, line in ipairs(lines) do
         shadowText(line, x, y - (i - 1) * n.lineHeight, size, color or EqTrainingHud.COLOR.white, RenderText.ALIGN_LEFT, above)
     end
     resetText()
+end
+
+
+--- Each frame before the horse's HUD draws: notes under the panel start again under it.
+function EqTrainingHud.newFrame()
+    EqTrainingHud.belowNext = nil
 end
 
 

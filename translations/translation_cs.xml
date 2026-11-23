@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="需要 1,000 升木屑、10,000 升木材和 1,000 升木板。"/>
         <text name="eq_shop_lizardPlinth_straw" text="需要 10,000 升稻草、10,000 升木材和 1,000 升木板。"/>
         <text name="eq_lizard_title" text="%s 的赞助邀约"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian 找不到 Realistic Livestock（Ritter 版），因此已停用。请安装最新版本的 Realistic Livestock。"/>
         <text name="eq_rlrm_incompatible" text="你的 Realistic Livestock 版本 %s 对 Realistic Equestrian 来说太旧，因此 Realistic Equestrian 已停用。请获取最新版本的 Realistic Livestock（Ritter 版）。"/>
         <text name="eq_rlrm_old" text="你的 Realistic Livestock 版本 %s 低于 Realistic Equestrian 所需的版本（%s 或更新），部分功能可能无法使用。请获取最新版本的 Realistic Livestock（Ritter 版）。"/>
         <text name="eq_lizard_offer" text="%s 希望赞助你的%s（%s），并在赛事月借给你一辆它的车辆。要求在赛事结束前达到%s品牌度，并在你的场地建好Lizard展台：%s。如果公布成绩时一切就绪，它将支付 %s。否则不付费，也没有任何处罚。赛事结束后展台会倒塌。"/>
@@ -118,6 +117,9 @@
         <text name="eq_lizard_decline" text="拒绝"/>
         <text name="eq_lizard_offerNote" text="%s 想赞助你的%s。"/>
         <text name="eq_lizard_accepted" text="已接受与 %s 的合作！在商店（可建造建筑）购买Lizard展台，并用%s、原木和木板建造它。"/>
+        <text name="eq_lizard_or" text="%s或%s"/>
+        <text name="eq_lizard_and" text="%s和%s"/>
+        <text name="eq_lizard_needs" text="%s（任选其一），另加%s"/>
         <text name="eq_lizard_stepAside" text="%s 退出了：现在由 %s 赞助你的赛事。"/>
         <text name="eq_lizard_paid" text="%s 为赞助你的赛事支付了 %s。"/>
         <text name="eq_lizard_unpaid_plinth" text="%s 不付费：Lizard展台没有完工。别介意。"/>
@@ -175,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="Pasáž %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="原地踏步"/>
         <text name="eq_now_pirouette" text="定后肢旋转"/>
+        <text name="eq_now_volte" text="小圈"/>
         <text name="eq_now_collected" text="收缩"/>
         <text name="eq_now_collectedCanter" text="收缩跑步"/>
         <text name="eq_now_passage" text="Pasáž"/>
@@ -203,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="在%s立定"/>
         <text name="eq_dressage_piaffeAt" text="原地踏步（%s）在%s：按住Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="向左定后肢旋转（%s）在%s：Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="向左定后肢旋转（%s）在%s：Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="向右定后肢旋转（%s）在%s：Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="向右定后肢旋转（%s）在%s：Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="原地踏步（%s）！按住Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="向左定后肢旋转（%s）！Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="向左定后肢旋转（%s）！Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="向右定后肢旋转（%s）！Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="向右定后肢旋转（%s）！Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="回到线上！"/>
         <text name="eq_dressage_mark" text="上一项得分：%s"/>
         <text name="eq_pop_routineError" text="路线错误 %d/%d"/>
@@ -594,7 +601,6 @@
         <text name="eq_ui_col_success" text="胜算"/>
         <text name="eq_ui_col_training" text="训练"/>
         <text name="eq_ui_trainingBenefit" text="训练收益"/>
-        <text name="eq_ui_ageLong" text="%d个月"/>
         <text name="eq_success_favourite" text="热门"/>
         <text name="eq_success_contender" text="有力竞争者"/>
         <text name="eq_success_outsider" text="冷门"/>
@@ -610,6 +616,13 @@
         <text name="eq_ui_canEnter" text="%d匹可报名"/>
         <text name="eq_ui_noneEligible" text="无符合条件的马"/>
         <text name="eq_ui_ageMonths" text="%d个月"/>
+        <text name="eq_age_year" text="%d岁"/>
+        <text name="eq_age_years" text="%d岁"/>
+        <text name="eq_age_yearsFew" text="%d岁"/>
+        <text name="eq_age_join" text="%s%s"/>
+        <text name="eq_age_short" text="%d岁%d个月"/>
+        <text name="eq_age_shortYears" text="%d岁"/>
+        <text name="eq_ui_ages_rangeYears" text="%d-%d岁"/>
         <text name="eq_ui_day" text="第%d天"/>
         <text name="eq_ui_status_ok" text="可报名"/>
         <text name="eq_ui_status_lowHealth" text="健康低：%d%%退赛"/>
@@ -659,8 +672,8 @@
         <text name="eq_ui_noHorses" text="你没有马。"/>
         <text name="eq_ui_clientNote" text="比赛由主机运行。从多人游戏客户端报名将在以后的版本中提供。"/>
         <text name="eq_ui_noConfig" text="无法加载赛事列表；请查看日志。"/>
-        <text name="eq_ui_ages_range" text="%d-%d个月"/>
-        <text name="eq_ui_ages_from" text="%d个月起"/>
+        <text name="eq_ui_ages_range" text="%s至%s"/>
+        <text name="eq_ui_ages_from" text="%s起"/>
         <text name="eq_ui_summary_event" text="%s：%s，评分%.0f-%.0f，%d匹参赛。选择一匹马并按Enter。"/>
         <text name="eq_enter_noEvent" text="该赛事不接受报名。"/>
         <text name="eq_enter_retired" text="这匹马已退出比赛。"/>
@@ -668,8 +681,8 @@
         <text name="eq_enter_foaled" text="这匹母马仍在产后恢复中。产驹三个月后可以参赛。"/>
         <text name="eq_enter_already" text="这匹马已报名%s。"/>
         <text name="eq_enter_eventFull" text="一场赛事最多可报名%d匹马。"/>
-        <text name="eq_enter_tooYoung" text="太年轻：该赛事面向%d个月及以上的马，你的马%d个月。"/>
-        <text name="eq_enter_tooOld" text="太老：该赛事面向%d个月以下的马，你的马%d个月。"/>
+        <text name="eq_enter_tooYoung" text="太年轻：该赛事面向%s及以上的马，你的马%s。"/>
+        <text name="eq_enter_tooOld" text="太老：该赛事面向%s以下的马，你的马%s。"/>
         <text name="eq_enter_ratingLow" text="评分%.0f低于该赛事的%.0f-%.0f范围。"/>
         <text name="eq_enter_ratingHigh" text="评分%.0f高于该赛事的%.0f-%.0f范围：请报名更高级别。"/>
         <text name="eq_enter_noMoney" text="资金不足：报名需要%s（报名费%s，运输费%s）。"/>
@@ -1162,7 +1175,7 @@
         <text name="eq_sponsor_haveOf" text="你拥有%s／需要%d"/>
         <text name="eq_sponsor_mustOwn" text="申请前你必须拥有其%d台设备。"/>
         <text name="eq_sponsor_mustKeep" text="你必须保留其%d台设备才能获得付款。"/>
-        <text name="eq_sponsor_attachHalf" text="农具和拖车按半台计算。"/>
+        <text name="eq_sponsor_cheapHalf" text="非常便宜的设备按半台计算。"/>
         <text name="eq_sponsor_noRivals" text="你不能拥有价格在其产品%s以内的机械。"/>
         <text name="eq_sponsor_sellFirst" text="申请前请出售或归还以下机械："/>
         <text name="eq_sponsor_sellMore" text="……还有%d台"/>
@@ -1222,7 +1235,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s正在隔离，回家前不能骑乘。"/>
         <text name="eq_ride_blocked_away" text="%s外出参赛，不能骑乘。"/>
         <text name="eq_ride_blocked_injured" text="%s受伤了，痊愈前不能骑乘。"/>
-        <text name="eq_ride_blocked_tooYoung" text="%s还太小，不能骑乘。马满%d个月后才能骑乘。"/>
+        <text name="eq_ride_blocked_tooYoung" text="%s还太小，不能骑乘。马满%s后才能骑乘。"/>
         <text name="eq_loose_sentHome_quarantine" text="%s正在隔离，已被带回%s。"/>
         <text name="eq_loose_sentHome_away" text="%s外出参赛，已被带回%s。"/>
         <text name="eq_loose_sentHome_injured" text="%s受伤了，已被带回%s休息。"/>
@@ -1230,12 +1243,68 @@
         <text name="eq_help_lateral_title" text="横向动作"/>
         <text name="eq_help_lateral_1" text="横向动作是盛装舞步中最难的部分之一，需要组合多种操作。按住[[EQ_LATERAL]]并按A或D向侧面移动，即为腿部让步；同时按住[[EQ_REIN]]可以弯曲马的颈部和肩部，做出腰向内、腰向外或斜横步。在舞步测试中，路线上的图标会显示如何摆放马的姿势。"/>
         <text name="eq_help_collect_title" text="收缩"/>
-        <text name="eq_help_collect_1" text="收缩主要用于盛装舞步，让马以某种步法前进却不带平常的速度。快步时按住[[EQ_COLLECT]]做原地踏步（原地快步），再按W做正步（缓慢有弹性的快步）。在慢步或跑步时收缩并用A或D转向，即为定后肢旋转。"/>
+        <text name="eq_help_collect_1" text="收缩主要用于盛装舞步，让马以某种步法前进却不带平常的速度。快步时按住[[EQ_COLLECT]]做原地踏步（原地快步），再按W做正步（缓慢有弹性的快步）。收缩并用A或D转向：慢步或快步时为绕后肢的定后肢旋转，跑步时为小圈（马越沉稳圈越小）。跑步中的定后肢旋转需再按住[[EQ_LATERAL]]。"/>
         <text name="eq_help_rein_title" text="鼠标转向"/>
         <text name="eq_help_rein_1" text="按住[[EQ_REIN]]会把镜头转到马的身后，让你用鼠标精细转向，这在盛装舞步中至关重要，在场地障碍中有时也有用。同时按住[[EQ_LATERAL]]时，鼠标会弯曲马的头部来做横向动作。"/>
         <text name="eq_help_courseEdit_title" text="编辑路线"/>
         <text name="eq_help_courseEdit_1" text="按顺序骑过各个障碍来描绘路线，速度不限。描绘时，本模组的障碍物没有碰撞。如果出错，骑回最后一个正确的点，直到有一条线吸附过去，然后按[[EQ_COURSE_REWIND]]从那里重新描绘。再次按[[EQ_COURSE_RECORD]]（越野为[[EQ_COURSE_RECORD_XC]]）保存。"/>
         <text name="eq_help_dressageEdit_title" text="编辑舞步测试"/>
         <text name="eq_help_dressageEdit_1" text="用图形、动作和步法编写你自己的舞步测试。[[EQ_DT_PREV]]和[[EQ_DT_NEXT]]切换图形，[[EQ_DT_GAIT]]切换步法，[[EQ_DT_MODE]]切换到横向动作或原地动作。[[EQ_DT_ACCEPT]]保留当前步骤并继续，[[EQ_DT_UNDO]]返回上一步，[[EQ_DT_RANDOM]]随机选一步。按[[EQ_DRESSAGE_TEST]]保存测试。"/>
+        <text name="eq_band_extremelyLow" text="极低"/>
+        <text name="eq_band_veryLow" text="很低"/>
+        <text name="eq_band_low" text="低"/>
+        <text name="eq_band_average" text="中等"/>
+        <text name="eq_band_high" text="高"/>
+        <text name="eq_band_veryHigh" text="很高"/>
+        <text name="eq_band_extremelyHigh" text="极高"/>
+        <text name="input_EQ_MENU" text="马术菜单"/>
+        <text name="eq_menu_button" text="马术"/>
+        <text name="eq_menu_pickHint" text="选择一行即可勾选或取消勾选。要更改其他项，请再次打开列表。"/>
+        <text name="eq_horses_title" text="马匹"/>
+        <text name="eq_horses_col_name" text="名字"/>
+        <text name="eq_horses_col_age" text="年龄"/>
+        <text name="eq_horses_col_status" text="状态"/>
+        <text name="eq_horses_inTrailer" text="在拖车里"/>
+        <text name="eq_horses_foal" text="太小，不能骑"/>
+        <text name="eq_horses_ready" text="就绪"/>
+        <text name="eq_horses_none" text="这个农场还没有马。请到动物商人那里购买。"/>
+        <text name="eq_horses_stable" text="马厩"/>
+        <text name="eq_horses_fitness" text="体能"/>
+        <text name="eq_horses_health" text="健康"/>
+        <text name="eq_horses_career" text="生涯"/>
+        <text name="eq_horses_careerValue" text="出赛 %d 次，获胜 %d 次，%s"/>
+        <text name="eq_horses_summary" text="共 %d 匹马。用下方按钮骑乘所选的马、设定角色或让它退役。"/>
+        <text name="eq_horses_summaryOne" text="共 %d 匹马。用下方按钮骑乘、设定角色或让它退役。"/>
+        <text name="eq_messages_title" text="消息"/>
+        <text name="eq_messages_col_date" text="日期"/>
+        <text name="eq_messages_col_type" text="类型"/>
+        <text name="eq_messages_col_message" text="内容"/>
+        <text name="eq_messages_button_clear" text="清除"/>
+        <text name="eq_messages_clearConfirm" text="删除这个农场的所有消息？"/>
+        <text name="eq_messages_none" text="暂无消息。"/>
+        <text name="eq_messages_summary" text="成绩、伤病、运输、主办赛事和赞助消息。每条也会以通知显示。"/>
+        <text name="eq_messages_date" text="第 %d 天，%s，第 %d 年"/>
+        <text name="eq_messages_day" text="第 %d 天"/>
+        <text name="input_EQ_DT_TYPE" text="盛装舞步路线类型"/>
+        <text name="input_EQ_DT_LEVEL" text="盛装舞步路线等级"/>
+        <text name="eq_dt_typeAction" text="路线：%s"/>
+        <text name="eq_dt_levelAction" text="等级：%s"/>
+        <text name="eq_dt_type_own" text="自己的"/>
+        <text name="eq_dt_type_random" text="随机"/>
+        <text name="eq_dt_type_set" text="标准路线"/>
+        <text name="eq_dlevel_novice" text="新手"/>
+        <text name="eq_dlevel_elementary" text="初级"/>
+        <text name="eq_dlevel_medium" text="中级"/>
+        <text name="eq_dlevel_advanced" text="高级"/>
+        <text name="eq_dlevel_prixStGeorges" text="圣乔治级"/>
+        <text name="eq_dlevel_intermediate" text="中级赛"/>
+        <text name="eq_dlevel_grandPrix" text="大奖赛"/>
+        <text name="eq_dt_choiceOwn" text="你自己的路线（Ctrl+N：类型）"/>
+        <text name="eq_dt_choiceRandom" text="随机路线，%s（Ctrl+N：类型，Ctrl+M：等级）"/>
+        <text name="eq_dt_choiceSet" text="标准路线，%s（Ctrl+N：类型，Ctrl+M：等级）"/>
+        <text name="eq_dt_choiceFallback" text="没有标准路线适合此场地：随机路线，%s"/>
+        <text name="eq_dt_choiceEvent" text="赛事路线：随机，%s"/>
+        <text name="eq_fig_canterSide" text="跑步 %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="跑步 %s-X-%s"/>
     </texts>
 </l10n>

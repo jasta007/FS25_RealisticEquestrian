@@ -18,8 +18,10 @@ local modName = g_currentModName
 source(modDirectory .. "scripts/core/EqLog.lua")
 source(modDirectory .. "scripts/core/EqI18N.lua")
 source(modDirectory .. "scripts/core/EqRLRM.lua")
+source(modDirectory .. "scripts/core/EqBase.lua")
 source(modDirectory .. "scripts/core/EqMessages.lua")
 source(modDirectory .. "scripts/core/EqConstants.lua")
+source(modDirectory .. "scripts/core/EqAge.lua")
 source(modDirectory .. "scripts/core/EqSettings.lua")
 source(modDirectory .. "scripts/core/EqRandom.lua")
 source(modDirectory .. "scripts/core/EqStats.lua")
@@ -36,6 +38,7 @@ source(modDirectory .. "scripts/training/EqFoalVisuals.lua")
 source(modDirectory .. "scripts/training/EqTemperament.lua")
 source(modDirectory .. "scripts/training/EqBreath.lua")
 source(modDirectory .. "scripts/training/EqDressagePath.lua")
+source(modDirectory .. "scripts/training/EqDressageLevels.lua")
 source(modDirectory .. "scripts/training/EqDressage.lua")
 source(modDirectory .. "scripts/training/EqDressageHooks.lua")
 source(modDirectory .. "scripts/training/EqDressageTests.lua")
@@ -93,6 +96,7 @@ source(modDirectory .. "scripts/competition/EqQuarantine.lua")
 source(modDirectory .. "scripts/competition/EqCompetitionManager.lua")
 source(modDirectory .. "scripts/competition/EqAway.lua")
 source(modDirectory .. "scripts/dealer/EqDealerHooks.lua")
+source(modDirectory .. "scripts/dealer/EqDealerStock.lua")
 source(modDirectory .. "scripts/dealer/EqDelivery.lua")
 source(modDirectory .. "scripts/gui/EqSkillsHudBox.lua")
 source(modDirectory .. "scripts/gui/EqInfoDisplay.lua")
@@ -108,6 +112,10 @@ source(modDirectory .. "scripts/gui/EqMessagesLink.lua")
 source(modDirectory .. "scripts/gui/EqAnimalsPageButton.lua")
 source(modDirectory .. "scripts/gui/EqRideButton.lua")
 source(modDirectory .. "scripts/gui/EqSettingsPage.lua")
+source(modDirectory .. "scripts/gui/EqHorsesFrame.lua")
+source(modDirectory .. "scripts/gui/EqMessagesFrame.lua")
+source(modDirectory .. "scripts/gui/EqSettingsFrame.lua")
+source(modDirectory .. "scripts/gui/EqMenu.lua")
 source(modDirectory .. "scripts/gui/EqWelcome.lua")
 source(modDirectory .. "scripts/console/EqConsole.lua")
 source(modDirectory .. "scripts/console/EqProbe.lua")
@@ -155,6 +163,9 @@ EqMain.copyMoneyTexts()
 
 EqMain.activated = false
 EqMain.isActive = false
+-- True when Realistic Livestock isn't installed: the mod runs on the base game's horses (EqBase)
+-- with its own menu (EqMenu). With RLRM, nothing that depends on this is installed.
+EqMain.withoutRLRM = false
 
 
 --- Every hook body runs protected: these hooks sit inside the game's own load, save and
@@ -174,8 +185,16 @@ function EqMain.activate()
     EqMain.activated = true
 
     guarded("activation", function()
-        EqMain.isActive = EqRLRM.init()
+        local found = EqRLRM.init()
+        EqMain.withoutRLRM = not found and EqRLRM.isMissing()
+        EqMain.isActive = found or EqMain.withoutRLRM
     end)
+
+    if EqMain.withoutRLRM then
+        guarded("base horses", function() EqBase.install(guarded) end)
+        guarded("base horse info", function() EqInfoDisplay.installBase(guarded) end)
+        guarded("equestrian menu", function() EqMenu.install(guarded, modDirectory) end)
+    end
 
     -- Foals in the pen: the horse config is swapped right after the animal system loads. Hooked
     -- here, after every mod is sourced, as RLRM replaces AnimalSystem.loadMapData outright.
@@ -203,12 +222,16 @@ function EqMain.activate()
         guarded("menu paging hook", function() EqMenuPaging.install(guarded) end)
     end
 
-    if EqMain.isActive and EqRLRM.features.animalsPageButton then
+    if EqMain.isActive and (EqRLRM.features.animalsPageButton or EqMain.withoutRLRM) then
         guarded("animals page button hook", function() EqAnimalsPageButton.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.horsePricing then
         guarded("horse pricing hook", function() EqDealerHooks.install(guarded) end)
+    end
+
+    if EqMain.isActive and EqRLRM.features.dealerStock then
+        guarded("dealer horse stock hook", function() EqDealerStock.install(guarded) end)
     end
 
     if EqMain.isActive and EqRLRM.features.dealerDelivery then
@@ -241,8 +264,12 @@ function EqMain.activate()
 
     if EqMain.isActive then
         guarded("welcome popups hooks", function() EqWelcome.install(guarded) end)
-        guarded("message log", EqMessages.install)
-        guarded("settings page hook", function() EqSettingsPage.install(guarded, EqRLRM.features.settingsTab) end)
+        if EqMain.withoutRLRM then
+            guarded("message log", EqMessages.installOwn)
+        else
+            guarded("message log", EqMessages.install)
+            guarded("settings page hook", function() EqSettingsPage.install(guarded, EqRLRM.features.settingsTab) end)
+        end
     end
 
     if EqMain.isActive and EqRLRM.features.menuLayout then
@@ -250,7 +277,13 @@ function EqMain.activate()
     end
 
     if EqMain.isActive then
+        guarded("horse age hooks", function() EqAge.install(guarded) end)
+    end
+
+    if EqMain.isActive and not EqMain.withoutRLRM then
         guarded("training hooks", function() EqTrainingHooks.installDaily(guarded) end)
+    end
+    if EqMain.isActive then
         guarded("competition setup", function()
             EqMain.copyMoneyTexts()
             MoneyType.EQ_ENTRY_FEES = MoneyType.register("eqEntryFees", "eq_money_entryFees")
@@ -365,6 +398,17 @@ local function onMissionLoaded(mission)
         if mission:getIsServer() then EqStaffManager.start(guarded) end
     end)
 
+    guarded("dealer horse stock start", function()
+        if mission:getIsServer() and EqRLRM.features.dealerStock then EqDealerStock.start(guarded) end
+    end)
+
+    if EqMain.withoutRLRM then
+        guarded("base horses start", function()
+            if mission:getIsServer() then EqBase.start(guarded) end
+        end)
+        guarded("equestrian menu setup", EqMenu.setupGui)
+    end
+
     -- A farm bought with the map's starved horses in its barn: checked hourly, ahead of
     -- RLRM's daily low-health death roll.
     guarded("map horses fresh start", function()
@@ -415,6 +459,8 @@ local function onMissionDelete()
         EqDelivery.stop(g_currentMission)
         EqLooseHorses.stop(g_currentMission)
         EqStaffManager.stop()
+        EqDealerStock.stop()
+        if EqMain.withoutRLRM then EqBase.stop() end
         EqHostManager.reset()
         EqSponsorManager.reset()
         EqLizard.reset()
@@ -438,4 +484,4 @@ Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00
 FSCareerMissionInfo.saveToXMLFile = Utils.appendedFunction(FSCareerMissionInfo.saveToXMLFile, onSave)
 FSBaseMission.delete = Utils.prependedFunction(FSBaseMission.delete, onMissionDelete)
 
-Log:info("Realistic Equestrian sourced; waiting for Realistic Livestock to load")
+Log:info("Realistic Equestrian sourced; looking for Realistic Livestock once every mod has loaded")

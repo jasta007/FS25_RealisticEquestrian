@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Potřebuje 1 000 l štěpky, 10 000 l dřeva a 1 000 l prken."/>
         <text name="eq_shop_lizardPlinth_straw" text="Potřebuje 10 000 l slámy, 10 000 l dřeva a 1 000 l prken."/>
         <text name="eq_lizard_title" text="Sponzorská nabídka od %s"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian nemůže najít Realistic Livestock (verze od Rittera), a proto je vypnutý. Nainstaluj nejnovější verzi Realistic Livestock."/>
         <text name="eq_rlrm_incompatible" text="Tvoje verze %s Realistic Livestock je pro Realistic Equestrian příliš stará, a proto je Realistic Equestrian vypnutý. Stáhni si nejnovější verzi Realistic Livestock (verze od Rittera)."/>
         <text name="eq_rlrm_old" text="Tvoje verze %s Realistic Livestock je starší, než Realistic Equestrian potřebuje (%s nebo novější), takže některé funkce nemusí fungovat. Stáhni si nejnovější verzi Realistic Livestock (verze od Rittera)."/>
         <text name="eq_lizard_offer" text="%s by rád sponzoroval vaši akci %s (%s) a na měsíc akce vám půjčí jedno ze svých vozidel. Žádá branding %s do konce akce a svůj podstavec Lizard postavený na vašem areálu: %s. Pokud bude vše hotové, až přijdou výsledky, zaplatí %s. Pokud ne, nezaplatí nic a žádná pokuta nehrozí. Podstavec se po akci zřítí."/>
@@ -118,6 +117,9 @@
         <text name="eq_lizard_decline" text="Odmítnout"/>
         <text name="eq_lizard_offerNote" text="%s chce sponzorovat vaši akci %s."/>
         <text name="eq_lizard_accepted" text="Dohoda s %s přijata! Kupte podstavec Lizard v obchodě (Stavitelné) a postavte ho z %s, klád a prken."/>
+        <text name="eq_lizard_or" text="%s nebo %s"/>
+        <text name="eq_lizard_and" text="%s a %s"/>
+        <text name="eq_lizard_needs" text="%s (podle výběru), k tomu %s"/>
         <text name="eq_lizard_stepAside" text="%s ustupuje: vaši akci teď sponzoruje %s."/>
         <text name="eq_lizard_paid" text="%s zaplatil %s za sponzorování vaší akce."/>
         <text name="eq_lizard_unpaid_plinth" text="%s nezaplatí nic: podstavec Lizard nebyl hotový. Bez zášti."/>
@@ -175,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="Pasáž %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="Piafa"/>
         <text name="eq_now_pirouette" text="Piruet"/>
+        <text name="eq_now_volte" text="Volta"/>
         <text name="eq_now_collected" text="Shromážděný"/>
         <text name="eq_now_collectedCanter" text="Shromážděný cval"/>
         <text name="eq_now_passage" text="Pasáž"/>
@@ -203,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="Zastavení v %s"/>
         <text name="eq_dressage_piaffeAt" text="Piafa (%s) u %s: držte Ctrl"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Piruet vlevo (%s) u %s: Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Piruet vlevo (%s) u %s: Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Piruet vpravo (%s) u %s: Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Piruet vpravo (%s) u %s: Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="Piafa (%s)! Držte Ctrl"/>
         <text name="eq_dressage_pirouetteLeft" text="Piruet vlevo (%s)! Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Piruet vlevo (%s)! Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="Piruet vpravo (%s)! Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Piruet vpravo (%s)! Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="Zpět na čáru!"/>
         <text name="eq_dressage_mark" text="Poslední známka: %s"/>
         <text name="eq_pop_routineError" text="Chyba v úloze %d/%d"/>
@@ -594,7 +601,6 @@
         <text name="eq_ui_col_success" text="Šance"/>
         <text name="eq_ui_col_training" text="Trénink"/>
         <text name="eq_ui_trainingBenefit" text="Přínos tréninku"/>
-        <text name="eq_ui_ageLong" text="%d měsíců"/>
         <text name="eq_success_favourite" text="Favorit"/>
         <text name="eq_success_contender" text="Vyzyvatel"/>
         <text name="eq_success_outsider" text="Outsider"/>
@@ -610,6 +616,13 @@
         <text name="eq_ui_canEnter" text="Mohou startovat: %d"/>
         <text name="eq_ui_noneEligible" text="Nikdo způsobilý"/>
         <text name="eq_ui_ageMonths" text="%d m"/>
+        <text name="eq_age_year" text="%d rok"/>
+        <text name="eq_age_years" text="%d let"/>
+        <text name="eq_age_yearsFew" text="%d roky"/>
+        <text name="eq_age_join" text="%s, %s"/>
+        <text name="eq_age_short" text="%d r. %d m"/>
+        <text name="eq_age_shortYears" text="%d r."/>
+        <text name="eq_ui_ages_rangeYears" text="věk %d až %d let"/>
         <text name="eq_ui_day" text="Den %d"/>
         <text name="eq_ui_status_ok" text="Může startovat"/>
         <text name="eq_ui_status_lowHealth" text="Slabé zdraví: %d%% odhlášení"/>
@@ -659,8 +672,8 @@
         <text name="eq_ui_noHorses" text="Nemáte žádné koně."/>
         <text name="eq_ui_clientNote" text="Závody řídí hostitel. Přihlašování z klienta v multiplayeru přijde v pozdější verzi."/>
         <text name="eq_ui_noConfig" text="Seznam závodů se nepodařilo načíst; viz log."/>
-        <text name="eq_ui_ages_range" text="věk %d-%d měsíců"/>
-        <text name="eq_ui_ages_from" text="od %d měsíců"/>
+        <text name="eq_ui_ages_range" text="věk %s až %s"/>
+        <text name="eq_ui_ages_from" text="od %s"/>
         <text name="eq_ui_summary_event" text="%s: %s, hodnocení %.0f-%.0f, startujících: %d. Vyberte koně a stiskněte Enter."/>
         <text name="eq_enter_noEvent" text="Tento závod nepřijímá přihlášky."/>
         <text name="eq_enter_retired" text="Tento kůň ukončil sportovní kariéru."/>
@@ -668,8 +681,8 @@
         <text name="eq_enter_foaled" text="Tato klisna se ještě zotavuje z ohřebení. Závodit může tři měsíce po porodu."/>
         <text name="eq_enter_already" text="Tento kůň je už přihlášen: %s."/>
         <text name="eq_enter_eventFull" text="Na jeden závod můžete přihlásit nejvýše %d koní."/>
-        <text name="eq_enter_tooYoung" text="Příliš mladý: tento závod je pro koně od %d měsíců a váš má %d měsíců."/>
-        <text name="eq_enter_tooOld" text="Příliš starý: tento závod je pro koně do %d měsíců a váš má %d měsíců."/>
+        <text name="eq_enter_tooYoung" text="Příliš mladý: tento závod je pro koně od %s a váš má %s."/>
+        <text name="eq_enter_tooOld" text="Příliš starý: tento závod je pro koně do %s a váš má %s."/>
         <text name="eq_enter_ratingLow" text="Hodnocení %.0f je pod rozsahem %.0f-%.0f tohoto závodu."/>
         <text name="eq_enter_ratingHigh" text="Hodnocení %.0f je nad rozsahem %.0f-%.0f tohoto závodu: přihlaste se na vyšší úroveň."/>
         <text name="eq_enter_noMoney" text="Nedostatek peněz: přihláška stojí %s (startovné %s, přeprava %s)."/>
@@ -1162,7 +1175,7 @@
         <text name="eq_sponsor_haveOf" text="Máš %s z %d"/>
         <text name="eq_sponsor_mustOwn" text="Před podáním žádosti musíš vlastnit jejich vybavení: %d ks."/>
         <text name="eq_sponsor_mustKeep" text="Abys dostával platby, ponech si jejich vybavení: %d ks."/>
-        <text name="eq_sponsor_attachHalf" text="Nářadí a přívěsy se počítají napůl."/>
+        <text name="eq_sponsor_cheapHalf" text="Velmi levné vybavení se počítá napůl."/>
         <text name="eq_sponsor_noRivals" text="Nesmíš vlastnit stroje s cenou do %s jejich produktu."/>
         <text name="eq_sponsor_sellFirst" text="Před podáním žádosti prodej nebo vrať:"/>
         <text name="eq_sponsor_sellMore" text="...a dalších %d"/>
@@ -1222,7 +1235,7 @@
         <text name="eq_ride_blocked_quarantine" text="Kůň %s je v karanténě a nelze na něm jezdit, dokud nebude doma."/>
         <text name="eq_ride_blocked_away" text="Kůň %s je na závodech a nelze na něm jezdit."/>
         <text name="eq_ride_blocked_injured" text="Kůň %s je zraněný a nelze na něm jezdit, dokud se neuzdraví."/>
-        <text name="eq_ride_blocked_tooYoung" text="Kůň %s je příliš mladý na ježdění. Na koních se dá jezdit od %d měsíců."/>
+        <text name="eq_ride_blocked_tooYoung" text="Kůň %s je příliš mladý na ježdění. Na koních se dá jezdit od %s."/>
         <text name="eq_loose_sentHome_quarantine" text="Kůň %s je v karanténě, a tak byl odveden zpět: %s."/>
         <text name="eq_loose_sentHome_away" text="Kůň %s je na závodech, a tak byl odveden zpět: %s."/>
         <text name="eq_loose_sentHome_injured" text="Kůň %s je zraněný, a tak byl odveden zpět k odpočinku: %s."/>
@@ -1230,12 +1243,68 @@
         <text name="eq_help_lateral_title" text="Boční pohyby"/>
         <text name="eq_help_lateral_1" text="Boční pohyby patří k nejtěžším částem drezury a kombinují několik ovládání. Držte [[EQ_LATERAL]] a mačkejte A nebo D pro posun stranou v ustupování na holeň, a když držíte i [[EQ_REIN]], ohnete krk a plece koně do travers, renvers nebo převodu. V úloze ukazují ikony na trase, jak koně postavit."/>
         <text name="eq_help_collect_title" text="Shromáždění"/>
-        <text name="eq_help_collect_1" text="Shromáždění se používá hlavně v drezuře, k jízdě chodem bez jeho obvyklé rychlosti. Držte [[EQ_COLLECT]] v klusu pro piafu, klus na místě, a stiskněte i W pro pasáž, pomalý pérovaný klus. Shromážděte koně v kroku nebo cvalu a otáčejte A nebo D pro piruetu."/>
+        <text name="eq_help_collect_1" text="Shromáždění se používá hlavně v drezuře, k jízdě chodem bez jeho obvyklé rychlosti. Držte [[EQ_COLLECT]] v klusu pro piafu, klus na místě, a stiskněte i W pro pasáž, pomalý pérovaný klus. Shromážděte koně a otáčejte A nebo D pro piruetu v kroku nebo klusu, kolem zadních nohou, nebo voltu ve cvalu, malý kruh (tím menší, čím klidnější kůň). Pro piruetu ve cvalu držte i [[EQ_LATERAL]]."/>
         <text name="eq_help_rein_title" text="Řízení myší"/>
         <text name="eq_help_rein_1" text="Držením [[EQ_REIN]] se kamera přesune za koně a můžete jemně řídit myší, což je zásadní v drezuře a občas v parkuru. Když držíte i [[EQ_LATERAL]], myš ohýbá hlavu koně pro boční pohyby."/>
         <text name="eq_help_courseEdit_title" text="Úprava trati"/>
         <text name="eq_help_courseEdit_1" text="Vyznačte trať průjezdem překážkami po pořadí, v jakémkoli tempu. Překážky z tohoto modu při vyznačování nemají kolize. Když uděláte chybu, vraťte se k poslednímu dobrému bodu, až se k němu přichytí čára, a stiskem [[EQ_COURSE_REWIND]] pokračujte odtud. Znovu stiskněte [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] pro terén) a trať se uloží."/>
         <text name="eq_help_dressageEdit_title" text="Úprava drezurní úlohy"/>
         <text name="eq_help_dressageEdit_1" text="Sestavte si vlastní drezurní úlohu z figur, cviků a chodů. [[EQ_DT_PREV]] a [[EQ_DT_NEXT]] mění figuru, [[EQ_DT_GAIT]] chod a [[EQ_DT_MODE]] přepíná na boční pohyby nebo cviky na místě. [[EQ_DT_ACCEPT]] krok ponechá a pokračuje, [[EQ_DT_UNDO]] se vrátí a [[EQ_DT_RANDOM]] vybere náhodný krok. Stiskem [[EQ_DRESSAGE_TEST]] úlohu uložíte."/>
+        <text name="eq_band_extremelyLow" text="Extrémně nízká"/>
+        <text name="eq_band_veryLow" text="Velmi nízká"/>
+        <text name="eq_band_low" text="Nízká"/>
+        <text name="eq_band_average" text="Průměrná"/>
+        <text name="eq_band_high" text="Vysoká"/>
+        <text name="eq_band_veryHigh" text="Velmi vysoká"/>
+        <text name="eq_band_extremelyHigh" text="Extrémně vysoká"/>
+        <text name="input_EQ_MENU" text="Jezdecké menu"/>
+        <text name="eq_menu_button" text="Jezdectví"/>
+        <text name="eq_menu_pickHint" text="Vyberte řádek pro zaškrtnutí nebo odškrtnutí. Pro změnu dalšího otevřete seznam znovu."/>
+        <text name="eq_horses_title" text="Koně"/>
+        <text name="eq_horses_col_name" text="Jméno"/>
+        <text name="eq_horses_col_age" text="Věk"/>
+        <text name="eq_horses_col_status" text="Stav"/>
+        <text name="eq_horses_inTrailer" text="V přívěsu"/>
+        <text name="eq_horses_foal" text="Příliš mladý na ježdění"/>
+        <text name="eq_horses_ready" text="Připraven"/>
+        <text name="eq_horses_none" text="Na této farmě zatím nejsou žádní koně. Kupte si koně u obchodníka se zvířaty."/>
+        <text name="eq_horses_stable" text="Stáj"/>
+        <text name="eq_horses_fitness" text="Kondice"/>
+        <text name="eq_horses_health" text="Zdraví"/>
+        <text name="eq_horses_career" text="Kariéra"/>
+        <text name="eq_horses_careerValue" text="%d startů, %d vítězství, %s"/>
+        <text name="eq_horses_summary" text="Koní: %d. Tlačítky níže vybraného koně osedláte, dáte mu roli nebo ho pošlete do důchodu."/>
+        <text name="eq_horses_summaryOne" text="Koní: %d. Tlačítky níže ho osedláte, dáte mu roli nebo ho pošlete do důchodu."/>
+        <text name="eq_messages_title" text="Zprávy"/>
+        <text name="eq_messages_col_date" text="Datum"/>
+        <text name="eq_messages_col_type" text="Typ"/>
+        <text name="eq_messages_col_message" text="Zpráva"/>
+        <text name="eq_messages_button_clear" text="Vymazat"/>
+        <text name="eq_messages_clearConfirm" text="Smazat všechny zprávy této farmy?"/>
+        <text name="eq_messages_none" text="Zatím žádné zprávy."/>
+        <text name="eq_messages_summary" text="Výsledky, zranění, doprava, vlastní závody a sponzoři. Každá se zobrazí i jako oznámení."/>
+        <text name="eq_messages_date" text="Den %d, %s, rok %d"/>
+        <text name="eq_messages_day" text="Den %d"/>
+        <text name="input_EQ_DT_TYPE" text="Typ drezurní úlohy"/>
+        <text name="input_EQ_DT_LEVEL" text="Úroveň drezurní úlohy"/>
+        <text name="eq_dt_typeAction" text="Úloha: %s"/>
+        <text name="eq_dt_levelAction" text="Úroveň: %s"/>
+        <text name="eq_dt_type_own" text="Vlastní"/>
+        <text name="eq_dt_type_random" text="Náhodná"/>
+        <text name="eq_dt_type_set" text="Standardní úloha"/>
+        <text name="eq_dlevel_novice" text="Začátečník"/>
+        <text name="eq_dlevel_elementary" text="Základní"/>
+        <text name="eq_dlevel_medium" text="Střední"/>
+        <text name="eq_dlevel_advanced" text="Pokročilá"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermediate"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Vaše vlastní úloha (Ctrl+N: typ)"/>
+        <text name="eq_dt_choiceRandom" text="Náhodná úloha, %s (Ctrl+N: typ, Ctrl+M: úroveň)"/>
+        <text name="eq_dt_choiceSet" text="Standardní úloha, %s (Ctrl+N: typ, Ctrl+M: úroveň)"/>
+        <text name="eq_dt_choiceFallback" text="Do této jízdárny se nevejde žádná standardní úloha: náhodná úloha, %s"/>
+        <text name="eq_dt_choiceEvent" text="Úloha závodů: náhodná, %s"/>
+        <text name="eq_fig_canterSide" text="Cval %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Cval %s-X-%s"/>
     </texts>
 </l10n>

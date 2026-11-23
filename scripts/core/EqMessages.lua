@@ -63,6 +63,13 @@ EqMessages.TEXT_KEYS = {
 }
 
 EqMessages.isInstalled = false
+--- Without RLRM: our own log, newest last, shown on the Messages tab of our menu (EqMenu) and
+--- as the game's notifications. Saved in rlEquestrian.xml.
+EqMessages.ownLog = false
+EqMessages.lines = {}
+EqMessages.MAX_LINES = 200
+EqMessages.NOTIFICATION = { SUCCESS = "INGAME_NOTIFICATION_OK", INFO = "INGAME_NOTIFICATION_INFO",
+    NOTICE = "INGAME_NOTIFICATION_INFO", WARNING = "INGAME_NOTIFICATION_CRITICAL" }
 
 
 --- Add our ids to RLRM's RLMessage and our texts to the global table RLRM reads them from.
@@ -125,6 +132,96 @@ function EqMessages.husbandryFor(farmId, animal)
 end
 
 
+--- Keep our own log instead of RLRM's. Run once, without RLRM.
+function EqMessages.installOwn()
+    EqMessages.ownLog = true
+    EqMessages.isInstalled = true
+    EqMessages.lines = {}
+end
+
+
+--- @return string text the l10n title of a message id
+function EqMessages.titleOf(id)
+    local kind = EqMessages.TYPES[id]
+    return kind ~= nil and g_i18n:getText("rl_messageTitle_" .. kind.title) or ""
+end
+
+
+--- Add a line to our own log and show it as a notification.
+--- @param farmId number
+--- @param id string
+--- @param text string
+--- @param horseId string|nil
+function EqMessages.addOwn(farmId, id, text, horseId)
+    local environment = g_currentMission ~= nil and g_currentMission.environment or nil
+    table.insert(EqMessages.lines, { farmId = farmId, id = id, text = text, horseId = horseId,
+        day = environment ~= nil and environment.currentMonotonicDay or 0,
+        period = environment ~= nil and environment.currentPeriod or nil,
+        dayInPeriod = environment ~= nil and environment.currentDayInPeriod or nil,
+        year = environment ~= nil and environment.currentYear or nil })
+    while #EqMessages.lines > EqMessages.MAX_LINES do table.remove(EqMessages.lines, 1) end
+
+    if g_currentMission ~= nil and g_currentMission.addIngameNotification ~= nil
+        and (g_currentMission.getFarmId == nil or g_currentMission:getFarmId() == farmId) then
+        local kind = EqMessages.TYPES[id]
+        local field = EqMessages.NOTIFICATION[kind ~= nil and kind.severity or "INFO"]
+        local notification = FSBaseMission ~= nil and FSBaseMission[field] or nil
+        if notification ~= nil then g_currentMission:addIngameNotification(notification, text) end
+    end
+end
+
+
+--- @param farmId number
+--- @return table lines the farm's lines, newest first
+function EqMessages.linesFor(farmId)
+    local out = {}
+    for i = #EqMessages.lines, 1, -1 do
+        local line = EqMessages.lines[i]
+        if line.farmId == farmId then table.insert(out, line) end
+    end
+    return out
+end
+
+
+--- @param xmlFile table
+--- @param key string
+function EqMessages.saveToXMLFile(xmlFile, key)
+    if not EqMessages.ownLog then return end
+    for i, line in ipairs(EqMessages.lines) do
+        local lineKey = string.format("%s.line(%d)", key, i - 1)
+        xmlFile:setInt(lineKey .. "#farmId", line.farmId or 1)
+        xmlFile:setString(lineKey .. "#id", line.id)
+        xmlFile:setString(lineKey .. "#text", line.text)
+        xmlFile:setInt(lineKey .. "#day", line.day or 0)
+        if line.horseId ~= nil then xmlFile:setString(lineKey .. "#horse", line.horseId) end
+        if line.period ~= nil then xmlFile:setInt(lineKey .. "#period", line.period) end
+        if line.dayInPeriod ~= nil then xmlFile:setInt(lineKey .. "#dayInPeriod", line.dayInPeriod) end
+        if line.year ~= nil then xmlFile:setInt(lineKey .. "#year", line.year) end
+    end
+end
+
+
+--- @param xmlFile table|nil nil for a new game
+--- @param key string
+function EqMessages.loadFromXMLFile(xmlFile, key)
+    EqMessages.lines = {}
+    if xmlFile == nil then return end
+    local i = 0
+    while true do
+        local lineKey = string.format("%s.line(%d)", key, i)
+        if not xmlFile:hasProperty(lineKey) then break end
+        local id, text = xmlFile:getString(lineKey .. "#id"), xmlFile:getString(lineKey .. "#text")
+        if id ~= nil and text ~= nil then
+            table.insert(EqMessages.lines, { farmId = xmlFile:getInt(lineKey .. "#farmId", 1), id = id, text = text,
+                day = xmlFile:getInt(lineKey .. "#day", 0), horseId = xmlFile:getString(lineKey .. "#horse"),
+                period = xmlFile:getInt(lineKey .. "#period"), dayInPeriod = xmlFile:getInt(lineKey .. "#dayInPeriod"),
+                year = xmlFile:getInt(lineKey .. "#year") })
+        end
+        i = i + 1
+    end
+end
+
+
 --- Write one line in a farm's message log. Server only: RLRM sends the line on to the clients.
 --- @param farmId number
 --- @param id string one of EqMessages.TYPES
@@ -134,6 +231,10 @@ end
 function EqMessages.post(farmId, id, text, animal, horseId)
     if not EqMessages.isInstalled or EqMessages.TYPES[id] == nil or text == nil then return end
     if g_currentMission == nil or (g_currentMission.getIsServer ~= nil and not g_currentMission:getIsServer()) then return end
+    if EqMessages.ownLog then
+        EqMessages.addOwn(farmId, id, text, horseId)
+        return
+    end
 
     local husbandry = EqMessages.husbandryFor(farmId, animal)
     if husbandry == nil then return end

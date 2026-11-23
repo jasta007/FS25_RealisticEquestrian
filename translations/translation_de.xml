@@ -110,14 +110,16 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="Benötigt 1.000 l Hackschnitzel, 10.000 l Holz und 1.000 l Bretter."/>
         <text name="eq_shop_lizardPlinth_straw" text="Benötigt 10.000 l Stroh, 10.000 l Holz und 1.000 l Bretter."/>
         <text name="eq_lizard_title" text="Sponsorenangebot von %s"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian findet Realistic Livestock (Ritter-Version) nicht und ist deshalb ausgeschaltet. Bitte installiere die neueste Version von Realistic Livestock."/>
         <text name="eq_rlrm_incompatible" text="Deine Realistic-Livestock-Version %s ist zu alt für Realistic Equestrian, deshalb ist Realistic Equestrian ausgeschaltet. Bitte hol dir die neueste Version von Realistic Livestock (Ritter-Version)."/>
         <text name="eq_rlrm_old" text="Deine Realistic-Livestock-Version %s ist älter als Realistic Equestrian braucht (%s oder neuer), deshalb funktionieren manche Funktionen vielleicht nicht. Bitte hol dir die neueste Version von Realistic Livestock (Ritter-Version)."/>
         <text name="eq_lizard_offer" text="%s möchte deine Veranstaltung %s (%s) sponsern und leiht dir für den Veranstaltungsmonat eines seiner Fahrzeuge. Verlangt werden %s Branding bis zum Ende der Veranstaltung und das Lizard-Podest an deinem Veranstaltungsort: %s. Ist bei den Ergebnissen alles vorhanden, zahlt Lizard %s. Wenn nicht, gibt es nichts, aber auch keine Strafe. Das Podest bricht nach der Veranstaltung zusammen."/>
         <text name="eq_lizard_accept" text="Annehmen"/>
         <text name="eq_lizard_decline" text="Ablehnen"/>
         <text name="eq_lizard_offerNote" text="%s möchte deine Veranstaltung %s sponsern."/>
-        <text name="eq_lizard_accepted" text="Deal mit %s angenommen! Kaufe das Lizard-Podest im Shop (Baubare Objekte) und baue es mit %s, Stämmen und Brettern."/>
+        <text name="eq_lizard_accepted" text="Deal mit %s angenommen! Unter Baubare Objekte gibt es ein Lizard-Podest für jedes Material (%s): Baue das, welches du möchtest, dazu mit Stämmen und Brettern."/>
+        <text name="eq_lizard_or" text="%s oder %s"/>
+        <text name="eq_lizard_and" text="%s und %s"/>
+        <text name="eq_lizard_needs" text="%s (nach Wahl), dazu %s"/>
         <text name="eq_lizard_stepAside" text="%s tritt zurück: %s sponsert jetzt deine Veranstaltung."/>
         <text name="eq_lizard_paid" text="%s hat %s für das Sponsoring deiner Veranstaltung gezahlt."/>
         <text name="eq_lizard_unpaid_plinth" text="%s zahlt nichts: Das Lizard-Podest wurde nicht fertig. Nichts für ungut."/>
@@ -175,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="Passage %s-%s: Strg + W"/>
         <text name="eq_now_piaffe" text="Piaffe"/>
         <text name="eq_now_pirouette" text="Pirouette"/>
+        <text name="eq_now_volte" text="Volte"/>
         <text name="eq_now_collected" text="Versammelt"/>
         <text name="eq_now_collectedCanter" text="Versammelter Galopp"/>
         <text name="eq_now_passage" text="Passage"/>
@@ -203,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="Halten bei %s"/>
         <text name="eq_dressage_piaffeAt" text="Piaffe (%s) bei %s: Strg halten"/>
         <text name="eq_dressage_pirouetteLeftAt" text="Linkspirouette (%s) bei %s: Strg + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="Linkspirouette (%s) bei %s: Strg + Umschalt + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="Rechtspirouette (%s) bei %s: Strg + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="Rechtspirouette (%s) bei %s: Strg + Umschalt + D"/>
         <text name="eq_dressage_piaffe" text="Piaffe (%s)! Strg halten"/>
         <text name="eq_dressage_pirouetteLeft" text="Linkspirouette (%s)! Strg + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="Linkspirouette (%s)! Strg + Umschalt + A"/>
         <text name="eq_dressage_pirouetteRight" text="Rechtspirouette (%s)! Strg + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="Rechtspirouette (%s)! Strg + Umschalt + D"/>
         <text name="eq_dressage_line" text="Zurück auf die Linie!"/>
         <text name="eq_dressage_mark" text="Letzte Note: %s"/>
         <text name="eq_pop_routineError" text="Verritten %d/%d"/>
@@ -595,7 +602,6 @@
         <text name="eq_ui_col_success" text="Erfolg"/>
         <text name="eq_ui_col_training" text="Training"/>
         <text name="eq_ui_trainingBenefit" text="Trainingseffekt"/>
-        <text name="eq_ui_ageLong" text="%d Monate"/>
         <text name="eq_success_favourite" text="Favorit"/>
         <text name="eq_success_contender" text="Anwärter"/>
         <text name="eq_success_outsider" text="Außenseiter"/>
@@ -611,6 +617,13 @@
         <text name="eq_ui_canEnter" text="%d startberechtigt"/>
         <text name="eq_ui_noneEligible" text="Keines startberechtigt"/>
         <text name="eq_ui_ageMonths" text="%d M."/>
+        <text name="eq_age_year" text="%d Jahr"/>
+        <text name="eq_age_years" text="%d Jahre"/>
+        <text name="eq_age_yearsFew" text="%d Jahre"/>
+        <text name="eq_age_join" text="%s, %s"/>
+        <text name="eq_age_short" text="%d J. %d M."/>
+        <text name="eq_age_shortYears" text="%d J."/>
+        <text name="eq_ui_ages_rangeYears" text="Alter %d bis %d Jahre"/>
         <text name="eq_ui_day" text="Tag %d"/>
         <text name="eq_ui_status_ok" text="Startberechtigt"/>
         <text name="eq_ui_status_lowHealth" text="Geringe Gesundheit: %d%% Streichung"/>
@@ -660,8 +673,8 @@
         <text name="eq_ui_noHorses" text="Sie haben keine Pferde."/>
         <text name="eq_ui_clientNote" text="Turniere werden vom Host ausgerichtet. Nennungen als Mehrspieler-Client folgen in einer späteren Version."/>
         <text name="eq_ui_noConfig" text="Die Veranstaltungsliste konnte nicht geladen werden; siehe Log."/>
-        <text name="eq_ui_ages_range" text="Alter %d-%d Monate"/>
-        <text name="eq_ui_ages_from" text="ab %d Monaten"/>
+        <text name="eq_ui_ages_range" text="Alter %s bis %s"/>
+        <text name="eq_ui_ages_from" text="ab %s"/>
         <text name="eq_ui_summary_event" text="%s: %s, Wertung %.0f-%.0f, Starterfeld %d. Wählen Sie ein Pferd und drücken Sie Enter."/>
         <text name="eq_enter_noEvent" text="Für diese Veranstaltung sind keine Nennungen offen."/>
         <text name="eq_enter_retired" text="Dieses Pferd wurde aus dem Turniersport genommen."/>
@@ -669,8 +682,8 @@
         <text name="eq_enter_foaled" text="Diese Stute erholt sich noch vom Abfohlen. Sie kann drei Monate nach der Geburt wieder starten."/>
         <text name="eq_enter_already" text="Dieses Pferd ist bereits für %s gemeldet."/>
         <text name="eq_enter_eventFull" text="Sie können höchstens %d Pferde für eine Veranstaltung melden."/>
-        <text name="eq_enter_tooYoung" text="Zu jung: Diese Veranstaltung ist für Pferde ab %d Monaten, Ihres ist %d Monate alt."/>
-        <text name="eq_enter_tooOld" text="Zu alt: Diese Veranstaltung ist für Pferde bis %d Monate, Ihres ist %d Monate alt."/>
+        <text name="eq_enter_tooYoung" text="Zu jung: Diese Veranstaltung ist für Pferde ab %s, Ihres ist %s alt."/>
+        <text name="eq_enter_tooOld" text="Zu alt: Diese Veranstaltung ist für Pferde bis %s, Ihres ist %s alt."/>
         <text name="eq_enter_ratingLow" text="Wertung %.0f liegt unter dem Bereich %.0f-%.0f dieser Veranstaltung."/>
         <text name="eq_enter_ratingHigh" text="Wertung %.0f liegt über dem Bereich %.0f-%.0f dieser Veranstaltung: Melden Sie es in einer höheren Stufe."/>
         <text name="eq_enter_noMoney" text="Nicht genug Geld: Die Teilnahme kostet %s (Startgebühr %s, Transport %s)."/>
@@ -1164,7 +1177,7 @@
         <text name="eq_sponsor_haveOf" text="Sie haben %s von %d"/>
         <text name="eq_sponsor_mustOwn" text="Sie müssen %d Geräte dieses Herstellers besitzen, bevor Sie sich bewerben."/>
         <text name="eq_sponsor_mustKeep" text="Sie müssen %d Geräte dieses Herstellers behalten, um bezahlt zu werden."/>
-        <text name="eq_sponsor_attachHalf" text="Anbaugeräte und Anhänger zählen halb."/>
+        <text name="eq_sponsor_cheapHalf" text="Sehr günstige Geräte zählen halb."/>
         <text name="eq_sponsor_noRivals" text="Sie dürfen keine Maschinen besitzen, die im Preis innerhalb von %s ihres Produkts liegen."/>
         <text name="eq_sponsor_sellFirst" text="Vor der Bewerbung verkaufen oder zurückgeben:"/>
         <text name="eq_sponsor_sellMore" text="...und %d weitere"/>
@@ -1224,7 +1237,7 @@
         <text name="eq_ride_blocked_quarantine" text="%s ist in Quarantäne und kann erst geritten werden, wenn es zu Hause ist."/>
         <text name="eq_ride_blocked_away" text="%s ist auf einem Turnier und kann nicht geritten werden."/>
         <text name="eq_ride_blocked_injured" text="%s ist verletzt und kann erst nach der Heilung geritten werden."/>
-        <text name="eq_ride_blocked_tooYoung" text="%s ist zu jung zum Reiten. Pferde können ab %d Monaten geritten werden."/>
+        <text name="eq_ride_blocked_tooYoung" text="%s ist zu jung zum Reiten. Pferde können ab %s geritten werden."/>
         <text name="eq_loose_sentHome_quarantine" text="%s ist in Quarantäne und wurde zurück in %s gebracht."/>
         <text name="eq_loose_sentHome_away" text="%s ist auf einem Turnier und wurde zurück in %s gebracht."/>
         <text name="eq_loose_sentHome_injured" text="%s ist verletzt und wurde zum Ausruhen zurück in %s gebracht."/>
@@ -1232,12 +1245,68 @@
         <text name="eq_help_lateral_title" text="Seitengänge"/>
         <text name="eq_help_lateral_1" text="Seitengänge gehören zum Schwierigsten in der Dressur und kombinieren mehrere Steuerungen. Halten Sie [[EQ_LATERAL]] und drücken Sie A oder D, um im Schenkelweichen seitwärts zu treten, und halten Sie zusätzlich [[EQ_REIN]], um Hals und Schultern in Travers, Renvers oder Traversale zu stellen. In einer Dressuraufgabe zeigen die Symbole auf der Linie, wie Sie Ihr Pferd stellen."/>
         <text name="eq_help_collect_title" text="Versammeln"/>
-        <text name="eq_help_collect_1" text="Versammeln braucht man vor allem in der Dressur, um eine Gangart ohne ihr übliches Tempo zu reiten. Halten Sie im Trab [[EQ_COLLECT]] für eine Piaffe, einen Trab auf der Stelle, und drücken Sie zusätzlich W für eine Passage, einen langsamen, schwebenden Trab. Versammeln Sie im Schritt oder Galopp und wenden Sie mit A oder D für eine Pirouette."/>
+        <text name="eq_help_collect_1" text="Versammeln braucht man vor allem in der Dressur, um eine Gangart ohne ihr übliches Tempo zu reiten. Halten Sie im Trab [[EQ_COLLECT]] für eine Piaffe, einen Trab auf der Stelle, und drücken Sie zusätzlich W für eine Passage, einen langsamen, schwebenden Trab. Versammeln Sie und wenden Sie mit A oder D für eine Pirouette im Schritt oder Trab, um die Hinterbeine, oder eine Volte im Galopp, einen kleinen Zirkel (je gelassener das Pferd, desto kleiner). Halten Sie zusätzlich [[EQ_LATERAL]] für eine Galopppirouette."/>
         <text name="eq_help_rein_title" text="Mauslenkung"/>
         <text name="eq_help_rein_1" text="Mit gehaltener [[EQ_REIN]] schwenkt die Kamera hinter Ihr Pferd, und Sie lenken fein mit der Maus, unverzichtbar in der Dressur und manchmal im Springreiten. Halten Sie dabei auch [[EQ_LATERAL]], stellt die Maus den Kopf Ihres Pferdes für Seitengänge."/>
         <text name="eq_help_courseEdit_title" text="Parcours bearbeiten"/>
         <text name="eq_help_courseEdit_1" text="Zeichnen Sie den Parcours, indem Sie in beliebigem Tempo der Reihe nach durch die Hindernisse reiten. Hindernisse aus diesem Mod haben dabei keine Kollision. Bei einem Fehler reiten Sie zurück zum letzten guten Punkt, bis eine Linie dort einrastet, und drücken [[EQ_COURSE_REWIND]], um von dort neu zu zeichnen. Drücken Sie erneut [[EQ_COURSE_RECORD]] ([[EQ_COURSE_RECORD_XC]] im Gelände), um zu speichern."/>
         <text name="eq_help_dressageEdit_title" text="Dressuraufgabe bearbeiten"/>
         <text name="eq_help_dressageEdit_1" text="Bauen Sie Ihre eigene Dressuraufgabe aus Figuren, Lektionen und Gangarten. Mit [[EQ_DT_PREV]] und [[EQ_DT_NEXT]] wechseln Sie die Figur, mit [[EQ_DT_GAIT]] die Gangart und mit [[EQ_DT_MODE]] zu Seitengängen oder Lektionen auf der Stelle. [[EQ_DT_ACCEPT]] übernimmt einen Schritt, [[EQ_DT_UNDO]] geht zurück, [[EQ_DT_RANDOM]] wählt zufällig. Mit [[EQ_DRESSAGE_TEST]] speichern Sie die Aufgabe."/>
+        <text name="eq_band_extremelyLow" text="Extrem niedrig"/>
+        <text name="eq_band_veryLow" text="Sehr niedrig"/>
+        <text name="eq_band_low" text="Niedrig"/>
+        <text name="eq_band_average" text="Durchschnitt"/>
+        <text name="eq_band_high" text="Hoch"/>
+        <text name="eq_band_veryHigh" text="Sehr hoch"/>
+        <text name="eq_band_extremelyHigh" text="Extrem hoch"/>
+        <text name="input_EQ_MENU" text="Reitsport-Menü"/>
+        <text name="eq_menu_button" text="Reitsport"/>
+        <text name="eq_menu_pickHint" text="Wählen Sie eine Zeile, um sie an- oder abzuhaken. Öffnen Sie die Liste erneut, um eine weitere zu ändern."/>
+        <text name="eq_horses_title" text="Pferde"/>
+        <text name="eq_horses_col_name" text="Name"/>
+        <text name="eq_horses_col_age" text="Alter"/>
+        <text name="eq_horses_col_status" text="Status"/>
+        <text name="eq_horses_inTrailer" text="Im Anhänger"/>
+        <text name="eq_horses_foal" text="Zu jung zum Reiten"/>
+        <text name="eq_horses_ready" text="Bereit"/>
+        <text name="eq_horses_none" text="Noch keine Pferde auf diesem Hof. Kaufen Sie eines beim Tierhändler."/>
+        <text name="eq_horses_stable" text="Stall"/>
+        <text name="eq_horses_fitness" text="Fitness"/>
+        <text name="eq_horses_health" text="Gesundheit"/>
+        <text name="eq_horses_career" text="Karriere"/>
+        <text name="eq_horses_careerValue" text="%d Starts, %d Siege, %s"/>
+        <text name="eq_horses_summary" text="%d Pferde. Mit den Tasten unten reiten Sie das gewählte Pferd, geben ihm eine Rolle oder setzen es zur Ruhe."/>
+        <text name="eq_horses_summaryOne" text="%d Pferd. Mit den Tasten unten reiten Sie es, geben ihm eine Rolle oder setzen es zur Ruhe."/>
+        <text name="eq_messages_title" text="Nachrichten"/>
+        <text name="eq_messages_col_date" text="Datum"/>
+        <text name="eq_messages_col_type" text="Art"/>
+        <text name="eq_messages_col_message" text="Nachricht"/>
+        <text name="eq_messages_button_clear" text="Leeren"/>
+        <text name="eq_messages_clearConfirm" text="Alle Nachrichten dieses Hofs löschen?"/>
+        <text name="eq_messages_none" text="Noch keine Nachrichten."/>
+        <text name="eq_messages_summary" text="Ergebnisse, Verletzungen, Transport, eigene Turniere und Sponsoren. Jede Nachricht erscheint auch als Benachrichtigung."/>
+        <text name="eq_messages_date" text="Tag %d, %s, Jahr %d"/>
+        <text name="eq_messages_day" text="Tag %d"/>
+        <text name="input_EQ_DT_TYPE" text="Art der Dressuraufgabe"/>
+        <text name="input_EQ_DT_LEVEL" text="Klasse der Dressuraufgabe"/>
+        <text name="eq_dt_typeAction" text="Aufgabe: %s"/>
+        <text name="eq_dt_levelAction" text="Klasse: %s"/>
+        <text name="eq_dt_type_own" text="Eigene"/>
+        <text name="eq_dt_type_random" text="Zufällig"/>
+        <text name="eq_dt_type_set" text="Standardaufgabe"/>
+        <text name="eq_dlevel_novice" text="Einsteiger"/>
+        <text name="eq_dlevel_elementary" text="Grundstufe"/>
+        <text name="eq_dlevel_medium" text="Mittelstufe"/>
+        <text name="eq_dlevel_advanced" text="Fortgeschritten"/>
+        <text name="eq_dlevel_prixStGeorges" text="Prix St Georges"/>
+        <text name="eq_dlevel_intermediate" text="Intermediaire"/>
+        <text name="eq_dlevel_grandPrix" text="Grand Prix"/>
+        <text name="eq_dt_choiceOwn" text="Ihre eigene Aufgabe (Strg+N: Art)"/>
+        <text name="eq_dt_choiceRandom" text="Zufällige Aufgabe, %s (Strg+N: Art, Strg+M: Klasse)"/>
+        <text name="eq_dt_choiceSet" text="Standardaufgabe, %s (Strg+N: Art, Strg+M: Klasse)"/>
+        <text name="eq_dt_choiceFallback" text="Keine Standardaufgabe passt in dieses Viereck: zufällige Aufgabe, %s"/>
+        <text name="eq_dt_choiceEvent" text="Turnieraufgabe: zufällig, %s"/>
+        <text name="eq_fig_canterSide" text="Galopp %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="Galopp %s-X-%s"/>
     </texts>
 </l10n>

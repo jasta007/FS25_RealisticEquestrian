@@ -39,9 +39,17 @@ EqDressagePath.CORNER_SMALL = { walk = 3.5, trot = 3.5, canter = 7 }
 EqDressagePath.MARKER_GAP = 0.6
 -- Turns down the centre line (radius), and how wide a "20 m" circle may be (radius).
 EqDressagePath.CENTRE_TURN = 4
+-- A canter half pass to the centre line turns onto the track in a teardrop: off the centre
+-- line `before` metres ahead of the turn (an S eased with corners of `ease`), then one half
+-- circle of `radius` onto the track.
+EqDressagePath.CENTRE_CANTER = { before = 10, radius = 7, ease = 10 }
 EqDressagePath.BIG_CIRCLE = 10
 -- Circles at the side letters by gait (radius): 8 m at a walk, 10 or 15 m at a trot, 15 m at a canter.
 EqDressagePath.VOLTES = { walk = { 4 }, trot = { 5, 7.5 }, canter = { 7.5 } }
+-- Tighter voltes only a level's test asks for, sized by its level (EqDressageLevels voltes,
+-- James 2026-11-23: a 6 m canter volte at Grand Prix, ridden with Ctrl + A/D; "if you can't
+-- ride that... that's tough"). Radii; built after the ones above so saved figure ids hold.
+EqDressagePath.LEVEL_VOLTES = { walk = {}, trot = { 3, 3.5, 4, 4.5 }, canter = { 3, 3.5, 4, 4.5, 5 } }
 -- The tightest turn a figure may ask for at each gait (radius; at most half the track's width).
 -- The base game turns a ridden horse on about 3.5 m (log, 2026-10-27), but a canter needs room.
 EqDressagePath.MIN_RADIUS = { walk = 3.5, trot = 4, canter = 7 }
@@ -73,7 +81,9 @@ EqDressagePath.GAIT_WEIGHTS = { walk = 2, trot = 5, canter = 3 }
 EqDressagePath.FIGURE_WEIGHTS = { circle = 1.5, longDiagonal = 1.5, shortDiagonal = 1.5, halfVolte = 2, across = 1.5, acrossChange = 1.5,
     centreToX = 1, centreFromX = 1, serpentine = 1.2, shallowLoop = 1.2, throughCircle = 1.2, eight = 1.2,
     -- Four kinds of lateral work along the rail share what one had (James, 2026-10-31).
-    shoulderIn = 0.5, renvers = 0.5, travers = 0.5, legYieldRail = 0.5, passageRail = 0.7 }
+    shoulderIn = 0.5, renvers = 0.5, travers = 0.5, legYieldRail = 0.5, passageRail = 0.7,
+    -- Canter on a straight in the smallest arena (EqDressageLevels): as often as a canter figure.
+    canterDiagonal = 0.6, canterSide = 0.6 }
 -- Chances in 100: on the track before a figure, a stretch at another gait between two letters
 -- (INTERLUDES: which gait, by the gait the horse is in), else a halt at a letter; a change down
 -- inside a figure (DOWN); a halt at X on a centre line.
@@ -134,10 +144,11 @@ EqDressagePath.LATERAL_IN = { [true] = 4, [false] = 3 }
 -- (James, 2026-10-31: the horse's form weighed more than being wildly off the line, a lateral
 -- half way off scored 8 and a nice one 6.5: form halved, and FAR_* below.)
 EqDressagePath.ANGLE_FREE = math.rad(15)
-EqDressagePath.ANGLE_PER_S = 0.3
+EqDressagePath.ANGLE_PER_S = 0.5
 EqDressagePath.ANGLE_MAX = 2
 EqDressagePath.BEND_MIN = 0.3
-EqDressagePath.BEND_PER_S = 0.25
+EqDressagePath.BEND_PER_S = 0.4
+-- (James, 2026-11-23: laterals a little generous: ANGLE_PER_S 0.3 -> 0.5, BEND_PER_S 0.25 -> 0.4.)
 EqDressagePath.BEND_MAX = 1
 -- Ridden further than FAR_DEV metres off the line: FAR_PER_M off for each metre of line ridden
 -- like that, at most FAR_MAX, on top of the average.
@@ -199,6 +210,8 @@ EqDressagePath.DEV_PER_M = 12
 -- At the wrong gait: this much a second, at most WRONG_MAX a movement.
 EqDressagePath.WRONG_PER_S = 0.5
 EqDressagePath.WRONG_MAX = 5
+-- A wrong gait in lateral work counts this many times over.
+EqDressagePath.LATERAL_WRONG = 3
 -- At the wrong gait this long in a row, the asked gait shows in red (James, 2026-11-01: a half
 -- volte walked when it wanted a trot scored 0 and "looked fine to me": nothing on screen said so).
 EqDressagePath.WRONG_TELL_MS = 800
@@ -219,6 +232,9 @@ EqDressagePath.HALT_PASS = 5
 -- piaffe held SPOT_MS, a pirouette turned a full circle the way asked (SPOT_TURN radians short
 -- of it will do); let go early costs up to SPOT_SHORT, riding past SPOT_MISSED.
 EqDressagePath.SPOT_MS = 4000
+-- A pirouette is placed by its hind feet, this many metres behind the horse's middle (as
+-- EqLateral.PIVOT_BACK; James, 2026-11-23: rear legs on the mark still lost half a mark).
+EqDressagePath.PIROUETTE_BACK = 0.9
 EqDressagePath.SPOT_TURN = math.rad(20)
 -- (James, 2026-10-30: a piaffe he stopped for first, then fumbled into, still scored a 7.)
 -- Stopping when one is coming costs SPOT_STOP, and every second off the asked gait on the way in
@@ -249,6 +265,9 @@ EqDressagePath.OUT_MS = 3000
 EqDressagePath.STALL_TELL_MS = 3000
 EqDressagePath.STALL_MS = 30000
 EqDressagePath.ERROR_PEN = 3
+-- Running into something during a test costs CRASH_PEN marks on the movement; the test carries
+-- on (James, 2026-11-19: "Crashes shouldn't just flat end the test").
+EqDressagePath.CRASH_PEN = 2
 EqDressagePath.ERRORS = 3
 EqDressagePath.SNAP_AHEAD = 40
 -- The training multiplier after a movement: up at MULT_UP or better, down below MULT_DOWN.
@@ -548,18 +567,35 @@ end
 --- trot or canter where the arena is wide enough.
 FIGURES.volte = function(g, frame, gait)
     local list = {}
-    for _, r in ipairs(EqDressagePath.VOLTES[gait]) do
-        if 2 * r <= 2 * g.wt and r < g.wt then
-            for _, y in ipairs(g.sides) do
-                if math.abs(y) <= g.straight[gait] and math.abs(y) + r <= g.lt then
-                    local pen = newPen(g.wt, y, 0, 1)
-                    arc(pen, r, math.pi * 2)
-                    table.insert(list, { key = "circle", size = r * 2, pts = pen.pts, labels = { { g.wt, y } }, marks = {} })
+    local function add(radii, levelVolte)
+        for _, r in ipairs(radii) do
+            if 2 * r <= 2 * g.wt and r < g.wt then
+                for _, y in ipairs(g.sides) do
+                    if math.abs(y) <= g.straight[gait] and math.abs(y) + r <= g.lt then
+                        local pen = newPen(g.wt, y, 0, 1)
+                        arc(pen, r, math.pi * 2)
+                        table.insert(list, { key = "circle", size = r * 2, pts = pen.pts, labels = { { g.wt, y } }, marks = {},
+                            levelVolte = levelVolte })
+                    end
                 end
             end
         end
     end
+    add(EqDressagePath.VOLTES[gait], nil)
+    add(EqDressagePath.LEVEL_VOLTES[gait] or {}, true)
     return list
+end
+
+
+--- Whether a volte fits a test's level (pure): a level with a volte size for the gait asks for
+--- that size only; with none (a player's own test, no level) only the usual sizes.
+--- @param figure table { name, gait, size, levelVolte }
+--- @param level table|nil EqDressageLevels.forBuild
+function EqDressagePath.volteFits(figure, level)
+    if figure.name ~= "volte" then return true end
+    local want = level ~= nil and level.voltes ~= nil and level.voltes[figure.gait] or nil
+    if want == nil then return not figure.levelVolte end
+    return figure.size ~= nil and math.abs(figure.size - want) < 0.5
 end
 
 
@@ -893,15 +929,32 @@ local function lateralCentre(g, gait, key)
     local run = g.wt / EqDressagePath.DRIFT
     if key == "halfPassCentre" then
         if gait == "walk" or gait == "canter" and g.wt < 8 then return {} end
+        -- At a canter the end of the centre line is too narrow to turn onto the track in two
+        -- quarter circles (James, 2026-11-23: about 4 m, "incredibly hard"): it swings out the
+        -- other way first and comes round in one wide teardrop (CENTRE_CANTER).
+        local cc = gait == "canter" and EqDressagePath.CENTRE_CANTER or nil
+        local need = cc ~= nil and cc.before + cc.radius or a
         for _, y in ipairs(g.sides) do
-            if y >= -g.straight[gait] - 1 and y + 2 + run + 3 <= g.lt - a then
+            if y >= -g.straight[gait] - 1 and y + 2 + run + 3 <= g.lt - need then
                 for _, turn in ipairs({ 1, -1 }) do
                     local pen = newPen(g.wt, y, 0, 1)
                     forward(pen, 2)
                     local from = #pen.pts
                     lineTo(pen, 0, pen.y + run)
                     local to = #pen.pts
-                    rounded(pen, { { x = 0, y = g.lt }, { x = -turn * g.wt, y = g.lt }, { x = -turn * g.wt, y = g.lt - a - 1 } }, a)
+                    if cc ~= nil then
+                        -- One half circle of cc.radius touching the short side and the far long
+                        -- side; an easy S out to it first.
+                        local r = math.min(cc.radius, g.wt)
+                        local out = turn * (2 * r - g.wt)
+                        local y1 = g.lt - r - cc.before
+                        rounded(pen, { { x = 0, y = y1 }, { x = out, y = y1 + cc.before * 0.6 }, { x = out, y = g.lt - r } }, cc.ease)
+                        pen.hx, pen.hy = 0, 1
+                        arc(pen, r, turn * math.pi)
+                        forward(pen, 1)
+                    else
+                        rounded(pen, { { x = 0, y = g.lt }, { x = -turn * g.wt, y = g.lt }, { x = -turn * g.wt, y = g.lt - a - 1 } }, a)
+                    end
                     table.insert(list, { key = key, pts = pen.pts, labels = { { g.wt, y }, { 0, g.lt } }, marks = {}, lateral = true,
                         sections = { { from = from, to = to, hx = 0, hy = 1, bend = -1, drift = -1, kind = "halfPass" } } })
                 end
@@ -974,13 +1027,45 @@ FIGURES.passageDiagonal = function(g, frame, gait)
 end
 
 
+--- Canter on a straight in the smallest arena (James 2026-11-23: "canters back into the small
+--- arena but ONLY if they are on straights. No turns."): a trot figure along a long side or the
+--- long diagonal, cantered from just after the turn onto it to just before the turn off it.
+--- Ridden only in a level's test (levelOnly), never in a player's own. canter = { from, to }.
+FIGURES.canterStretch = function(g, frame, gait)
+    if gait ~= "trot" or g.wt >= 8 or g.sides[1] == nil then return {} end
+    local list = {}
+    local straight = g.straight.trot
+    do
+        local pen = newPen(g.wt, -straight, 0, 1)
+        lineTo(pen, g.wt, straight)
+        local lead = math.floor(1 / EqDressagePath.STEP)
+        if #pen.pts > 2 * lead + 4 then
+            table.insert(list, { key = "canterSide", pts = pen.pts, labels = { { g.wt, g.sides[1] }, { g.wt, g.sides[#g.sides] } }, marks = {},
+                canter = { from = 1 + lead, to = #pen.pts - lead }, levelOnly = true })
+        end
+    end
+    local last = g.sides[#g.sides]
+    local pts = diagonalLine(g, gait, last)
+    local from, to = nil, nil
+    for i, p in ipairs(pts) do
+        if from == nil and p.x < g.wt - 0.8 then from = i end
+        if p.x > -g.wt + 0.8 then to = i end
+    end
+    if from ~= nil and to ~= nil and to > from then
+        table.insert(list, { key = "canterDiagonal", pts = pts, labels = { { g.wt, g.sides[1] }, { -g.wt, last } }, marks = {},
+            canter = { from = from, to = to }, levelOnly = true })
+    end
+    return list
+end
+
+
 -- For the tests.
 EqDressagePath.FIGURES = FIGURES
 
 
 EqDressagePath.FIGURE_ORDER = { "legYield", "halfPass", "shoulderIn", "legYieldRail", "renvers", "travers", "halfPassCentre", "legYieldCentre",
     "passageRail", "passageDiagonal", "circleEnd", "circleMid", "volte", "diagonals", "halfVolte", "across", "centre", "centreToX", "centreFromX", "serpentine",
-    "shallowLoop", "throughCircle", "eight" }
+    "shallowLoop", "throughCircle", "eight", "canterStretch" }
 
 
 --- The tightest turn along a line of points (metres of radius), from each point and the ones
@@ -1027,7 +1112,8 @@ function EqDressagePath.library(frame)
             for k, figure in ipairs(FIGURES[name](g, frame, gait)) do
                 local weight = EqDressagePath.FIGURE_WEIGHTS[figure.key] or 1
                 -- Lateral work drifts without turning: its kinks are not turns.
-                if figure.lateral or EqDressagePath.tightest(figure.pts) >= g.minR[gait] * 0.9 then
+                -- A level's volte is as tight as its level asks (ridden with Ctrl + A/D at a canter).
+                if figure.lateral or figure.levelVolte or EqDressagePath.tightest(figure.pts) >= g.minR[gait] * 0.9 then
                     for mi, mirror in ipairs({ { 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 } }) do
                         local sx, sy = mirror[1], mirror[2]
                         local pts = {}
@@ -1047,7 +1133,7 @@ function EqDressagePath.library(frame)
                             end
                             table.insert(list, {
                                 -- Saved in a player's own test (EqDressageTests): the same figure on every load.
-                                id = string.format("%s/%s/%d/%d", name, gait, k, mi),
+                                id = string.format("%s/%s/%d/%d", name, gait, k, mi), name = name,
                                 key = figure.key, gait = gait, weight = weight * EqDressagePath.GAIT_WEIGHTS[gait],
                                 size = figure.size, loops = figure.loops, labels = labels,
                                 turn = figure.turn ~= nil and figure.turn * sx * sy or nil,
@@ -1055,6 +1141,7 @@ function EqDressagePath.library(frame)
                                 entry = entry, entryRein = reinAt(track, entry, pts[2].x - pts[1].x, pts[2].y - pts[1].y),
                                 exitRein = reinAt(track, exit, pts[n].x - pts[n - 1].x, pts[n].y - pts[n - 1].y),
                                 fromA = pts[1].y < 0, finalOnly = figure.finalOnly, passage = figure.passage,
+                                canter = figure.canter, levelOnly = figure.levelOnly, levelVolte = figure.levelVolte,
                             })
                         end
                     end
@@ -1220,12 +1307,18 @@ end
 --- @param rng function (n) -> 1..n; a seeded one rides the same test every time (no plan)
 --- @param plan table|nil { turn = 1|-1, seed, steps = { { kind = "figure", id, seed } | { kind = "spot", style, letter, seed } } }
 --- @param open boolean|nil true for the editor: stop before the final centre line, with test.options
+--- @param level table|nil a test level (EqDressageLevels.forBuild): { pool = { ["name/gait"] = true },
+---   straight (canter only on straights), reinBack, spots = { walkPirouette, canterPirouette, piaffe },
+---   lateralWeight, plainWeight, spotTrack }. A random test picks only from its pool; a set test
+---   (plan.set) rides its steps, which may name figures ({ kind = "find", name, gait, letters, size }).
 --- @return table test { pts = { x, y, s, m }, moves = { s0, s1, key, ... }, events = { s, kind, gait, letter, m }, length, frame }
-function EqDressagePath.build(frame, figures, rng, plan, open)
+function EqDressagePath.build(frame, figures, rng, plan, open, level)
     local library, byGait, g = EqDressagePath.library(frame)
     if plan ~= nil then rng = seededRng(plan.seed) end
     local test = { pts = {}, moves = {}, events = {}, sections = {}, passages = {}, frame = frame, g = g }
     local events = test.events
+    -- A set test (EqDressageLevels) rides its steps like a player's own, but its walks may be long.
+    local own = plan ~= nil and not plan.set
 
     -- Changes: never closer than CHANGE_GAP to the last one (unless forced), and walks kept short.
     local gait, lastChange, walkFrom = EqDressagePath.PROCEED, 0, nil
@@ -1247,6 +1340,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
     end
     local function halt(s, letter, m, final, after, reinBack)
         local back = not final and rng(100) <= EqDressagePath.REIN_BACK_CHANCE or nil
+        if level ~= nil and level.reinBack == false then back = nil end
         if reinBack ~= nil then back = reinBack or nil end
         table.insert(events, { s = s, kind = "halt", gait = final and "halt" or after, letter = letter, m = m, final = final, reinBack = back })
         gait, lastChange = after, s
@@ -1256,6 +1350,11 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
     local function spot(s, letter, m, turn, style)
         if s < lastChange + EqDressagePath.CHANGE_GAP then return end
         style = style or (gait == "trot" and "piaffe" or "pirouette")
+        -- A random test asks only for the movements on the spot its level has.
+        if plan == nil and level ~= nil and level.spots ~= nil then
+            local kind = style == "piaffe" and "piaffe" or (gait == "canter" and "canterPirouette" or "walkPirouette")
+            if not level.spots[kind] then return end
+        end
         table.insert(events, { s = s, kind = "spot", style = style, gait = gait, letter = letter, m = m, turn = turn })
         lastChange = s
     end
@@ -1378,6 +1477,12 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             -- A stretch at another gait between two letters, then back: a canter only along
             -- one long side (the track's corners are sized for the gait it is ridden at).
             local options = EqDressagePath.INTERLUDES[gait]
+            -- Canter on a straight only (the smallest arena in a level's test): no canter between figures.
+            if level ~= nil and level.straight then
+                local kept = {}
+                for _, o in ipairs(options) do if o[1] ~= "canter" then table.insert(kept, o) end end
+                options = kept
+            end
             local other = pick(options, rng)
             local from = usable[1]
             local to = nil
@@ -1421,7 +1526,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             if test.pts[#test.pts].s >= lastChange + EqDressagePath.CHANGE_GAP then
                 halt(test.pts[#test.pts].s, at.letter, m, false, gait)
             end
-        elseif #usable >= 1 and roll <= EqDressagePath.INTERLUDE + EqDressagePath.HALT_TRACK + EqDressagePath.SPOT_TRACK then
+        elseif #usable >= 1 and roll <= EqDressagePath.INTERLUDE + EqDressagePath.HALT_TRACK + (level ~= nil and level.spotTrack or EqDressagePath.SPOT_TRACK) then
             local at = usable[rng(#usable)]
             track(at.x, at.y, m)
             spot(test.pts[#test.pts].s, at.letter, m, rein)
@@ -1438,6 +1543,12 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         for _, sec in ipairs(figure.sections or {}) do
             table.insert(test.sections, { s0 = sAt(sec.from), s1 = sAt(sec.to), m = m, kind = sec.kind or figure.key, hx = sec.hx, hy = sec.hy,
                 bend = sec.bend, drift = sec.drift })
+        end
+        if figure.canter ~= nil then
+            -- Canter on the straight, trot again before the turn off it.
+            local labels = move.labels or {}
+            change(sAt(figure.canter.from), "canter", labels[1], m, true)
+            change(sAt(figure.canter.to), figure.gait, labels[#labels], m, true)
         end
         if figure.passage ~= nil then
             local labels = move.labels or {}
@@ -1489,21 +1600,34 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             if collected and figure.gait ~= gait and plan == nil then step = false end
             -- All walks short in a player's test (James 2026-10-31: a giant walk path was
             -- easy to make): the walk to a walking figure and the figure itself.
-            if plan ~= nil and figure.gait == "walk" then
+            if own and figure.gait == "walk" then
                 figure.length = figure.length or pathLength(figure.pts)
                 if figure.length > EqDressagePath.WALK_MAX then step = false end
             end
-            if figure.entryRein == rein and (figure.key ~= lastKey or plan ~= nil) and step and not figure.finalOnly then
+            -- A level's test: its own figures (canter on straights) and, when random, only its pool.
+            local fits = true
+            if figure.levelOnly and (level == nil or not level.straight) then fits = false end
+            if not EqDressagePath.volteFits(figure, level) then fits = false end
+            if plan == nil and level ~= nil then
+                if level.pool ~= nil and not level.pool[figure.name .. "/" .. figure.gait] then fits = false end
+                if level.straight and figure.gait == "canter" then fits = false end
+            end
+            if fits and figure.entryRein == rein and (figure.key ~= lastKey or plan ~= nil) and step and not figure.finalOnly then
                 local d = trackDistance(t.pts, t.length, from, onTrack(t.pts, figure.pts[1].x, figure.pts[1].y), rein)
                 local least = figure.gait == gait and EqDressagePath.CONNECT_MIN or EqDressagePath.CHANGE_LEAD
                 local clear = not collected or here.s + d - lastChange >= EqDressagePath.LATERAL_CLEAR
                 if collected and figure.gait ~= gait then
                     clear = d >= (figure.gait == "walk" and EqDressagePath.CHANGE_LEAD or EqDressagePath.LATERAL_CLEAR) + 2
                 end
-                local walkOk = plan == nil or figure.gait ~= "walk" or gait ~= "walk" or d + figure.length <= walkLeft()
+                local walkOk = not own or figure.gait ~= "walk" or gait ~= "walk" or d + figure.length <= walkLeft()
                 if d >= least and d <= t.length * 0.6 and clear and walkOk then
                     local near = d <= EqDressagePath.CONNECT_GOOD and 4 or (d <= 2 * EqDressagePath.CONNECT_GOOD and 2 or 1)
-                    table.insert(list, { figure, figure.weight * near, d = d })
+                    local weight = figure.weight
+                    if plan == nil and level ~= nil then
+                        if collected then weight = weight * (level.lateralWeight or 1)
+                        elseif PLAIN_KEYS[figure.key] then weight = weight * (level.plainWeight or 1) end
+                    end
+                    table.insert(list, { figure, weight * near, d = d })
                 end
             end
         end
@@ -1528,7 +1652,7 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
         local list = {}
         -- A player's test at a walk stays short (WALK_MAX) on the way to a letter too.
         local reach = length * EqDressagePath.SPOT_REACH
-        if plan ~= nil and gait == "walk" then reach = math.min(reach, math.max(EqDressagePath.CONNECT_MIN + 6, walkLeft())) end
+        if own and gait == "walk" then reach = math.min(reach, math.max(EqDressagePath.CONNECT_MIN + 6, walkLeft())) end
         for _, l in ipairs(letters) do
             if l.d >= EqDressagePath.CONNECT_MIN and l.d <= reach then table.insert(list, l) end
         end
@@ -1605,6 +1729,18 @@ function EqDressagePath.build(frame, figures, rng, plan, open)
             local done = false
             if step.kind == "spot" then
                 done = addSpot(step)
+            elseif step.kind == "find" then
+                -- A set test's step by name: the first figure that fits with that name, gait and
+                -- letters (and size) on the rein the horse is on.
+                for _, c in ipairs(choices()) do
+                    local f = c[1]
+                    if not done and f.name == step.name and f.gait == step.gait and table.concat(f.labels, "-") == step.letters
+                        and (step.size == nil or f.size ~= nil and math.abs(f.size - step.size) < 0.5)
+                        and (step.exitRein == nil or f.exitRein == step.exitRein) then
+                        addFigure(f)
+                        done = true
+                    end
+                end
             else
                 for _, c in ipairs(choices()) do
                     if not done and c[1].id == step.id then
@@ -1783,9 +1919,9 @@ local function closeTo(run, m)
             -- Why: for the log.
             local move = run.test.moves[run.cur]
             run.lastDetail = string.format("%s, off the line %.2f m on average, wrong gait %.1f s, timing and halts -%.1f, body angle off %.1f s, " ..
-                "bend off %.1f s, over 1 m off for %.1f m, out of passage %.1f s (%.0f%% of it)",
+                "bend off %.1f s, over 1 m off for %.1f m, out of passage %.1f s (%.0f%% of it), crashes %d",
                 move.key, acc.len > 0 and acc.devSum / acc.len or 0, acc.wrongMs / 1000, acc.pen, (acc.angleMs or 0) / 1000, (acc.bendMs or 0) / 1000,
-                acc.farLen or 0, (acc.passMs or 0) / 1000, (acc.passSpan or 0) > 0 and 100 * (acc.passOut or 0) / acc.passSpan or 0)
+                acc.farLen or 0, (acc.passMs or 0) / 1000, (acc.passSpan or 0) > 0 and 100 * (acc.passOut or 0) / acc.passSpan or 0, acc.crashes or 0)
             event = "done"
         end
         run.cur = run.cur + 1
@@ -1826,20 +1962,32 @@ local function addPen(run, m, amount)
 end
 
 
+--- The horse ran into something: marks off the movement under way, and the test goes on.
+--- @param run table
+--- @return number crashes on this movement so far
+function EqDressagePath.crash(run)
+    if not run.started then return 0 end
+    addPen(run, run.cur, EqDressagePath.CRASH_PEN)
+    local acc = run.acc[math.max(1, math.min(run.cur, #run.test.moves))]
+    acc.crashes = (acc.crashes or 0) + 1
+    return acc.crashes
+end
+
+
 --- An error of course: a penalty, and the line picks up at the nearest point ahead.
 --- @return string "fault" or "lost"
 local function errorOfCourse(run, x, y)
     -- Still on the entry: the rider crossed A and rode off, so the test is cancelled, not
     -- faulted three times (James, 2026-10-30).
     if run.cur == 1 then
-        run.cancelled = true
+        run.cancelled, run.lostWhy = true, "rode off the entry"
         return "lost"
     end
     run.errors = run.errors + 1
     addPen(run, run.cur, EqDressagePath.ERROR_PEN)
     run.lostMs, run.outMs, run.stallMs = 0, 0, 0
     if run.errors >= EqDressagePath.ERRORS then
-        run.eliminated = true
+        run.eliminated, run.lostWhy = true, "three errors of course"
         return "lost"
     end
     local pts = run.test.pts
@@ -1969,6 +2117,8 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
         run.stallMs = 0
         local spot, done = run.spot, false
         local on = look ~= nil and look.spot and EqDressagePath.matches(move, spot.event.gait)
+        -- A volte (Ctrl + A/D at a canter, EqLateral.spotMode) leaves the spot; a pirouette doesn't.
+        if on and spot.event.style == "pirouette" and look.pirouette == false then on = false end
         if on then
             spot.offMs = 0
             spot.ms = spot.ms + dt
@@ -2076,7 +2226,11 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
                         - math.min(EqDressagePath.SPOT_WRONG_MAX, before / 1000 * EqDressagePath.SPOT_WRONG_PER_S)
                     if pen > 0 then addPen(run, next.m, pen) end
                 end
-                if look ~= nil and look.spot and EqDressagePath.matches(move, next.gait) then
+                -- A canter volte (Ctrl while turning) is not the pirouette coming up: it doesn't
+                -- start it (James, 2026-11-23: a volte near the letter cost the pirouette).
+                local starting = look ~= nil and look.spot and EqDressagePath.matches(move, next.gait)
+                if starting and next.style == "pirouette" and look.pirouette == false then starting = false end
+                if starting then
                     local hx, hy = pts[run.i].x, pts[run.i].y
                     for k = run.i, #pts do
                         if pts[k].s >= next.s then
@@ -2084,7 +2238,9 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
                             break
                         end
                     end
-                    local err = math.sqrt((hx - x) ^ 2 + (hy - y) ^ 2)
+                    -- A pirouette turns round the hind feet, so they are what goes on the mark.
+                    local px, py = EqDressagePath.spotPos(run.frame, next.style, wx, wz, look)
+                    local err = math.sqrt((hx - px) ^ 2 + (hy - py) ^ 2)
                     addPen(run, next.m, math.min(EqDressagePath.HALT_MAX, math.max(0, err - EqDressagePath.HALT_FREE) * EqDressagePath.HALT_PER_M))
                     run.spot = { event = next, ms = 0, turned = 0, lastA = math.atan2(look.dirX, look.dirZ) }
                     return event
@@ -2137,9 +2293,12 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
     -- At the wrong gait, once settled after the last change or halt.
     local settling = run.proceedMs ~= nil and run.clock - run.proceedMs < 3000
     -- run.wrongNowMs: how long it has been at the wrong gait in a row, for the HUD's red prompt.
-    if not free and not settling and not EqDressagePath.matches(move, run.gait) then
+    -- In lateral work there is no settling, and a wrong gait costs LATERAL_WRONG times as much
+    -- (James, 2026-11-23: a half pass broken into canter for a moment still scored 8.5).
+    local judged = sec ~= nil and look ~= nil and run.s >= sec.s0 + EqDressagePath.SECTION_GRACE
+    if not free and (not settling or judged) and not EqDressagePath.matches(move, run.gait) then
         local acc = run.acc[math.min(m, #test.moves)]
-        acc.wrongMs = acc.wrongMs + dt
+        acc.wrongMs = acc.wrongMs + dt * (judged and EqDressagePath.LATERAL_WRONG or 1)
         run.wrongNowMs = (run.wrongNowMs or 0) + dt
     else
         run.wrongNowMs = 0
@@ -2152,7 +2311,7 @@ function EqDressagePath.step(run, move, wx, wz, dt, look)
     run.outMs = out and run.outMs + dt or 0
     run.stallMs = run.stallMs + dt
     if run.stallMs >= EqDressagePath.STALL_MS then
-        run.cancelled = true
+        run.cancelled, run.lostWhy = true, "stood still too long"
         return "lost"
     end
     if run.lostMs >= EqDressagePath.LOST_MS or run.outMs >= EqDressagePath.OUT_MS then
@@ -2284,6 +2443,19 @@ function EqDressagePath.section(run)
 end
 
 
+--- Where a movement on the spot is placed (pure, local metres): a pirouette by its hind feet,
+--- PIROUETTE_BACK behind the horse's middle; anything else by the middle.
+--- @param style string "pirouette", "piaffe"
+--- @param look table { dirX, dirZ } the horse's facing in the world
+function EqDressagePath.spotPos(frame, style, wx, wz, look)
+    if style == "pirouette" and look ~= nil and look.dirX ~= nil then
+        local back = EqDressagePath.PIROUETTE_BACK
+        return EqDressagePath.toLocal(frame, wx - look.dirX * back, wz - look.dirZ * back)
+    end
+    return EqDressagePath.toLocal(frame, wx, wz)
+end
+
+
 --- How far the horse's body faces off what a section asks (radians, pure).
 --- @param dirX number the horse's facing in the world
 --- @param dirZ number
@@ -2300,11 +2472,16 @@ end
 --- @param run table
 --- @param wx number the horse's position
 --- @param wz number
+--- The pull is only ever sideways onto the line, never along it, and there is none while the
+--- horse backs up (James, 2026-11-19: a test ended right after a rein back). A pull against the
+--- way the horse goes cut its move short, and the base game's stuck check took that for running
+--- into something: a crash, and the test was lost.
 --- @param lateral boolean drifting sideways now
 --- @param dt number ms
+--- @param reversing boolean|nil the horse is backing up
 --- @return number dx, number dz, number|nil wantX, number|nil wantZ, number turnRate rad/s
-function EqDressagePath.assist(run, wx, wz, lateral, dt)
-    if not run.started or run.hold ~= nil or run.back ~= nil or run.spot ~= nil then return 0, 0, nil, nil, 0 end
+function EqDressagePath.assist(run, wx, wz, lateral, dt, reversing)
+    if reversing or not run.started or run.hold ~= nil or run.back ~= nil or run.spot ~= nil then return 0, 0, nil, nil, 0 end
     local pts, frame = run.test.pts, run.frame
     local x, y = EqDressagePath.toLocal(frame, wx, wz)
     local i = run.i
@@ -2323,6 +2500,11 @@ function EqDressagePath.assist(run, wx, wz, lateral, dt)
     local share = EqDressagePath.STICK_PULL * run.temper * ((lateral or sec ~= nil) and 1 or EqDressagePath.STICK_FREE)
     local k = math.min(1, share * dt / 1000)
     local ox, oy = (px - x) * k, (py - y) * k
+    -- Past either end of the piece the nearest point lies along the line: keep only the sideways part.
+    if len2 > 1e-9 then
+        local along = (ox * dx + oy * dy) / len2
+        ox, oy = ox - dx * along, oy - dy * along
+    end
     local pullX, pullZ = ox * frame.vx + oy * frame.ux, ox * frame.vz + oy * frame.uz
     if sec == nil then return pullX, pullZ, nil, nil, 0 end
     local wantX, wantZ = sec.hx * frame.vx + sec.hy * frame.ux, sec.hx * frame.vz + sec.hy * frame.uz

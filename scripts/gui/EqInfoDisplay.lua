@@ -151,6 +151,9 @@ end
 local function stopColor(stop)
     local helper = EqRLRM.get("RLDetailPaneHelper")
     local palette = helper ~= nil and helper.GENETICS_COLOR or nil
+    if stop.key ~= nil and palette == nil and not EqRLRM.isAvailable then
+        return EqBase.bandColor("rl_ui_genetics_" .. stop.key) or stop.color
+    end
     return stop.key ~= nil and palette ~= nil and palette[stop.key] or stop.color
 end
 
@@ -210,7 +213,7 @@ end
 --- @param value number
 --- @return string word such as "High"
 local function bandText(value)
-    return g_i18n:getText(EqInfoDisplay.statBandKey(value), EqRLRM.MOD_NAME)
+    return EqBase.bandText(EqInfoDisplay.statBandKey(value))
 end
 
 
@@ -324,6 +327,10 @@ local function fillSkillsBox(record, box, animal)
 end
 
 
+EqInfoDisplay.fillSkillsBox = fillSkillsBox
+EqInfoDisplay.statusText = statusText
+
+
 --- @param animal table|nil
 --- @return boolean
 local function isHorse(animal)
@@ -428,7 +435,7 @@ end
 --- @return table|nil color { r, g, b, a } from RLRM's genetics palette
 function EqInfoDisplay.geneticsValue(trained)
     local bandKey = EqInfoDisplay.statBandKey(trained)
-    local text = string.format("%d - %s", math.floor(trained + 0.5), g_i18n:getText(bandKey, EqRLRM.MOD_NAME))
+    local text = string.format("%d - %s", math.floor(trained + 0.5), EqBase.bandText(bandKey))
     return text, EqInfoDisplay.bandColor(bandKey)
 end
 
@@ -438,6 +445,7 @@ end
 function EqInfoDisplay.bandColor(bandKey)
     local formatter = EqRLRM.get("RLGeneticsFormatter")
     local helper = EqRLRM.get("RLDetailPaneHelper")
+    if formatter == nil and not EqRLRM.isAvailable then return EqBase.bandColor(bandKey) end
     local colorKey = formatter ~= nil and formatter.VALUE_KEY_TO_COLOR_KEY ~= nil and formatter.VALUE_KEY_TO_COLOR_KEY[bandKey] or nil
     return colorKey ~= nil and helper ~= nil and helper.GENETICS_COLOR ~= nil and helper.GENETICS_COLOR[colorKey] or nil
 end
@@ -761,15 +769,9 @@ function EqInfoDisplay.installMenu(guarded)
 end
 
 
---- Hook RLRM's horse display functions. Call once, after EqRLRM.init succeeded.
---- @param guarded function main.lua's error guard, so a display bug never breaks RLRM's panel
-function EqInfoDisplay.install(guarded)
-    local animalHorse = EqRLRM.get("AnimalHorse")
-
-    animalHorse.addHorseInfos = Utils.appendedFunction(animalHorse.addHorseInfos, function(animal, infos)
-        guarded("horse info rows", function() EqInfoDisplay.addHorseInfos(animal, infos) end)
-    end)
-
+--- The base game's look-at Skills box and the Esc > Animals page text. RLRM or not.
+--- @param guarded function
+local function installLookAt(guarded)
     PlayerHUDUpdater.showAnimalInfo = Utils.appendedFunction(PlayerHUDUpdater.showAnimalInfo, function(hudUpdater, animal)
         guarded("horse skills box", function() EqInfoDisplay.showSkillsBox(hudUpdater, animal) end)
     end)
@@ -791,6 +793,39 @@ function EqInfoDisplay.install(guarded)
                 end)
             end)
     end
+end
 
+
+--- Hook RLRM's horse display functions. Call once, after EqRLRM.init succeeded.
+--- @param guarded function main.lua's error guard, so a display bug never breaks RLRM's panel
+function EqInfoDisplay.install(guarded)
+    local animalHorse = EqRLRM.get("AnimalHorse")
+
+    animalHorse.addHorseInfos = Utils.appendedFunction(animalHorse.addHorseInfos, function(animal, infos)
+        guarded("horse info rows", function() EqInfoDisplay.addHorseInfos(animal, infos) end)
+    end)
+
+    installLookAt(guarded)
     Log:debug("EqInfoDisplay: hooked AnimalHorse.addHorseInfos and PlayerHUDUpdater.showAnimalInfo")
+end
+
+
+--- Without RLRM: the same, with the status row added to the base horse's info rows.
+--- @param guarded function
+function EqInfoDisplay.installBase(guarded)
+    local function addRows(animal, infos)
+        if not EqMain.isActive or not isHorse(animal) or type(infos) ~= "table" then return end
+        for _, info in ipairs(infos) do
+            if type(info) == "table" and info.eqBlock then return end
+        end
+        guarded("horse info rows", function() EqInfoDisplay.addHorseInfos(animal, infos) end)
+    end
+    -- The horse's own addInfos may or may not call AnimalCluster's; the rows go in once either way.
+    for _, class in ipairs({ AnimalCluster, AnimalClusterHorse }) do
+        if type(class) == "table" and type(rawget(class, "addInfos")) == "function" then
+            class.addInfos = Utils.appendedFunction(class.addInfos, addRows)
+        end
+    end
+    installLookAt(guarded)
+    Log:debug("EqInfoDisplay: hooked the base horse's info rows and PlayerHUDUpdater.showAnimalInfo")
 end

@@ -43,6 +43,11 @@ above its potential. Starting above 80 is rare: about one horse in 125. Dealer h
 few points lower. Horses from an older save whose stats were all still at the old flat 10 draw
 new starting stats the next time they are seen. `eqHorses` shows each horse as `bred` or `rolled`.
 
+**Dealer stock.** With Realistic Livestock, the animal dealer keeps 0 to 3 horses of each colour
+and gender, rolled again each in-game month and topped up so there are always at least 12 in all
+(about 24 on average). A sold-out colour comes back in a later month. Horses over this month's
+numbers leave the dealer within the hour. Other animals keep RLRM's own stock.
+
 **Foals.** The Horse maturing setting decides how fast foals grow up:
 
 | | Foal model | Ridden from | Training events | Other events |
@@ -227,13 +232,20 @@ and drifts to stay on it: forehand in and bent away from the way it goes is a sh
 forehand in and bent the way it goes a renvers (haunches out), head to the rail and bent the way
 it goes a travers (haunches in), head to the rail with no bend a leg yield along the rail.
 Under the panel the movement the horse is doing now shows in big letters (James, 2026-11-01:
-"I forget which is which"): Piaffe, Pirouette, Passage, Collected, Leg yield, Half pass, and on a
+"I forget which is which"): Piaffe, Pirouette, Volte, Passage, Collected, Leg yield, Half pass, and on a
 long side of our arenas (within 2.5 m of the track, body turned off the rail) Shoulder-in,
 Renvers, Travers or Leg yield along the rail. White, or in a test green when it is what is asked
 right now and red when something else is.
 Holding **Ctrl** at a walk, trot or canter collects the horse to a stop over 0.6 s while it keeps
-the gait's animation (James, 2026-10-30): a trot on the spot is a piaffe, and **Ctrl + A/D** turns
-it on the spot at the usual turn rate, so a walk or canter turned on the spot is a pirouette.
+the gait's animation (James, 2026-10-30): a trot on the spot is a piaffe. **Ctrl + A/D** at a walk
+or trot is a **pirouette** (James, 2026-11-23): on the spot, the body carried round a point 0.9 m
+behind the horse's middle (its hind feet), so the forehand swings round them. At a canter
+**Ctrl + A/D** rides a **volte**: the horse goes on at a collected canter on a small circle, 6 m
+across at temperament 70 or more, widening evenly to 10 m at 0. Its turn is capped to what that
+circle needs, and its speed follows the turn it actually makes, so the circle keeps its size while
+the turn eases in (the log says "volte ridden N m across" once a second). A canter pirouette is
+**Ctrl + Shift + A/D** only (James: for the top levels; tests prompt "Ctrl + Shift + A"). A hard turn
+at a trot (80% of full lock or more) ridden free, not in a test, is named a Volte under the panel.
 Ctrl alone also makes for a precise halt. Let go and it
 moves on at the gait. On the spot the animation plays slower (60% of the way from the gait below's
 top speed) and the horse creeps on at 8% of its speed at a trot and 15% at a canter, so the hooves
@@ -243,10 +255,10 @@ way between the walk's and the trot's top speed); W doesn't change gait while Ct
 letting go of W goes back to the spot. Tests ask for them at letters on the track: a **piaffe** when trotting (hold Ctrl
 4 s), a **pirouette** at a walk or canter (Ctrl + A or D, a full circle the way asked, into the
 arena), 15% of the time between figures and in 40% of canters or walks between two letters.
-Started near the gold pole (marked like a halt); letting go early (off the spot for 4.5 s, so a fumbled start can be put right) costs
+Started near the gold pole (marked like a halt; a pirouette by its hind feet, 0.9 m behind the horse's middle, since it turns round them); letting go early (off the spot for 4.5 s, so a fumbled start can be put right) costs
 up to 5, riding past 5. Coming in it is ridden from the asked gait: a full stop first costs 2, and
 each second in another gait on the way costs 1 (up to 3), so a fumbled one marks near 1. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
-(Canter) at B: Ctrl + A". Gold symbols on the line show what is coming: a bar across for a halt,
+(Canter) at B: Ctrl + Shift + A". Gold symbols on the line show what is coming: a bar across for a halt,
 for a piaffe a short stretch of trot and walk dashes in turn (it creeps forward a little), a ring with an arrowhead the way to turn for a pirouette.
 Single player for now (the keys and mouse are read on the rider's machine).
 
@@ -307,7 +319,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   "pretty hard to not get an 8"), but never more than 7.5 times the square root of the metres, so
   further off it eases: 0.2 m is a 7, 0.33 m a 6, 0.5 m a 5 (James's hosted test, 2026-11-01: a
   circle 0.33 m off was a 3). Lateral work, passage and movements on the spot keep the gentler
-  rate. Drifting with Shift to get back on the line in an ordinary figure is never marked down. Also the wrong gait 0.5 a second (at most 5; after 0.8 s at it the asked gait shows in red, "Trot!"), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
+  rate. Drifting with Shift to get back on the line in an ordinary figure is never marked down. Also the wrong gait 0.5 a second (1.5 a second in lateral work, with no settling time; at most 5; after 0.8 s at it the asked gait shows in red, "Trot!"), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4. On top of the average, every metre of line ridden more than 1 m off costs 0.4
   (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
@@ -320,7 +332,8 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   counts as having stopped (then as moving during the halt).
 - **Lateral movements** come among the figures: leg yield (walk or trot) and half pass (trot, or
   canter in arenas 20 m wide) from a long side letter in 4 m (3 m in the 15x30) and back; on a
-  diagonal, a half pass from a side letter to the centre line and on up it to C, and a leg yield
+  diagonal, a half pass from a side letter to the centre line and on up it to C (at a canter it
+  swings out and turns onto the track in one 7 m half circle, not two tight quarters), and a leg yield
   off the centre line from A to a side letter (James, 2026-10-31: none went across the arena);
   shoulder-in, renvers, travers and leg yield along the rail (walk or trot) over one or two
   letter gaps (10 to 26 m).
@@ -336,7 +349,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   alone were unreadable mid-ride): cyan dashes facing the way the horse should face, each one
   smooth curve bending to the bend side towards its front. Lateral work comes only in the gait the
   horse is already in, with no change of gait in the 15 m before it. From 1 m into each section the body must face within 15 degrees of the asked angle
-  (0.3 a second off, at most 2; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.25 a second,
+  (0.5 a second off, at most 2; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.4 a second,
   at most 1): staying on the line matters more than the form (James, 2026-10-31).
 - **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back
   onto the line (up to 1.0 of its distance off a second at temperament 100, half that outside
@@ -366,6 +379,39 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
 - In the month of your own event with a dressage phase, every shop arena rides that event's fixed
   test (the same figures for every horse, from the event's seed); other months are random. It
   counts for an entered horse in an arena big enough for the rating (see Hosting).
+
+**Test types and levels** (James, 2026-11-22/23; `EqDressageLevels`). While a test waits at A,
+**Ctrl+N** cycles the test type (your own test, random, standardized test; own only when the arena has one)
+and **Ctrl+M** the level, skipping levels the arena can't hold. The choice shows under "Move to A"
+and is saved per arena; the first time it is your own test if there is one, else random at
+Elementary. Not in your own event's month: its test is fixed.
+
+| Level | First 15x30 | Second 20x40 | Third 20x60 | Random figures | Adds |
+|---|---|---|---|---|---|
+| Novice | yes | yes | no | 6 | trot and canter circles, diagonals, loops, leg yield; halts, no rein back |
+| Elementary | yes | yes | yes | 7 | shoulder-in, travers, leg yield on the rail, walk circles, eights, canter shallow loop; rein back, walk pirouettes |
+| Medium | no | yes | yes | 8 | half pass (canter only in 20x60), renvers |
+| Advanced | no | yes | yes | 9 | canter half pass to the centre line; canter pirouettes |
+| Prix St Georges | no | no | yes | 10 | more lateral work and movements on the spot, fewer plain figures |
+| Intermediate | no | no | yes | 11 | passage on the rail; piaffe |
+| Grand Prix | no | no | yes | 12 | passage on the diagonal; piaffe more often |
+
+Voltes come in a level's test from Medium, sized by the level (James, 2026-11-23): canter 10 m at
+Medium, 9 m at Advanced, 8 m at Prix St Georges, 7 m at Intermediate and 6 m at Grand Prix (ridden
+with Ctrl + A/D, whose circle is 6 to 10 m by temperament: "if you can't ride that... that's
+tough"); trot (a plain turn) 10 m at Elementary, 9 m at Medium, 8 m at Advanced, 7 m at Prix St Georges, 6 m at
+Intermediate and none at Grand Prix; walk 8 m from Medium. Novice has none, Elementary trot only (their
+set tests ride 15 m and 20 m circles at E and B instead). A player's own
+tests keep the usual 8, 10 and 15 m voltes.
+
+- A random test picks only from its level's figures and every level's below it.
+- A standardized test (set test in the code) is one fixed test per level and arena, adapted from real test sheets to the figures we
+  have (no flying changes or extended paces, no names of the real tests). It is built from the
+  arena's figures at start and never saved; in a ring it doesn't fit (another mod's) it rides a
+  random test at that level instead.
+- In the first arena canter comes only on a straight: a long side or the long diagonal, from just
+  after the turn onto it to just before the turn off it (canter K-H, canter F-X-H). No canter
+  circles, loops or eights there, and no canter stretches between figures.
 
 **Your own tests** (James, 2026-10-31). Near a shop arena **Ctrl+L** opens the test editor (or edits
 the arena's saved test). The horse stands and the camera looks straight down on the arena, C at the
@@ -439,7 +485,9 @@ up again later in the course, but not twice in a row within 4 seconds.
 | Ctrl+Backspace | Delete the course within 40 m, after a yes/no question | Cancel: a new course is dropped unsaved; on a saved course, changes since its last save are thrown away |
 
 A cross country course is recorded the same way over cross country fences: each pair of a red and a
-white flag (the fence runs between them) and log piles. Drop walls are not fences of their own:
+white flag (the fence runs between them), the shop's cross country pieces (log piles, corners, start/finish
+arches and the rest) and every show jump, which needs no flags. Both kinds of course use the same
+fences, so a log pile can be in a show jumping course too. Drop walls are not fences of their own:
 ride over them freely, or flag one to make it a fence. Their flags' height guides show
 while you edit. Only obstacles placed from this mod (log piles, drop walls, show jumps) lose their
 collision while you edit; a map or other mod's obstacle marked with flags stays solid, so ride round it. Edit, delete and the round work as for show jumping, but by eventing rules: the time
@@ -945,8 +993,10 @@ Championship loses money unless a sponsor pays for it (see Sponsors below).
 - **Ride it yourself:** while the event runs, a round you ride on one of your entered horses,
   on a course that meets the rating, is that horse's show jumping or cross country, with its
   real faults and time: the penalties you are told at the finish are the ones on the
-  scoresheet. In an arena big enough, the dressage test is the event's fixed test of 8, 10 or
-  13 figures by rating (or your own test for that arena, if it has at least as many steps).
+  scoresheet. In an arena big enough, the dressage test is your own test for that arena (if it
+  has at least 8, 10 or 13 steps by rating), else the event's fixed random test at a level drawn
+  from its rating: Novice or Elementary, Medium or Advanced, Prix St Georges, Intermediate or
+  Grand Prix (a level the arena can hold; the same test all month).
   Its penalties are on the simulated field's scale: 75% scores 22 (the simulated best), each
   percent either side 0.8, so 80% is 18, 70% 26 and 60% 34; a third error of course eliminates.
   Each horse gets one go at each phase, and later rounds are practice. Phases you don't ride
@@ -1018,7 +1068,7 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 
 | Term | Relaxed | Hard bargain |
 | --- | --- | --- |
-| Their machines to own | 1 per 4 shop subcategories they make | 1 per 2 (at most 1 for small, 3 moderate, 5 big) |
+| Their machines to own | what 75% of the size's budget buys at the brand's median price | 125% (always at least 1; at most 1 for small, 2 moderate, 3 big) |
 | No rival machine priced within | 20% of one of theirs (same category) | 60% |
 | Yearly popularity target | size target -10 | +10, and a top 3 finish |
 | Branding required | Low | High |
@@ -1031,12 +1081,18 @@ are `data/sponsors.xml`, read by `EqSponsorship`; `EqSponsorManager` runs them).
 | Moderate | 25,000-40,000 | Intermediate and Championship | +6 | 55 | 1-2 years |
 | Small | 3,000-6,000 | every event | +3 | 40 | 1 year |
 
+- **Machines to own** (James, 2026-11-19): each size has a budget (big 250,000, moderate
+  150,000, small 60,000) and the sponsor asks for about what it buys at the brand's median shop
+  price. A maker of dear tractors asks for fewer than a maker of cheap implements: on the base
+  shop Fendt asks for 1-2, John Deere 1-2, Claas 2-3, Horsch 2, every small sponsor 1. Offers
+  and contracts from older saves are worked out again by this rule, never asking for more.
+
 - The table shows each sponsor's logo, **Speciality** (the three shop subcategories it has the
   most machines in), contract, **Eligibility** (or why not: Already exclusive, Exclusive only, Sponsors full, Same speciality, Own rival kit, Need equipment, Need branding) and what it pays you; the panel adds its terms and
   the rival machines to sell. Window and discounts are on 5% steps. **Show in
   shop** opens the shop on the brand.
 - **Signing** needs enough of their machines (owned or leased; machines borrowed for a contract
-  don't count; an attachment or trailer, anything that can't drive itself, counts as half), no rival machine inside the price window (sell it or return the lease first; the
+  don't count; a very cheap one, under a quarter of the brand's median shop price, counts as half), no rival machine inside the price window (sell it or return the lease first; the
   panel lists them), and the branding the offer asks for.
 - **Branding:** the sponsor boards on all your placeables (our bleachers carry 3, 5 or 8, the
   cross country table 1, the plank corner 2, the 1.6 m drop wall 1, a show jump bought with
@@ -1134,8 +1190,9 @@ lapses when the event opens.
   Lizard steps aside.
 - **The Lizard Plinth** (500, in the construction menu's Buildings, Constructibles tab only while you have an accepted deal) is a
   constructible, like the game's rental houses: a few stakes until you deliver its materials to
-  the triggers in front of it. One bulk load Lizard picks at random, **1,200 l stone**, **1,000 l
-  wood chips** or **10,000 l straw** (tipped, or straw as bales), makes the mound (with the game's
+  the triggers in front of it. There is one plinth per bulk material and all three are offered,
+  so you build whichever suits your farm (James, 2026-11-19): **1,200 l stone**, **1,000 l
+  wood chips** or **10,000 l straw** (tipped, or straw as bales) makes the mound (with the game's
   own heap material, as a real heap of it looks); **10,000 l of logs** (dropped at the wood trigger) go on top as
   a deck; **1,000 l of planks** (pallets) make the lizard at the back and the LIZARD board at the
   front. A Lizard machine on the log deck counts 2 boards, and the board 1.
@@ -1153,7 +1210,7 @@ Console: `eqSponsors` lists the shop's brands by size, the brands with easy kit,
 category names (easy ones starred), this year's offers and your contracts (with when their
 discounts start); `eqSponsors age [n]` (testing) counts your contracts as signed n months
 earlier, 3 by default;
-`eqLizard [on|off]` (testing) makes Lizard's offer chance 100% for the session, so the whole flow can be tested; `eqLizard now [stone|woodchips|straw] [accept]` (testing) makes Lizard sponsor your booked event for sure (the popup, or accepted at once with `accept`), or your event already open this month;
+`eqLizard [on|off]` (testing) makes Lizard's offer chance 100% for the session, so the whole flow can be tested; `eqLizard now [accept]` (testing) makes Lizard sponsor your booked event for sure (the popup, or accepted at once with `accept`), or your event already open this month;
 `eqSponsorNew` (testing) makes a fresh set of offers now; `eqSponsorLoan [brand]` (testing)
 has a sponsor (your lead one, or the brand named, such as LIZARD) lend you a machine now, and
 `eqSponsorLoan end` takes it back. `eqShopProbe` (testing, with the shop open on a category)

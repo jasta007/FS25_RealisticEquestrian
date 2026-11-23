@@ -110,7 +110,6 @@
         <text name="eq_shop_lizardPlinth_woodchips" text="必要資材：ウッドチップ 1,000 L、木材 10,000 L、板材 1,000 L。"/>
         <text name="eq_shop_lizardPlinth_straw" text="必要資材：わら 10,000 L、木材 10,000 L、板材 1,000 L。"/>
         <text name="eq_lizard_title" text="%sからのスポンサー提案"/>
-        <text name="eq_rlrm_missing" text="Realistic Equestrian は Realistic Livestock（Ritter 版）を見つけられないため、無効になっています。Realistic Livestock の最新版をインストールしてください。"/>
         <text name="eq_rlrm_incompatible" text="お使いの Realistic Livestock のバージョン %s は Realistic Equestrian には古すぎるため、Realistic Equestrian は無効になっています。Realistic Livestock（Ritter 版）の最新版を入手してください。"/>
         <text name="eq_rlrm_old" text="お使いの Realistic Livestock のバージョン %s は Realistic Equestrian が必要とするバージョン（%s 以降）より古いため、一部の機能が動作しない場合があります。Realistic Livestock（Ritter 版）の最新版を入手してください。"/>
         <text name="eq_lizard_offer" text="%sがあなたの%s（%s）をスポンサーし、イベント月の間は車両を1台貸し出したいと言っています。条件はイベント終了までにブランディング「%s」を達成し、会場にLizard展示台を建設すること：%s。結果発表の時点ですべて揃っていれば%sを支払います。揃っていなくても支払いがないだけで、ペナルティはありません。展示台はイベント後に崩れます。"/>
@@ -118,6 +117,9 @@
         <text name="eq_lizard_decline" text="断る"/>
         <text name="eq_lizard_offerNote" text="%sがあなたの%sをスポンサーしたいそうです。"/>
         <text name="eq_lizard_accepted" text="%sとの契約成立！ショップ（建設可能）でLizard展示台を購入し、%s・丸太・板材で建設しましょう。"/>
+        <text name="eq_lizard_or" text="%sまたは%s"/>
+        <text name="eq_lizard_and" text="%sと%s"/>
+        <text name="eq_lizard_needs" text="%s（いずれか1つ）、さらに%s"/>
         <text name="eq_lizard_stepAside" text="%sは身を引きました：今は%sがあなたのイベントのスポンサーです。"/>
         <text name="eq_lizard_paid" text="%sがイベントのスポンサー料として%sを支払いました。"/>
         <text name="eq_lizard_unpaid_plinth" text="%sの支払いはありません：Lizard展示台が完成していませんでした。気にしないでとのことです。"/>
@@ -175,6 +177,7 @@
         <text name="eq_dressage_passageAt" text="パッサージュ %s-%s: Ctrl + W"/>
         <text name="eq_now_piaffe" text="ピアッフェ"/>
         <text name="eq_now_pirouette" text="ピルエット"/>
+        <text name="eq_now_volte" text="ボルト"/>
         <text name="eq_now_collected" text="収縮"/>
         <text name="eq_now_collectedCanter" text="収縮駈歩"/>
         <text name="eq_now_passage" text="パッサージュ"/>
@@ -203,10 +206,14 @@
         <text name="eq_dressage_haltAt" text="%sで停止"/>
         <text name="eq_dressage_piaffeAt" text="ピアッフェ（%s）%sで：Ctrlを押し続ける"/>
         <text name="eq_dressage_pirouetteLeftAt" text="左ピルエット（%s）%sで：Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShiftAt" text="左ピルエット（%s）%sで：Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRightAt" text="右ピルエット（%s）%sで：Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShiftAt" text="右ピルエット（%s）%sで：Ctrl + Shift + D"/>
         <text name="eq_dressage_piaffe" text="ピアッフェ（%s）！Ctrlを押し続ける"/>
         <text name="eq_dressage_pirouetteLeft" text="左ピルエット（%s）！Ctrl + A"/>
+        <text name="eq_dressage_pirouetteLeftShift" text="左ピルエット（%s）！Ctrl + Shift + A"/>
         <text name="eq_dressage_pirouetteRight" text="右ピルエット（%s）！Ctrl + D"/>
+        <text name="eq_dressage_pirouetteRightShift" text="右ピルエット（%s）！Ctrl + Shift + D"/>
         <text name="eq_dressage_line" text="ラインに戻れ！"/>
         <text name="eq_dressage_mark" text="前回の得点：%s"/>
         <text name="eq_pop_routineError" text="経路違反 %d/%d"/>
@@ -594,7 +601,6 @@
         <text name="eq_ui_col_success" text="見込み"/>
         <text name="eq_ui_col_training" text="トレーニング"/>
         <text name="eq_ui_trainingBenefit" text="トレーニング効果"/>
-        <text name="eq_ui_ageLong" text="%dか月"/>
         <text name="eq_success_favourite" text="本命"/>
         <text name="eq_success_contender" text="対抗"/>
         <text name="eq_success_outsider" text="伏兵"/>
@@ -610,6 +616,13 @@
         <text name="eq_ui_canEnter" text="%d頭が出場可能"/>
         <text name="eq_ui_noneEligible" text="出場可能な馬なし"/>
         <text name="eq_ui_ageMonths" text="%dか月"/>
+        <text name="eq_age_year" text="%d歳"/>
+        <text name="eq_age_years" text="%d歳"/>
+        <text name="eq_age_yearsFew" text="%d歳"/>
+        <text name="eq_age_join" text="%s%s"/>
+        <text name="eq_age_short" text="%d歳%dか月"/>
+        <text name="eq_age_shortYears" text="%d歳"/>
+        <text name="eq_ui_ages_rangeYears" text="%d～%d歳"/>
         <text name="eq_ui_day" text="%d日目"/>
         <text name="eq_ui_status_ok" text="出場可能"/>
         <text name="eq_ui_status_lowHealth" text="健康不良：取消%d%%"/>
@@ -659,8 +672,8 @@
         <text name="eq_ui_noHorses" text="馬を所有していません。"/>
         <text name="eq_ui_clientNote" text="大会はホストが運営します。マルチプレイのクライアントからのエントリーは今後のバージョンで対応予定です。"/>
         <text name="eq_ui_noConfig" text="大会リストを読み込めませんでした。ログを確認してください。"/>
-        <text name="eq_ui_ages_range" text="%d～%dか月"/>
-        <text name="eq_ui_ages_from" text="%dか月以上"/>
+        <text name="eq_ui_ages_range" text="%s～%s"/>
+        <text name="eq_ui_ages_from" text="%s以上"/>
         <text name="eq_ui_summary_event" text="%s：%s、レーティング%.0f-%.0f、出走%d頭。馬を選んでEnterを押してください。"/>
         <text name="eq_enter_noEvent" text="その大会はエントリーを受け付けていません。"/>
         <text name="eq_enter_retired" text="その馬は競技から引退しています。"/>
@@ -668,8 +681,8 @@
         <text name="eq_enter_foaled" text="その牝馬はまだ出産から回復中です。出産の3か月後から出場できます。"/>
         <text name="eq_enter_already" text="その馬はすでに%sにエントリーしています。"/>
         <text name="eq_enter_eventFull" text="1つの大会にエントリーできるのは最大%d頭です。"/>
-        <text name="eq_enter_tooYoung" text="若すぎます：この大会は%dか月以上の馬が対象で、あなたの馬は%dか月です。"/>
-        <text name="eq_enter_tooOld" text="年を取りすぎています：この大会は%dか月までの馬が対象で、あなたの馬は%dか月です。"/>
+        <text name="eq_enter_tooYoung" text="若すぎます：この大会は%s以上の馬が対象で、あなたの馬は%sです。"/>
+        <text name="eq_enter_tooOld" text="年を取りすぎています：この大会は%sまでの馬が対象で、あなたの馬は%sです。"/>
         <text name="eq_enter_ratingLow" text="レーティング%.0fはこの大会の範囲%.0f-%.0fを下回っています。"/>
         <text name="eq_enter_ratingHigh" text="レーティング%.0fはこの大会の範囲%.0f-%.0fを上回っています：上のクラスにエントリーしてください。"/>
         <text name="eq_enter_noMoney" text="お金が足りません：エントリーには%s必要です（エントリー料%s、輸送費%s）。"/>
@@ -1162,7 +1175,7 @@
         <text name="eq_sponsor_haveOf" text="所有%s／必要%d"/>
         <text name="eq_sponsor_mustOwn" text="申し込む前に相手の機材を%d台所有する必要があります。"/>
         <text name="eq_sponsor_mustKeep" text="支払いを受けるには相手の機材を%d台保持する必要があります。"/>
-        <text name="eq_sponsor_attachHalf" text="作業機とトレーラーは0.5台として数えます。"/>
+        <text name="eq_sponsor_cheapHalf" text="非常に安い機材は0.5台として数えます。"/>
         <text name="eq_sponsor_noRivals" text="相手の製品の価格の%s以内の機械は所有できません。"/>
         <text name="eq_sponsor_sellFirst" text="申し込む前に次を売却または返却してください："/>
         <text name="eq_sponsor_sellMore" text="…ほか%d台"/>
@@ -1222,7 +1235,7 @@
         <text name="eq_ride_blocked_quarantine" text="%sは検疫中のため、帰宅するまで騎乗できません。"/>
         <text name="eq_ride_blocked_away" text="%sは大会に出ているため騎乗できません。"/>
         <text name="eq_ride_blocked_injured" text="%sは怪我をしているため、治るまで騎乗できません。"/>
-        <text name="eq_ride_blocked_tooYoung" text="%sはまだ若すぎて騎乗できません。馬に乗れるのは生後%dか月からです。"/>
+        <text name="eq_ride_blocked_tooYoung" text="%sはまだ若すぎて騎乗できません。馬に乗れるのは%sからです。"/>
         <text name="eq_loose_sentHome_quarantine" text="%sは検疫中のため、%sに戻されました。"/>
         <text name="eq_loose_sentHome_away" text="%sは大会に出ているため、%sに戻されました。"/>
         <text name="eq_loose_sentHome_injured" text="%sは怪我をしているため、休養のため%sに戻されました。"/>
@@ -1230,12 +1243,68 @@
         <text name="eq_help_lateral_title" text="側方運動"/>
         <text name="eq_help_lateral_1" text="側方運動は馬場馬術でも特に難しく、いくつかの操作を組み合わせます。[[EQ_LATERAL]]を押しながらAかDで横へ動くと脚への譲歩になり、さらに[[EQ_REIN]]を押し続けると馬の首と肩を曲げてトラバース、レンバース、ハーフパスになります。演技中は線上のアイコンが馬の姿勢を示します。"/>
         <text name="eq_help_collect_title" text="収縮"/>
-        <text name="eq_help_collect_1" text="収縮は主に馬場馬術で、歩法をいつもの速さなしで行うために使います。速歩中に[[EQ_COLLECT]]を押し続けるとピアッフェ（その場での速歩）、さらにWでパッサージュ（ゆっくり弾む速歩）になります。常歩か駈歩で収縮してAかDで回るとピルエットです。"/>
+        <text name="eq_help_collect_1" text="収縮は主に馬場馬術で、歩法をいつもの速さなしで行うために使います。速歩中に[[EQ_COLLECT]]を押し続けるとピアッフェ（その場での速歩）、さらにWでパッサージュ（ゆっくり弾む速歩）になります。収縮してAかDで回ると、常歩か速歩では後肢を軸に回るピルエット、駈歩ではボルト（小さな輪乗り、馬が落ち着いているほど小さい）です。駈歩のピルエットはさらに[[EQ_LATERAL]]を押します。"/>
         <text name="eq_help_rein_title" text="マウス操作"/>
         <text name="eq_help_rein_1" text="[[EQ_REIN]]を押し続けるとカメラが馬の後ろに回り、マウスで細かく操作できます。馬場馬術では欠かせず、障害飛越でも役立ちます。[[EQ_LATERAL]]も押していると、マウスで馬の頭を曲げて側方運動ができます。"/>
         <text name="eq_help_courseEdit_title" text="コースの編集"/>
         <text name="eq_help_courseEdit_1" text="障害物を順番に通り抜けてコースを描きます。速さは自由です。描いている間、このMODの障害物には当たり判定がありません。間違えたら最後の正しい地点まで戻り、線がそこに吸い付いたら[[EQ_COURSE_REWIND]]でそこから描き直せます。もう一度[[EQ_COURSE_RECORD]]（クロスカントリーは[[EQ_COURSE_RECORD_XC]]）で保存します。"/>
         <text name="eq_help_dressageEdit_title" text="馬場馬術演技の編集"/>
         <text name="eq_help_dressageEdit_1" text="図形、運動、歩法から自分の演技を作れます。[[EQ_DT_PREV]]と[[EQ_DT_NEXT]]で図形を、[[EQ_DT_GAIT]]で歩法を切り替え、[[EQ_DT_MODE]]で側方運動やその場の運動に切り替えます。[[EQ_DT_ACCEPT]]で手順を確定して次へ、[[EQ_DT_UNDO]]で戻り、[[EQ_DT_RANDOM]]でランダムな手順を選びます。[[EQ_DRESSAGE_TEST]]で演技を保存します。"/>
+        <text name="eq_band_extremelyLow" text="極めて低い"/>
+        <text name="eq_band_veryLow" text="とても低い"/>
+        <text name="eq_band_low" text="低い"/>
+        <text name="eq_band_average" text="平均"/>
+        <text name="eq_band_high" text="高い"/>
+        <text name="eq_band_veryHigh" text="とても高い"/>
+        <text name="eq_band_extremelyHigh" text="極めて高い"/>
+        <text name="input_EQ_MENU" text="乗馬メニュー"/>
+        <text name="eq_menu_button" text="乗馬"/>
+        <text name="eq_menu_pickHint" text="行を選ぶとチェックが切り替わります。ほかを変えるにはもう一度リストを開いてください。"/>
+        <text name="eq_horses_title" text="馬"/>
+        <text name="eq_horses_col_name" text="名前"/>
+        <text name="eq_horses_col_age" text="年齢"/>
+        <text name="eq_horses_col_status" text="状態"/>
+        <text name="eq_horses_inTrailer" text="トレーラー内"/>
+        <text name="eq_horses_foal" text="まだ乗れない年齢"/>
+        <text name="eq_horses_ready" text="準備完了"/>
+        <text name="eq_horses_none" text="この農場にはまだ馬がいません。家畜商で購入してください。"/>
+        <text name="eq_horses_stable" text="厩舎"/>
+        <text name="eq_horses_fitness" text="体力"/>
+        <text name="eq_horses_health" text="健康"/>
+        <text name="eq_horses_career" text="戦績"/>
+        <text name="eq_horses_careerValue" text="出走 %d、勝利 %d、%s"/>
+        <text name="eq_horses_summary" text="馬 %d 頭。下のボタンで選んだ馬に乗る、役割を決める、引退させることができます。"/>
+        <text name="eq_horses_summaryOne" text="馬 %d 頭。下のボタンで乗る、役割を決める、引退させることができます。"/>
+        <text name="eq_messages_title" text="メッセージ"/>
+        <text name="eq_messages_col_date" text="日付"/>
+        <text name="eq_messages_col_type" text="種類"/>
+        <text name="eq_messages_col_message" text="内容"/>
+        <text name="eq_messages_button_clear" text="消去"/>
+        <text name="eq_messages_clearConfirm" text="この農場のメッセージをすべて削除しますか？"/>
+        <text name="eq_messages_none" text="まだメッセージはありません。"/>
+        <text name="eq_messages_summary" text="結果、けが、輸送、主催イベント、スポンサーの知らせ。それぞれ通知としても表示されます。"/>
+        <text name="eq_messages_date" text="%d日目、%s、%d年目"/>
+        <text name="eq_messages_day" text="%d日目"/>
+        <text name="input_EQ_DT_TYPE" text="馬場馬術経路の種類"/>
+        <text name="input_EQ_DT_LEVEL" text="馬場馬術経路のレベル"/>
+        <text name="eq_dt_typeAction" text="経路：%s"/>
+        <text name="eq_dt_levelAction" text="レベル：%s"/>
+        <text name="eq_dt_type_own" text="自作"/>
+        <text name="eq_dt_type_random" text="ランダム"/>
+        <text name="eq_dt_type_set" text="標準経路"/>
+        <text name="eq_dlevel_novice" text="ノービス"/>
+        <text name="eq_dlevel_elementary" text="エレメンタリー"/>
+        <text name="eq_dlevel_medium" text="ミディアム"/>
+        <text name="eq_dlevel_advanced" text="アドバンスト"/>
+        <text name="eq_dlevel_prixStGeorges" text="プリ・サンジョルジュ"/>
+        <text name="eq_dlevel_intermediate" text="インターメディエイト"/>
+        <text name="eq_dlevel_grandPrix" text="グランプリ"/>
+        <text name="eq_dt_choiceOwn" text="自作の経路（Ctrl+N：種類）"/>
+        <text name="eq_dt_choiceRandom" text="ランダム経路、%s（Ctrl+N：種類、Ctrl+M：レベル）"/>
+        <text name="eq_dt_choiceSet" text="標準経路、%s（Ctrl+N：種類、Ctrl+M：レベル）"/>
+        <text name="eq_dt_choiceFallback" text="このアリーナに合う標準経路はありません：ランダム経路、%s"/>
+        <text name="eq_dt_choiceEvent" text="競技会の経路：ランダム、%s"/>
+        <text name="eq_fig_canterSide" text="駈歩 %s-%s"/>
+        <text name="eq_fig_canterDiagonal" text="駈歩 %s-X-%s"/>
     </texts>
 </l10n>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <modDesc descVersion="116">
     <author>Jasta007</author>
-    <version>1.1.0.0</version>
+    <version>1.2.0.0</version>
     <title>
         <en>Realistic Equestrian</en>
     </title>
@@ -11,14 +11,21 @@
 
 Every horse gets four competition stats - Stamina, Speed, Agility and Temperament. Each has an inherited ceiling and a trained level: breeding raises what a horse could become, riding and hired staff make it happen. Enter your horses in daily shows and monthly championships for a fee and see the results the next day or month.
 
-Requires Realistic Livestock - Ritter version (FS25_RealisticLivestockRM).
+Works on its own or with Realistic Livestock - Ritter version (FS25_RealisticLivestockRM). With it, everything lives in its menu next to breeding and genetics. Without it, open the Equestrian menu with Right Shift + O or from a horse stable's Animals page.
 
 Strongly recommended: Riding Hall 2k26 (FS25_RidingHall), for show jumps you can buy and place. Clearing them trains more agility than jumping fences.
 
-Changelog 1.1.0.0:
-- New: foals. Young horses show as a foal model in the pen, in all 8 coats, with their own shop icons
-- New: Horse maturing setting. Accelerated (default): foal until 6 months, ridden from 6 months, training events at 1-2 years, other events from 2 years. Realistic: foal until 1 year, ridden from 1 year, training events at 2-3 years, other events from 3 years
-- Horses too young to ride can't be mounted
+Changelog 1.2.0.0:
+- New: Realistic Livestock is now optional. Without it, horses get their own Equestrian menu (Right Shift + O, or the Equestrian button on a horse stable's Animals page) with Horses, Events, Staff, Messages and Settings tabs
+- New: dressage test levels. Pick your own, a random or a standardized test (Ctrl + N) at seven levels from Novice to Grand Prix (Ctrl + M)
+- New: Ctrl + A/D rides a pirouette at a walk or trot and a volte at a canter; Ctrl + Shift + A/D rides a canter pirouette
+- Horse ages read in years and months
+- Sponsors ask you to own 1 to 3 of their machines, fewer for expensive brands
+- The Lizard plinth can be built from stones, wood chips or straw
+- Show jumps and cross country pieces count as fences in both course types
+- The dealer stocks 0 to 3 horses of each colour and gender, at least 12 in all
+- Fixed: a pause or menu in the saddle no longer ends a dressage test, and no false crash after a rein back
+- Start arch logos fit between the white corner strips
 
 Made by Jasta007.]]>
         </en>
@@ -27,14 +34,21 @@ Made by Jasta007.]]>
 
 Jedes Pferd erhält vier Turnierwerte: Ausdauer, Schnelligkeit, Wendigkeit und Temperament. Jeder Wert hat eine vererbte Obergrenze und einen trainierten Stand: Die Zucht hebt an, was ein Pferd werden kann, Reiten und angestellte Pfleger machen es wahr. Melden Sie Ihre Pferde gegen eine Startgebühr zu täglichen Turnieren und monatlichen Meisterschaften an und sehen Sie die Ergebnisse am nächsten Tag oder im nächsten Monat.
 
-Benötigt Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM).
+Läuft eigenständig oder mit Realistic Livestock in der Ritter-Version (FS25_RealisticLivestockRM). Damit liegt alles in dessen Menü neben Zucht und Genetik. Ohne öffnest du das Reitsport-Menü mit Rechts-Shift + O oder auf der Tiere-Seite eines Pferdestalls.
 
 Dringend empfohlen: Riding Hall 2k26 (FS25_RidingHall) für Springhindernisse, die Sie kaufen und aufstellen können. Über sie zu springen trainiert die Wendigkeit stärker als Sprünge über Zäune.
 
-Changelog 1.1.0.0:
-- Neu: Fohlen. Junge Pferde erscheinen auf der Weide als Fohlenmodell, in allen 8 Fellfarben und mit eigenen Shop-Symbolen
-- Neu: Einstellung Reifung der Pferde. Beschleunigt (Standard): Fohlen bis 6 Monate, reitbar ab 6 Monaten, Nachwuchsturniere mit 1-2 Jahren, andere Turniere ab 2 Jahren. Realistisch: Fohlen bis 1 Jahr, reitbar ab 1 Jahr, Nachwuchsturniere mit 2-3 Jahren, andere Turniere ab 3 Jahren
-- Pferde, die zu jung zum Reiten sind, können nicht bestiegen werden
+Changelog 1.2.0.0:
+- Neu: Realistic Livestock ist jetzt optional. Ohne es haben Pferde ihr eigenes Reitsport-Menü (Rechts-Shift + O oder die Schaltfläche Reitsport auf der Tiere-Seite eines Pferdestalls) mit den Reitern Pferde, Turniere, Personal, Nachrichten und Einstellungen
+- Neu: Dressurprüfungs-Stufen. Wähle eine eigene, eine zufällige oder eine Standardprüfung (Strg + N) in sieben Stufen von Novice bis Grand Prix (Strg + M)
+- Neu: Strg + A/D reitet im Schritt oder Trab eine Pirouette und im Galopp eine Volte; Strg + Umschalt + A/D reitet eine Galopppirouette
+- Das Alter der Pferde wird in Jahren und Monaten angezeigt
+- Sponsoren verlangen 1 bis 3 ihrer Maschinen, bei teuren Marken weniger
+- Der Lizard-Sockel lässt sich aus Steinen, Hackschnitzeln oder Stroh bauen
+- Springhindernisse und Geländehindernisse zählen in beiden Parcoursarten als Hindernis
+- Der Händler hat 0 bis 3 Pferde je Farbe und Geschlecht, mindestens 12 insgesamt
+- Behoben: Pause oder Menü im Sattel beendet keine Dressurprüfung mehr, kein falscher Sturz nach dem Rückwärtsrichten
+- Die Logos am Startbogen passen zwischen die weißen Eckstreifen
 
 Von Jasta007.]]>
         </de>
@@ -43,14 +57,21 @@ Von Jasta007.]]>
 
 Chaque cheval reçoit quatre compétences de compétition : Endurance, Vitesse, Agilité et Tempérament. Chacune a un plafond hérité et un niveau entraîné : l'élevage relève ce qu'un cheval peut devenir, la monte et le personnel embauché le concrétisent. Engagez vos chevaux dans des concours quotidiens et des championnats mensuels moyennant des frais d'engagement, et découvrez les résultats le lendemain ou le mois suivant.
 
-Nécessite Realistic Livestock, version Ritter (FS25_RealisticLivestockRM).
+Fonctionne seul ou avec Realistic Livestock, version Ritter (FS25_RealisticLivestockRM). Avec lui, tout se trouve dans son menu à côté de l'élevage et de la génétique. Sans lui, ouvrez le menu Équitation avec Maj droite + O ou depuis la page Animaux d'une écurie.
 
 Vivement recommandé : Riding Hall 2k26 (FS25_RidingHall), pour des obstacles de saut à acheter et à placer. Les franchir entraîne davantage l'agilité que sauter des clôtures.
 
-Changelog 1.1.0.0 :
-- Nouveau : les poulains. Les jeunes chevaux apparaissent au pré sous forme de poulain, dans les 8 robes, avec leurs propres icônes de boutique
-- Nouveau : paramètre Maturité des chevaux. Accélérée (par défaut) : poulain jusqu'à 6 mois, monté dès 6 mois, concours jeunes chevaux à 1-2 ans, autres concours dès 2 ans. Réaliste : poulain jusqu'à 1 an, monté dès 1 an, concours jeunes chevaux à 2-3 ans, autres concours dès 3 ans
-- Impossible de monter un cheval trop jeune
+Changelog 1.2.0.0 :
+- Nouveau : Realistic Livestock devient facultatif. Sans lui, les chevaux ont leur propre menu Équitation (Maj droite + O, ou le bouton Équitation sur la page Animaux d'une écurie) avec les onglets Chevaux, Concours, Personnel, Messages et Paramètres
+- Nouveau : niveaux de reprise de dressage. Choisissez votre propre reprise, une reprise aléatoire ou une reprise standard (Ctrl + N) sur sept niveaux, de Novice à Grand Prix (Ctrl + M)
+- Nouveau : Ctrl + A/D exécute une pirouette au pas ou au trot et une volte au galop ; Ctrl + Maj + A/D une pirouette au galop
+- L'âge des chevaux s'affiche en années et en mois
+- Les sponsors demandent de posséder 1 à 3 de leurs machines, moins pour les marques chères
+- Le socle Lizard peut être construit en pierres, copeaux de bois ou paille
+- Les obstacles de saut et de cross comptent comme obstacles dans les deux types de parcours
+- Le marchand propose 0 à 3 chevaux par robe et par sexe, au moins 12 au total
+- Corrigé : une pause ou un menu en selle ne met plus fin à une reprise de dressage, plus de fausse chute après un reculer
+- Les logos de l'arche de départ tiennent entre les bandes blanches des coins
 
 Par Jasta007.]]>
         </fr>
@@ -59,23 +80,27 @@ Par Jasta007.]]>
 
 Cada caballo tiene cuatro habilidades de competición: Resistencia, Velocidad, Agilidad y Temperamento. Cada una tiene un techo heredado y un nivel entrenado: la cría eleva lo que un caballo puede llegar a ser, y la monta y el personal contratado lo hacen realidad. Inscribe a tus caballos en concursos diarios y campeonatos mensuales pagando una inscripción y consulta los resultados al día o al mes siguiente.
 
-Requiere Realistic Livestock, versión de Ritter (FS25_RealisticLivestockRM).
+Funciona solo o con Realistic Livestock, versión de Ritter (FS25_RealisticLivestockRM). Con él, todo está en su menú junto a la cría y la genética. Sin él, abre el menú de Equitación con Mayús derecha + O o desde la página Animales de un establo.
 
 Muy recomendado: Riding Hall 2k26 (FS25_RidingHall), para obstáculos de salto que puedes comprar y colocar. Saltarlos entrena más la agilidad que saltar vallas.
 
-Changelog 1.1.0.0:
-- Nuevo: potros. Los caballos jóvenes aparecen en el prado como potro, en los 8 pelajes y con sus propios iconos de tienda
-- Nuevo: ajuste Maduración de los caballos. Acelerada (por defecto): potro hasta los 6 meses, se monta desde los 6 meses, pruebas de iniciación con 1-2 años, demás pruebas desde los 2 años. Realista: potro hasta 1 año, se monta desde 1 año, pruebas de iniciación con 2-3 años, demás pruebas desde los 3 años
-- Los caballos demasiado jóvenes para montar no se pueden montar
+Changelog 1.2.0.0:
+- Nuevo: Realistic Livestock ya es opcional. Sin él, los caballos tienen su propio menú de Equitación (Mayús derecha + O, o el botón Equitación en la página Animales de un establo) con las pestañas Caballos, Pruebas, Personal, Mensajes y Ajustes
+- Nuevo: niveles de prueba de doma. Elige tu propia prueba, una aleatoria o una estándar (Ctrl + N) en siete niveles, de Novice a Grand Prix (Ctrl + M)
+- Nuevo: Ctrl + A/D hace una pirueta al paso o al trote y una volta al galope; Ctrl + Mayús + A/D una pirueta al galope
+- La edad de los caballos se muestra en años y meses
+- Los patrocinadores piden tener de 1 a 3 de sus máquinas, menos en marcas caras
+- El pedestal Lizard se puede construir con piedras, astillas de madera o paja
+- Los obstáculos de salto y de cross cuentan como obstáculos en ambos tipos de recorrido
+- El tratante tiene de 0 a 3 caballos por capa y sexo, al menos 12 en total
+- Corregido: una pausa o un menú en la silla ya no termina una prueba de doma, ni hay caída falsa tras un paso atrás
+- Los logotipos del arco de salida caben entre las franjas blancas de las esquinas
 
 Por Jasta007.]]>
         </es>
     </description>
     <iconFilename>icon_RealisticEquestrian.dds</iconFilename>
     <multiplayer supported="true"/>
-    <dependencies>
-        <dependency>FS25_RealisticLivestockRM</dependency>
-    </dependencies>
     <extraSourceFiles>
         <sourceFile filename="scripts/main.lua"/>
     </extraSourceFiles>
@@ -142,9 +167,12 @@ Por Jasta007.]]>
         <action name="EQ_DT_MODE"/>
         <action name="EQ_DT_ACCEPT"/>
         <action name="EQ_DT_UNDO"/>
+        <action name="EQ_DT_TYPE"/>
+        <action name="EQ_DT_LEVEL"/>
         <action name="EQ_DT_PREV_LETTER"/>
         <action name="EQ_DT_NEXT_LETTER"/>
         <action name="EQ_DT_GAIT"/>
+        <action name="EQ_MENU"/>
     </actions>
     <inputBinding>
         <actionBinding action="EQ_DELIVER">
@@ -193,6 +221,12 @@ Por Jasta007.]]>
         <actionBinding action="EQ_DRESSAGE_TEST">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_l" index="1"/>
         </actionBinding>
+        <actionBinding action="EQ_DT_TYPE">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_n" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_DT_LEVEL">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_lctrl KEY_m" index="1"/>
+        </actionBinding>
         <actionBinding action="EQ_DT_PREV">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_n" index="1"/>
         </actionBinding>
@@ -219,6 +253,9 @@ Por Jasta007.]]>
         </actionBinding>
         <actionBinding action="EQ_DT_GAIT">
             <binding device="KB_MOUSE_DEFAULT" input="KEY_g" index="1"/>
+        </actionBinding>
+        <actionBinding action="EQ_MENU">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_rshift KEY_o" index="1"/>
         </actionBinding>
     </inputBinding>
 </modDesc>
