@@ -250,7 +250,7 @@ way between the walk's and the trot's top speed); W doesn't change gait while Ct
 letting go of W goes back to the spot. Tests ask for them at letters on the track: a **piaffe** when trotting (hold Ctrl
 4 s), a **pirouette** at a walk or canter (Ctrl + A or D, a full circle the way asked, into the
 arena), 15% of the time between figures and in 40% of canters or walks between two letters.
-Started near the gold pole (marked like a halt); letting go early (off the spot for 4.5 s, so a fumbled start can be put right) costs
+Started near the gold pole (marked like a halt; a pirouette by its hind feet, 0.9 m behind the horse's middle, since it turns round them); letting go early (off the spot for 4.5 s, so a fumbled start can be put right) costs
 up to 5, riding past 5. Coming in it is ridden from the asked gait: a full stop first costs 2, and
 each second in another gait on the way costs 1 (up to 3), so a fumbled one marks near 1. The prompt names the gait: "Piaffe (Trot) at E: hold Ctrl", "Left Pirouette
 (Canter) at B: Ctrl + Shift + A". Gold symbols on the line show what is coming: a bar across for a halt,
@@ -314,7 +314,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   "pretty hard to not get an 8"), but never more than 7.5 times the square root of the metres, so
   further off it eases: 0.2 m is a 7, 0.33 m a 6, 0.5 m a 5 (James's hosted test, 2026-11-01: a
   circle 0.33 m off was a 3). Lateral work, passage and movements on the spot keep the gentler
-  rate. Drifting with Shift to get back on the line in an ordinary figure is never marked down. Also the wrong gait 0.5 a second (at most 5; after 0.8 s at it the asked gait shows in red, "Trot!"), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
+  rate. Drifting with Shift to get back on the line in an ordinary figure is never marked down. Also the wrong gait 0.5 a second (1.5 a second in lateral work, with no settling time; at most 5; after 0.8 s at it the asked gait shows in red, "Trot!"), a change out of its window 0.8 a metre (at most 3, and 3 for one missed 10 m past its point), a halt 1 a
   metre past 1 m from its point (at most 3), moving off before the halt is over 1, riding
   through a halt 4. On top of the average, every metre of line ridden more than 1 m off costs 0.4
   (at most 4), so a stretch way off counts even when the rest was neat. The opening (in at A,
@@ -343,7 +343,7 @@ the panel; the middle of the screen is for orders (changes, halts, movements).
   alone were unreadable mid-ride): cyan dashes facing the way the horse should face, each one
   smooth curve bending to the bend side towards its front. Lateral work comes only in the gait the
   horse is already in, with no change of gait in the 15 m before it. From 1 m into each section the body must face within 15 degrees of the asked angle
-  (0.3 a second off, at most 2; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.25 a second,
+  (0.5 a second off, at most 2; off the line 0.3 m more is free in a section) and the head be bent at least 0.3 the asked way (0.4 a second,
   at most 1): staying on the line matters more than the form (James, 2026-10-31).
 - **Temperament's stickiness** (James, 2026-10-30): in a test a calm horse is gently pulled back
   onto the line (up to 1.0 of its distance off a second at temperament 100, half that outside
