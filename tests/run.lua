@@ -4181,6 +4181,13 @@ end
         and not EqLateral.trotVolte({ currentTurnSpeed = -0.5, maxTurnSpeed = 1 }, "TROT", false)
         and EqLateral.trotVolte({ currentTurnSpeed = -0.9, maxTurnSpeed = 1 }, "TROT", false)
         and not EqLateral.trotVolte({ currentTurnSpeed = 0.9, maxTurnSpeed = 1, eqCollect = 1 }, "TROT", false))
+    check("a level asks for its own volte size, a player's own test only the usual ones",
+        EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 6, levelVolte = true }, { voltes = { canter = 6 } })
+        and not EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 15 }, { voltes = { canter = 6 } })
+        and not EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 6, levelVolte = true }, nil)
+        and EqDressagePath.volteFits({ name = "volte", gait = "canter", size = 15 }, nil)
+        and EqDressagePath.volteFits({ name = "circle", gait = "canter", size = 20 }, { voltes = { canter = 6 } })
+        and EqDressageLevels.LEVELS.grandPrix.voltes.canter == 6 and EqDressageLevels.LEVELS.novice.voltes.canter == 10)
     check("a volte is 6 m across from temperament 70, widening evenly to 10 m at 0", EqLateral.volteDiameter(70) == 6
         and EqLateral.volteDiameter(100) == 6 and EqLateral.volteDiameter(0) == 10 and EqLateral.volteDiameter(nil) == 10
         and math.abs(EqLateral.volteDiameter(35) - 8) < 1e-9)
@@ -4405,7 +4412,8 @@ end)()
         for _, figure in ipairs(library) do
             keys[figure.key] = true
             -- Lateral work drifts without turning, so its kinks are not turns.
-            if figure.sections == nil and EqDressagePath.tightest(figure.pts) < g.minR[figure.gait] * 0.9 then tight = tight + 1 end
+            -- A level's volte is as tight as its level asks (James, 2026-11-23).
+            if figure.sections == nil and not figure.levelVolte and EqDressagePath.tightest(figure.pts) < g.minR[figure.gait] * 0.9 then tight = tight + 1 end
             if figure.gait == "canter" then canters[figure.key] = true end
         end
         -- Each figure is ridden at one gait, its turns sized for it (James 2026-10-29); a
