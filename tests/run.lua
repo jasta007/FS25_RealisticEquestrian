@@ -7185,6 +7185,8 @@ end)()
 
     AnimalType, g_currentMission = savedType, savedMission
     EqDealerStock.cache = nil
+end)()
+
 -- Without Realistic Livestock: our own horse ids, our own message log and plain breeding.
 ;(function()
     EqBase.known, EqBase.highest = {}, 0
@@ -7250,6 +7252,8 @@ end)()
     check("base: plain breeding centres on the parents", math.abs(total / n - 1.3) < 0.05)
     check("base: plain breeding is the same on every machine",
         EqRegistry.plainBreeder(EqRandom.new("x"))(1, 1, {}) == EqRegistry.plainBreeder(EqRandom.new("x"))(1, 1, {}))
+end)()
+
 -- Horse ages read as years and months (James, 2026-11-22), in each language's own words.
 ;(function()
     local savedI18n = g_i18n
