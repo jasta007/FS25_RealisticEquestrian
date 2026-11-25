@@ -17,8 +17,9 @@ EqCompetition = {}
 EqCompetition.PRIZE_SHARES = { 0.5, 0.3, 0.2 }
 
 -- Spread of the day's luck around a horse's rating; racing is a little less predictable.
-EqCompetition.LUCK_SD = 0.06
-EqCompetition.RACING_LUCK_SD = 0.09
+-- Enough that an underdog sometimes wins: at 0.06 a Long shot almost never placed.
+EqCompetition.LUCK_SD = 0.10
+EqCompetition.RACING_LUCK_SD = 0.14
 
 EqCompetition.KIND_ROUND = "round"
 EqCompetition.KIND_MONTH = "month"
@@ -119,8 +120,8 @@ end
 
 -- Words for a podium chance, best first.
 EqCompetition.SUCCESS_BANDS = {
-    { from = 0.6, name = "favourite" },
-    { from = 0.35, name = "contender" },
+    { from = 0.75, name = "favourite" },
+    { from = 0.4, name = "contender" },
     { from = 0.12, name = "outsider" },
     { from = -math.huge, name = "longShot" },
 }
